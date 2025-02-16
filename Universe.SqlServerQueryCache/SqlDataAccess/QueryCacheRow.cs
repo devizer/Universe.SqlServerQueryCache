@@ -8,7 +8,7 @@ public class QueryCacheRow
     public long ExecutionCount { get; set; }
 
     public long PlanGenerationNum { get; set; }
-    public long LastExecutionTime { get; set; }
+    public DateTime LastExecutionTime { get; set; }
 
     public long TotalElapsedTime { get; set; }
     public long LastElapsedTime { get; set; }
