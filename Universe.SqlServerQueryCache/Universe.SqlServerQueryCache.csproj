@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\Shared.props" />
+  <Import Project="..\Shared-Files\Dapper.proj" />
+  <Import Project="..\Shared-Files\Microsoft.Data.SqlClient.proj" />
+  <Import Project="..\Shared-Files\Net-2x-4x-Support.proj" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net35;net40;net45;net46;net47;net48;netstandard2.0;</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+</Project>

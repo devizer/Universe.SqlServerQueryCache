@@ -1,0 +1,30 @@
+<Project>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net35'">
+        <AssemblyAttribute Include="System.Runtime.Versioning.TargetFrameworkAttribute">
+            <_Parameter1>.NETFramework,Version=v3.5</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net30'">
+        <AssemblyAttribute Include="System.Runtime.Versioning.TargetFrameworkAttribute">
+            <_Parameter1>.NETFramework,Version=v3.0</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net20'">
+        <AssemblyAttribute Include="System.Runtime.Versioning.TargetFrameworkAttribute">
+            <_Parameter1>.NETFramework,Version=v2.0</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net40' Or '$(TargetFramework)' == 'net35' Or '$(TargetFramework)' == 'net30' Or '$(TargetFramework)' == 'net20' ">
+		<PackageReference Include="Theraot.Core" Version="3.2.11" />
+	</ItemGroup>
+
+    <ItemGroup>
+	  <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	    <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+    </ItemGroup>
+
+</Project>

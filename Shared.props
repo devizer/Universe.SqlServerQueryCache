@@ -1,0 +1,39 @@
+﻿<Project>
+
+    <PropertyGroup>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <OutputType>Library</OutputType>
+        <LangVersion>latest</LangVersion>
+        <DebugType>Full</DebugType>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+        <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <NoWarn>1701;1702;CS0162;CS0414;CS1591;NU5048</NoWarn>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <OutputType>Library</OutputType>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+        <PackageId>$(MSBuildProjectName)</PackageId>
+        <Title>$(MSBuildProjectName)</Title>
+        <Authors>Volodymyr Hoida</Authors>
+        <Product>$(MSBuildProjectName)</Product>
+        <Description>MS SQL Server QueryCache Visualisation. Supports 2005...2022.</Description>
+        <PackageProjectUrl>https://github.com/devizer/Universe.SqlServerQueryCache</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/devizer/Universe.SqlServerQueryCache</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIconUrl>https://raw.githubusercontent.com/devizer/Universe.SqlServerQueryCache/main/Icon.png</PackageIconUrl>
+        <PackageTags>mssql query cache</PackageTags>
+        <LangVersion>latest</LangVersion>
+        <NoWarn>NETSDK1138;NU5048</NoWarn>
+    </PropertyGroup>
+
+</Project>

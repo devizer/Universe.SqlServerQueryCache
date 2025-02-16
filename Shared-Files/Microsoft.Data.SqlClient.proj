@@ -1,0 +1,64 @@
+<Project>
+<!-- 
+  Microsoft.Data.SqlClient Targets: "netstandard2.0", "netstandard2.1", "netcoreapp2.1", "netcoreapp3.1", "net6.0", "net8.0", "net46", "net461", "net462" 
+  Microsoft.Data.SqlClient Versions:
+       5.2.*: 5.2.2, 5.2.1, 5.2.0
+       5.1.*: 5.1.6, 5.1.5, 5.1.4, 5.1.3, 5.1.2, 5.1.1, 5.1.0
+       5.0.*: 5.0.2, 5.0.1, 5.0.0
+       4.1.*: 4.1.1, 4.1.0
+       4.0.*: 4.0.6, 4.0.5, 4.0.4, 4.0.3, 4.0.2, 4.0.1, 4.0.0
+       3.1.*: 3.1.7, 3.1.6, 3.1.5, 3.1.4, 3.1.3, 3.1.2, 3.1.1, 3.1.0
+       3.0.*: 3.0.1, 3.0.0
+       2.1.*: 2.1.7, 2.1.6, 2.1.5, 2.1.4, 2.1.3, 2.1.2, 2.1.1, 2.1.0
+       2.0.*: 2.0.1, 2.0.0
+       1.1.*: 1.1.4, 1.1.3, 1.1.2, 1.1.1, 1.1.0
+       1.0.*: 1.0.19269.1, 1.0.19249.1, 1.0.19239.1
+-->
+  <Choose><When Condition=" '$(VERSION_MICROSOFT_DATA_SQLCLIENT)' == '' ">
+    <!-- Can't include reference for Microsoft.Data.SqlClient for target 'netcoreapp1.1'-->
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' "><VERSION_MICROSOFT_DATA_SQLCLIENT>2.0.1</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' "><VERSION_MICROSOFT_DATA_SQLCLIENT>2.0.1</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' "><VERSION_MICROSOFT_DATA_SQLCLIENT>2.1.7</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' "><VERSION_MICROSOFT_DATA_SQLCLIENT>3.0.1</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' "><VERSION_MICROSOFT_DATA_SQLCLIENT>3.1.7</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0'        "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0'        "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0'        "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0'        "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0'        "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'netstandard1.0'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'netstandard1.1'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'netstandard1.2'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'netstandard1.3'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'netstandard1.4'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'netstandard1.5'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'netstandard1.6'-->
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net11'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net20'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net35'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net40'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net403'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net45'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net451'-->
+    <!-- Can't reference Microsoft.Data.SqlClient for target 'net452'-->
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net46'  "><VERSION_MICROSOFT_DATA_SQLCLIENT>2.1.7</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net462' "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net47'  "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net471' "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net48'  "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net481' "><VERSION_MICROSOFT_DATA_SQLCLIENT>5.2.2</VERSION_MICROSOFT_DATA_SQLCLIENT></PropertyGroup>
+  </When></Choose>
+  
+  <ItemGroup Condition=" '$(VERSION_MICROSOFT_DATA_SQLCLIENT)' != '' ">
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="$(VERSION_MICROSOFT_DATA_SQLCLIENT)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(VERSION_MICROSOFT_DATA_SQLCLIENT)' != '' ">
+    <DefineConstants>$(DefineConstants);HAS_MICROSOFT_DATA_SQLCLIENT</DefineConstants>
+  </PropertyGroup>
+
+</Project>

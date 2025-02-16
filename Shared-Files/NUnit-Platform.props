@@ -1,0 +1,20 @@
+<Project>
+    <ItemGroup>
+        <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />
+
+       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+       <PackageReference Include="NUnit" Version="3.14.0" />
+       <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+       <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+       <PackageReference Include="coverlet.collector" Version="3.1.2" />
+
+        
+        <!-- Needs by NUnitTestsBase.cs -->
+        <PackageReference Include="Universe.CpuUsage" Version="2.2.497.598" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Compile Include="$([System.IO.Path]::GetDirectoryName('$(MSBuildThisFileFullPath)'))\NUnitTestsBase.cs" / -->
+        <Compile Include="$(MSBuildThisFileDirectory)NUnitTestsBase.cs" />
+    </ItemGroup>
+</Project>
