@@ -63,7 +63,7 @@ public class SqlCacheHtmlExporter
             var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
             if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
             var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
-            htmlTable.AppendLine($"    <th class='TableHeaderCell' data-sorting='{column.GetHtmlId()}'><button {attrs}>{column.TheCaption}{(isThisSorting ? "<span class='SortedArrow'>↡</span>" : "")}</button></th>");
+            htmlTable.AppendLine($"    <th class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button {attrs}>{column.TheCaption}</button></th>");
         }
         htmlTable.AppendLine("  </tr>");
         htmlTable.AppendLine("  </thead>");
@@ -76,12 +76,12 @@ public class SqlCacheHtmlExporter
             {
                 var value = column.PropertyAccessor(row);
                 var valueString = GetValueAsHtml(value, row, column);
-                htmlTable.AppendLine($"    <td style='cursor: pointer' data-removeIt='Sure!'>{valueString}</td>");
+                htmlTable.AppendLine($"\t\t<td>{valueString}</td>");
             }
-            htmlTable.AppendLine("  </tr>");
-            htmlTable.AppendLine("  <tr class='SqlRow'>");
-            htmlTable.AppendLine($"    <td colspan='{columnDefinitions.Length}'><pre>{row.SqlStatement}</pre></td>");
-            htmlTable.AppendLine("  </tr>");
+            htmlTable.AppendLine("\t</tr>");
+            htmlTable.AppendLine("\t<tr class='SqlRow'>");
+            htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length}'><pre>{row.SqlStatement}</pre></td>");
+            htmlTable.AppendLine("\t</tr>");
         }
         htmlTable.AppendLine("  </tbody>");
 

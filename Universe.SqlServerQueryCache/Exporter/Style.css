@@ -1,4 +1,8 @@
-﻿table.Metrics thead button {
+﻿table.Metrics thead th {
+    padding: 4px 4px 4px 16px;
+}
+
+table.Metrics thead th button {
     cursor: pointer;
     border: none;
     border-radius: 0;
@@ -6,10 +10,27 @@
     margin: 0;
     background-color: transparent;
     font-weight: bold;
+    font-size: 16px;
 }
+
+table.Metrics thead th button:after {
+    content: " ↡";
+    visibility: hidden
+}
+
 
 table.Metrics thead button:hover {
     color: #B9375E;
+}
+
+table.Metrics thead th button:hover:after {
+    content: " ↡" !important;
+    visibility: visible
+}
+
+table.Metrics thead th.Selected button:after {
+    content: " ↡" !important;
+    visibility: visible
 }
 
 .Hidden { display: none; }
@@ -36,6 +57,7 @@ table.Metrics {
 }
 table.Metrics thead th {
     border: 1px solid #999;
+    font-size: 16px;
 }
 
 table.Metrics td, table.Metrics th {
