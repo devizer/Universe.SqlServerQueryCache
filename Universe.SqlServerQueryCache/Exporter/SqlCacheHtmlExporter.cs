@@ -22,13 +22,15 @@ public class SqlCacheHtmlExporter
 
     public string Export()
     {
-
+        var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
+        htmlTables.AppendLine($"<Script>selectedSortProperty = '{selectedSortProperty}';</Script>");
         foreach (var sortingDefinition in AllSortingDefinitions.Get())
         {
-            string htmlForSortedProperty = $"<div id='{sortingDefinition.GetHtmlId()}'>" +
-                          "<!-- Not imaplemented -->" +
-                          $"</div>";
+            bool isSelected = selectedSortProperty == sortingDefinition.GetHtmlId();
+            string htmlForSortedProperty = @$"<div id='{sortingDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>
+{Export(sortingDefinition, isSelected)}
+</div>";
 
             htmlTables.AppendLine(htmlForSortedProperty);
         }
@@ -39,10 +41,59 @@ public class SqlCacheHtmlExporter
             .Replace("{{ StylesCSS }}", ExporterResources.StyleCSS);
     }
 
-    public string Export<TOrderProperty>(Func<QueryCacheRow, TOrderProperty> descendingSort)
+    public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
     {
-        var sortedRows = Rows.OrderByDescending(descendingSort).ToArray();
-        throw new NotImplementedException();
+        var headers = AllSortingDefinitions.GetHeaders().ToArray();
+        var sortedRows = sortByColumn.SortAction(Rows).ToArray();
+        StringBuilder htmlTable = new StringBuilder();
+        htmlTable.AppendLine("  <table class='Metrics'><thead>");
+        htmlTable.AppendLine("  <tr>");
+        foreach (var header in headers)
+        {
+            htmlTable.AppendLine($"    <th colspan={header.Columns.Count} class='TableHeaderGroupCell'>{header.Caption}</th>");
+        }
+        htmlTable.AppendLine("  <tr>");
+        var columnDefinitions = headers.SelectMany(h => h.Columns).ToArray();
+        foreach (var column in columnDefinitions)
+        {
+            bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
+            const string arrows = " ⇓ ⇩ ↓ ↡";
+            var attrs = "";
+            if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer\" onclick='SelectContent(\"{column.GetHtmlId()}\");'";
+            htmlTable.AppendLine($"    <th class='TableHeaderCell'><span {attrs}>{column.TheCaption}{(isThisSorting ? "<span class=SortedArrow>↡</span>" : "")}</span></th>");
+        }
+        htmlTable.AppendLine("  </tr>");
+        htmlTable.AppendLine("  </thead>");
+
+        htmlTable.AppendLine("  <tbody>");
+        foreach (QueryCacheRow row in sortedRows)
+        {
+            htmlTable.AppendLine("  <tr class='MetricsRow'>");
+            foreach (ColumnDefinition column in columnDefinitions)
+            {
+                var value = column.PropertyAccessor(row);
+                var valueString = GetValueAsHtml(value, row, column);
+                htmlTable.AppendLine($"    <td>{valueString}</td>");
+            }
+            htmlTable.AppendLine("  </tr>");
+            htmlTable.AppendLine("  <tr class='SqlRow'>");
+            htmlTable.AppendLine($"    <td colspan='{columnDefinitions.Length}'><pre>{row.SqlStatement}</pre></td>");
+            htmlTable.AppendLine("  </tr>");
+        }
+        htmlTable.AppendLine("  </tbody>");
+
+        htmlTable.AppendLine("  </table>");
+        return htmlTable.ToString();
+    }
+
+    private static string GetValueAsHtml(object value, QueryCacheRow row, ColumnDefinition column)
+    {
+        var valueString = Convert.ToString(value);
+        if (value is long l)
+            valueString = l == 0 ? "" : l.ToString("n0");
+        if (value is double d)
+            valueString = Math.Abs(d) <= Double.Epsilon ? "" : d.ToString("n2");
+        return valueString;
     }
 }
 

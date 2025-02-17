@@ -1,3 +1,51 @@
-﻿body
-{
+﻿.Hidden { display: none; }
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.SortedArrow {
+    display: inline-block;
+    padding-left: 6px;
+}
+table.Metrics {
+    border-collapse: collapse;
+}
+table.Metrics thead th {
+    border: 1px solid #999;
+}
+
+table.Metrics td, table.Metrics th {
+    padding: 4px;
+}
+
+table.Metrics tbody td {
+    text-align: right;
+}
+
+tr.MetricsRow td, .TableHeaderCell {
+    white-space: nowrap;
+}
+tr.SqlRow td {
+    text-align: left !important;
+    padding: 4px 64px;
+    border-bottom: 1px solid #999;
+}
+
+/* Wrap long SQL rows */
+tr.SqlRow td pre {
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
