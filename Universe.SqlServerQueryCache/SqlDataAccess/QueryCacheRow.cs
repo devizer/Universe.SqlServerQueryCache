@@ -10,24 +10,33 @@ public class QueryCacheRow
     public long PlanGenerationNum { get; set; }
     public DateTime LastExecutionTime { get; set; }
 
+    double GetAverage(long total)
+    {
+        return ExecutionCount == 0 ? 0 : (double)total / ExecutionCount;
+    }
+
     public long TotalElapsedTime { get; set; }
     public long LastElapsedTime { get; set; }
     public long MinElapsedTime { get; set; }
     public long MaxElapsedTime { get; set; }
-    
+    public double AvgElapsedTime => GetAverage(TotalElapsedTime);
+
     public long TotalWorkerTime { get; set; }
     public long LastWorkerTime { get; set; }
     public long MinWorkerTime { get; set; }
     public long MaxWorkerTime { get; set; }
+    public double AvgWorkerTime => GetAverage(TotalWorkerTime);
 
     public long TotalPhysicalReads { get; set; }
     public long LastPhysicalReads { get; set; }
     public long MinPhysicalReads { get; set; }
     public long MaxPhysicalReads { get; set; }
+    public double AvgPhysicalReads => GetAverage(TotalPhysicalReads);
 
     public long TotalLogicalWrites { get; set; }
     public long LastLogicalWrites { get; set; }
     public long MinLogicalWrites { get; set; }
     public long MaxLogicalWrites { get; set; }
+    public double AvgLogicalWrites => GetAverage(TotalLogicalWrites);
 
 }
