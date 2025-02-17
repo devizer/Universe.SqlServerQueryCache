@@ -24,7 +24,7 @@ public class SqlCacheHtmlExporter
     {
         var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
-        htmlTables.AppendLine($"<Script>selectedSortProperty = '{selectedSortProperty}';</Script>");
+        htmlTables.AppendLine($"<script>selectedSortProperty = '{selectedSortProperty}';</script>");
         foreach (var sortingDefinition in AllSortingDefinitions.Get())
         {
             bool isSelected = selectedSortProperty == sortingDefinition.GetHtmlId();
@@ -50,8 +50,9 @@ public class SqlCacheHtmlExporter
         htmlTable.AppendLine("  <tr>");
         foreach (var header in headers)
         {
-            htmlTable.AppendLine($"    <th colspan={header.Columns.Count} class='TableHeaderGroupCell'>{header.Caption}</th>");
+            htmlTable.AppendLine($"    <th colspan='{header.Columns.Count}' class='TableHeaderGroupCell'>{header.Caption}</th>");
         }
+        htmlTable.AppendLine("  </tr>");
         htmlTable.AppendLine("  <tr>");
         var columnDefinitions = headers.SelectMany(h => h.Columns).ToArray();
         foreach (var column in columnDefinitions)
@@ -59,8 +60,9 @@ public class SqlCacheHtmlExporter
             bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
             const string arrows = " ⇓ ⇩ ↓ ↡";
             var attrs = "";
-            if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer\" onclick='SelectContent(\"{column.GetHtmlId()}\");'";
-            htmlTable.AppendLine($"    <th class='TableHeaderCell'><span {attrs}>{column.TheCaption}{(isThisSorting ? "<span class=SortedArrow>↡</span>" : "")}</span></th>");
+            var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); return false;'";
+            if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sortparameter='{column.GetHtmlId()}'";
+            htmlTable.AppendLine($"    <th class='TableHeaderCell' {attrs}><button {attrs}>{column.TheCaption}{(isThisSorting ? "<span class='SortedArrow'>↡</span>" : "")}</button></th>");
         }
         htmlTable.AppendLine("  </tr>");
         htmlTable.AppendLine("  </thead>");
@@ -73,7 +75,7 @@ public class SqlCacheHtmlExporter
             {
                 var value = column.PropertyAccessor(row);
                 var valueString = GetValueAsHtml(value, row, column);
-                htmlTable.AppendLine($"    <td>{valueString}</td>");
+                htmlTable.AppendLine($"    <td style='cursor: pointer' data-removeIt='Sure!'>{valueString}</td>");
             }
             htmlTable.AppendLine("  </tr>");
             htmlTable.AppendLine("  <tr class='SqlRow'>");

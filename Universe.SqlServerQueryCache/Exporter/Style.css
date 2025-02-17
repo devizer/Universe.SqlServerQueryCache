@@ -1,4 +1,14 @@
-﻿.Hidden { display: none; }
+﻿button {
+    cursor: pointer;
+    border: none;
+    border-radius: 0;
+    padding: 4px 8px;
+    margin: 0;
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.Hidden { display: none; }
 
 body {
     margin: 0;
