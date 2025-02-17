@@ -1,4 +1,4 @@
-﻿namespace Universe.SqlServerQueryCache;
+﻿namespace Universe.SqlServerQueryCache.External;
 
 public static class ExceptionExtensions
 {
@@ -6,7 +6,7 @@ public static class ExceptionExtensions
     {
         List<string> ret = new List<string>();
         // while (ex != null)
-        foreach (var ex in AsPlainExceptionList(exception))
+        foreach (var ex in exception.AsPlainExceptionList())
         {
             ret.Add("[" + ex.GetType().Name + "] " + ex.Message);
         }

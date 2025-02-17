@@ -1,5 +1,6 @@
 using System.Data.SqlClient;
 using Universe.SqlServerJam;
+using Universe.SqlServerQueryCache.External;
 using Universe.SqlServerQueryCache.SqlDataAccess;
 
 namespace Universe.SqlServerQueryCache.Tests;

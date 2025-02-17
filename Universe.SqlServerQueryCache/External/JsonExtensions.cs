@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Universe.SqlServerQueryCache
+namespace Universe.SqlServerQueryCache.External
 {
     public enum JsonNaming
     {
@@ -16,7 +16,7 @@ namespace Universe.SqlServerQueryCache
     {
         public static T CloneByJson<T>(this T arg)
         {
-            if ((object)arg == null) return default(T);
+            if (arg == null) return default;
             var json = arg.ToJsonString(minify: true, JsonNaming.PascalCase);
             return ParseJsonString<T>(json, JsonNaming.PascalCase);
         }
@@ -89,7 +89,7 @@ namespace Universe.SqlServerQueryCache
 
         public static JsonSerializer CreateJsonSerializer(bool minify, JsonNaming namingStrategy) => new JsonSerializer()
         {
-            Formatting = minify ?Formatting.None : Formatting.Indented,
+            Formatting = minify ? Formatting.None : Formatting.Indented,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             ContractResolver = GetContractResolver(namingStrategy),
             MaxDepth = 32,

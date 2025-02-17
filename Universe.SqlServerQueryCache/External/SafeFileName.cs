@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Universe.SqlServerQueryCache;
+namespace Universe.SqlServerQueryCache.External;
 
 public static class SafeFileName
 {

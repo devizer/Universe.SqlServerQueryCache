@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Universe.SqlServerQueryCache;
+namespace Universe.SqlServerQueryCache.External;
 
 public static class TryAndForget
 {
