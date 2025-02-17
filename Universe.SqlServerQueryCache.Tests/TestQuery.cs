@@ -57,6 +57,7 @@ public class TestQuery
         SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(rows);
         var singleFileHtml = e.Export();
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, SafeFileName.Get(server.DataSource) + ".html");
+        Console.WriteLine($"Store HTML Report to {dumpFile}");
         File.WriteAllText(dumpFile, singleFileHtml);
     }
 
