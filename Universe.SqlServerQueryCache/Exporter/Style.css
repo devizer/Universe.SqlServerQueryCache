@@ -1,4 +1,4 @@
-﻿button {
+﻿table.Metrics thead button {
     cursor: pointer;
     border: none;
     border-radius: 0;
@@ -6,6 +6,10 @@
     margin: 0;
     background-color: transparent;
     font-weight: bold;
+}
+
+table.Metrics thead button:hover {
+    color: #B9375E;
 }
 
 .Hidden { display: none; }
