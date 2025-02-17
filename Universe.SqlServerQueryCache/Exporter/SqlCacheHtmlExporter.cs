@@ -60,9 +60,10 @@ public class SqlCacheHtmlExporter
             bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
             const string arrows = " ⇓ ⇩ ↓ ↡";
             var attrs = "";
-            var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); return false;'";
-            if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sortparameter='{column.GetHtmlId()}'";
-            htmlTable.AppendLine($"    <th class='TableHeaderCell' {attrs}><button {attrs}>{column.TheCaption}{(isThisSorting ? "<span class='SortedArrow'>↡</span>" : "")}</button></th>");
+            var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
+            if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
+            var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
+            htmlTable.AppendLine($"    <th class='TableHeaderCell' data-sorting='{column.GetHtmlId()}'><button {attrs}>{column.TheCaption}{(isThisSorting ? "<span class='SortedArrow'>↡</span>" : "")}</button></th>");
         }
         htmlTable.AppendLine("  </tr>");
         htmlTable.AppendLine("  </thead>");

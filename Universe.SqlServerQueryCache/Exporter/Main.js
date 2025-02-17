@@ -12,8 +12,18 @@
     tables.forEach(function (t) {
         t.addEventListener("click", function (tableClickEvent) {
             console.log("[CLICK] TABLE CLICKED '" + tableClickEvent.target.tagName + "'", tableClickEvent);
-            var sortParameter = tableClickEvent.target.dataset.SortParameter;
+            var sortParameter = tableClickEvent.target.dataset.sorting;
             console.log("[CLICK] TARGET DATASET", tableClickEvent.target.dataset);
+            var parent = tableClickEvent.target.parentElement;
+            console.log("[CLICK] TARGET's PARENT", parent);
+            console.log("[CLICK] TARGET's PARENT DATASET", parent.dataset);
+            sortParameter = parent.dataset.sorting;
+/*
+            var sortParameterElement = tableClickEvent.target.querySelector("#SortingParameter");
+            if (sortParameterElement) { sortParameter = sortParameterElement.innerText; }
+            console.log("[CLICK] INNER SORTING PARAMETER is " + sortParameter);
+*/
+
             if (sortParameter) {
                 SelectContent(sortParameter);
             }
