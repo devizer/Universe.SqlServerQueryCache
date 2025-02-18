@@ -153,7 +153,7 @@ namespace Universe.SqlServerQueryCache.TSqlSyntax
             for (int i = 0, len = argString.Length; i < len; i++)
             {
                 var c = argString[i];
-                bool isSpecial = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9');
+                bool isSpecial = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_';
                 if (isSpecial)
                 {
                     foreach (var sqlFragment in ReturnOtherBufferIfExists()) yield return sqlFragment;
@@ -283,7 +283,8 @@ namespace Universe.SqlServerQueryCache.TSqlSyntax
             "USE", "DOUBLE", "OPTION", "USER", "DROP", "OR", "VALUES", "DUMP", "ORDER", "VARYING", "ELSE", "OUTER",
             "VIEW", "END", "OVER", "WAITFOR", "ERRLVL", "PERCENT", "WHEN", "ESCAPE", "PIVOT", "WHERE", "EXCEPT", "PLAN",
             "WHILE", "EXEC", "PRECISION", "WITH", "EXECUTE", "PRIMARY", "WITHIN", "GROUP", "EXISTS", "PRINT",
-            "WRITETEXT", "EXIT", "PROC"
+            "WRITETEXT", "EXIT", "PROC",
+            "Count", "Count_Big", "Avg", "Sum", "Max", "Min", "STDEV", "STDEVP", "VAR", "VARP"
         };
 
     }
