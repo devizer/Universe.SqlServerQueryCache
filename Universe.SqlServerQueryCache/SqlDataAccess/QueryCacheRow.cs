@@ -33,6 +33,12 @@ public class QueryCacheRow
     public long MaxPhysicalReads { get; set; }
     public double AvgPhysicalReads => GetAverage(TotalPhysicalReads);
 
+    public long TotalLogicalReads { get; set; }
+    public long LastLogicalReads { get; set; }
+    public long MinLogicalReads { get; set; }
+    public long MaxLogicalReads { get; set; }
+    public double AvgLogicalReads => GetAverage(TotalLogicalReads);
+
     public long TotalLogicalWrites { get; set; }
     public long LastLogicalWrites { get; set; }
     public long MinLogicalWrites { get; set; }

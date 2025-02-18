@@ -113,7 +113,7 @@ tr.SqlRow td {
     border-bottom: 1px solid #888;
     border-bottom-color: light-dark(var(--light-header-border), var(--dark-header-border));
 }
-tr.MetricsRow td:not(:first-child) {
+tr.MetricsRow:not(:first-child) td {
     padding-top: 12px;
 }
 tr.MetricsRow td {

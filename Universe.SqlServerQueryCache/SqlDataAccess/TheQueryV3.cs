@@ -33,6 +33,11 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
     min_physical_reads [MinPhysicalReads],
     max_physical_reads [MaxPhysicalReads],
 
+    total_logical_reads [TotalLogicalReads],
+    last_logical_reads [LastLogicalReads],
+    min_logical_reads [MinLogicalReads],
+    max_logical_reads [MaxLogicalReads],
+
     total_logical_writes [TotalLogicalWrites],
     last_logical_writes [LastLogicalWrites],
     min_logical_writes [MinLogicalWrites],

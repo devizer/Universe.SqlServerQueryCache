@@ -67,7 +67,7 @@ public class AllSortingDefinitions
     {
         yield return new TableHeaderDefinition("Summary")
             .AddColumn(CreateSortableColumn("Count", r => r.ExecutionCount))
-            .AddColumn(CreateNonSortableColumn("Created At", r => r.CreationTime));
+            .AddColumn(CreateSortableColumn("Created At", r => r.CreationTime));
 
         yield return new TableHeaderDefinition("Duration")
             .AddColumn(CreateSortableColumn("Total", r => r.TotalElapsedTime))
