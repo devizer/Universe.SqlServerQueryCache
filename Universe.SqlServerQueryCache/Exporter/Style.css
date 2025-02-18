@@ -1,21 +1,23 @@
 ﻿:root {
     color-scheme: light dark;
-    --blackColor: #0C1011;
-    --whiteColor: #EFEFED;
-    --dark-back: #0C1011;
-    --dark-fore: #EFEFED;
-    --light-back: #fafafa;
-    --dark-fore: #484b6a;
     
-    --light-header-border: #AAA;
+    --dark-back: #0C1011;
+    --dark-fore: #DFDFDD;
     --dark-header-border: #555;
+    --dark-metrics: #EFEFED;
+
+    --light-back: #fafafa;
+    --light-fore: #484b6a;
+    --light-header-border: #AAA;
+    --light-metrics: #181b3a;
 }
 
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
-body, table.Metrics thead th {
+body, table.Metrics thead th, table.Metrics thead th button {
+    /*color: gray;*/
     color: light-dark(var(--light-fore), var(--dark-fore));
     background-color: light-dark(var(--light-back), var(--dark-back));
 }
@@ -98,7 +100,8 @@ table.Metrics td, table.Metrics th {
 }
 
 table.Metrics tbody td {
-    text-align: right;
+    text-align: center;
+    color: light-dark(var(--light-metrics), var(--dark-metrics));
 }
 
 tr.MetricsRow td, .TableHeaderCell {
@@ -118,6 +121,8 @@ tr.MetricsRow:not(:first-child) td {
 }
 tr.MetricsRow td {
     padding-top: 8px;
+    padding-left: 6px; 
+    padding-right: 6px;
 }
 
 /* Wrap long SQL rows */
