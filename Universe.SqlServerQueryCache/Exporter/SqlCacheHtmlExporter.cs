@@ -12,10 +12,13 @@ namespace Universe.SqlServerQueryCache.Exporter;
 public class SqlCacheHtmlExporter
 {
     private IEnumerable<QueryCacheRow> Rows;
+    private IEnumerable<TableHeaderDefinition> _tableTopHeaders;
 
     public SqlCacheHtmlExporter(IEnumerable<QueryCacheRow> rows)
     {
         Rows = rows;
+        _tableTopHeaders = AllSortingDefinitions.GetHeaders().ToArray();
+        _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
     }
 
 
@@ -25,7 +28,7 @@ public class SqlCacheHtmlExporter
         var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
         htmlTables.AppendLine($"<script>selectedSortProperty = '{selectedSortProperty}';</script>");
-        foreach (var sortingDefinition in AllSortingDefinitions.Get())
+        foreach (ColumnDefinition sortingDefinition in AllSortingDefinitions.Get())
         {
             bool isSelected = selectedSortProperty == sortingDefinition.GetHtmlId();
             string htmlForSortedProperty = @$"<div id='{sortingDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>
@@ -43,7 +46,7 @@ public class SqlCacheHtmlExporter
 
     public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
     {
-        var headers = AllSortingDefinitions.GetHeaders().ToArray();
+        var headers = _tableTopHeaders.ToArray();
         var sortedRows = sortByColumn.SortAction(Rows).ToArray();
         StringBuilder htmlTable = new StringBuilder();
         htmlTable.AppendLine("  <table class='Metrics'><thead>");
