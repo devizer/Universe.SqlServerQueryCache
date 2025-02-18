@@ -14,7 +14,7 @@ namespace Universe.SqlServerQueryCache.Tests
         {
             var raw = Environment.GetEnvironmentVariable("SYSTEM_ARTIFACTSDIRECTORY");
             raw = raw ?? Environment.CurrentDirectory;
-            var ret = Path.Combine(Path.GetFullPath(raw), "TestResults");
+            var ret = Path.Combine(Path.GetFullPath(raw), "QueryCacheReports");
             TryAndForget.Execute(() => Directory.CreateDirectory(ret));
             return ret;
         }, LazyThreadSafetyMode.ExecutionAndPublication);
