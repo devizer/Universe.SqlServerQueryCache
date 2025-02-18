@@ -18,7 +18,6 @@ public class TestQuery
     public void A_GetSqlServers(SqlServerRef server)
     {
         Console.WriteLine($"SERVER [{server}]");
-        bool ok = SqlServiceExtentions.StartService(server.DataSource, TimeSpan.FromSeconds(30));
     }
 
     [Test]
