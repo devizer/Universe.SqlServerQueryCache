@@ -1,4 +1,8 @@
-﻿body {
+﻿:root {
+    color-scheme: light dark;
+}
+
+body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
@@ -16,7 +20,8 @@ table.Metrics thead {
 
 table.Metrics thead th {
     padding: 4px 4px 4px 16px;
-    background-color: white;
+    background-color: light-dark(white, #111);
+    /*background-color: white;*/
 }
 
 table.Metrics th.TableHeaderGroupCell {
@@ -42,7 +47,7 @@ table.Metrics thead th button:after {
 
 
 table.Metrics thead button:hover {
-    color: #B9375E;
+    color: light-dark(#B9375E, #FF8F95);
 }
 
 table.Metrics thead th button:hover:after {
@@ -87,7 +92,7 @@ tr.MetricsRow td, .TableHeaderCell {
 }
 tr.SqlRow td {
     text-align: left !important;
-    padding: 4px 64px;
+    padding: 4px 4px;
     border-bottom: 1px solid #999;
 }
 
@@ -98,4 +103,20 @@ tr.SqlRow td pre {
     white-space: -pre-wrap; /* Opera 4-6 */
     white-space: -o-pre-wrap; /* Opera 7 */
     word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+.SqlFragmentText {
+    color: light-dark(black, #F0F0F0);
+}
+.SqlFragmentComment {
+    color: light-dark(green, #A5FF7F);
+}
+.SqlFragmentString {
+    color: light-dark(red, #FFA0A0);
+}
+.SqlFragmentKeyword {
+    color: light-dark(blue, #93B0FF);
+}
+.SqlFragmentDataType {
+    color: light-dark(fuchsia, #FF7AFF);
 }

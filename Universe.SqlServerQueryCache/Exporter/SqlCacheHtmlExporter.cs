@@ -6,6 +6,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Universe.SqlServerQueryCache.SqlDataAccess;
+using Universe.SqlServerQueryCache.TSqlSyntax;
 
 namespace Universe.SqlServerQueryCache.Exporter;
 
@@ -36,6 +37,10 @@ public class SqlCacheHtmlExporter
 </div>";
 
             htmlTables.AppendLine(htmlForSortedProperty);
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
         }
 
         return ExporterResources.HtmlTemplate
@@ -83,7 +88,9 @@ public class SqlCacheHtmlExporter
             }
             htmlTable.AppendLine("\t</tr>");
             htmlTable.AppendLine("\t<tr class='SqlRow'>");
-            htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length}'><pre>{row.SqlStatement}</pre></td>");
+            var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(row.SqlStatement, SqlSyntaxColors.DarkTheme);
+            htmlTable.AppendLine("\t\t<td colspan='2'></td>");
+            htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length - 2}'><pre>{tsqlHtmlString}</pre></td>");
             htmlTable.AppendLine("\t</tr>");
         }
         htmlTable.AppendLine("  </tbody>");
