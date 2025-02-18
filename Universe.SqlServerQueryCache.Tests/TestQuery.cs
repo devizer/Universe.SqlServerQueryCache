@@ -27,6 +27,12 @@ public class TestQuery
     {
         Console.WriteLine($"SERVER [{server}]");
         Console.WriteLine($"CONNECTION STRING [{server.ConnectionString}]");
+        bool isLocal = CrossInfo.ThePlatform == CrossInfo.Platform.Windows && SqlServiceExtentions.IsLocalDbOrLocalServer(server.ConnectionString);
+        if (!isLocal)
+        {
+            Console.WriteLine($"Server {server} is not local. Skipping Start Server");
+            return;
+        }
         bool ok = SqlServiceExtentions.StartService(server.DataSource, TimeSpan.FromSeconds(30));
         Console.WriteLine($"SERVER [{server}] is running=[{ok}]");
     }

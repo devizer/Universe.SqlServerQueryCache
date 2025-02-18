@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net6.0;net47</TargetFrameworks>
@@ -16,6 +16,7 @@
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Include="Universe.CpuUsage" Version="2.2.778.893" />
     <PackageReference Include="Universe.SqlServerJam" Version="1.0.586" />
   </ItemGroup>
 
