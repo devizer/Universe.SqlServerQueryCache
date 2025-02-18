@@ -8,12 +8,11 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
 {
     public static class TheQueryV3
     {
-        public const string SqlServerQueryCache = @"-- Query the query cache. https://github.com/devizer/Universe.SqlServerQueryCache
-SELECT
+        public const string SqlServerQueryCache = @"SELECT -- Query Cache Report https://github.com/devizer/Universe.SqlServerQueryCache
     s2.dbid,
-	s2.objectid,
+    s2.objectid,
     s1.sql_handle,
-	s1.creation_time [CreationTime],
+    s1.creation_time [CreationTime],
     (SELECT TOP 1 SUBSTRING(s2.text,(statement_start_offset / 2) + 1, ( (CASE WHEN statement_end_offset = -1 THEN (LEN(CONVERT(nvarchar(max),s2.text)) * 2) ELSE statement_end_offset END)  - statement_start_offset) / 2+1)) AS [SqlStatement],
     s1.execution_count [ExecutionCount],
     plan_generation_num [PlanGenerationNum],
