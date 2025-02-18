@@ -83,6 +83,13 @@ public class AllSortingDefinitions
             .AddColumn(CreateSortableColumn("Min", r => r.MinWorkerTime))
             .AddColumn(CreateSortableColumn("Max", r => r.MaxWorkerTime));
 
+        yield return new TableHeaderDefinition("Logical Reads")
+            .AddColumn(CreateSortableColumn("Total", r => r.TotalLogicalReads))
+            .AddColumn(CreateSortableColumn("Avg", r => r.AvgLogicalReads))
+            .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalReads))
+            .AddColumn(CreateSortableColumn("Min", r => r.MinLogicalReads))
+            .AddColumn(CreateSortableColumn("Max", r => r.MaxLogicalReads));
+
         yield return new TableHeaderDefinition("Physical Reads")
             .AddColumn(CreateSortableColumn("Total", r => r.TotalPhysicalReads))
             .AddColumn(CreateSortableColumn("Avg", r => r.AvgPhysicalReads))
