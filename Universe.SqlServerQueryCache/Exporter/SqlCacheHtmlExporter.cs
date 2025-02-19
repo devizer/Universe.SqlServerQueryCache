@@ -44,10 +44,11 @@ public class SqlCacheHtmlExporter
             GC.Collect();
         }
 
+        var css = ExporterResources.StyleCSS + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss;
         return ExporterResources.HtmlTemplate
             .Replace("{{ Body }}", htmlTables.ToString())
             .Replace("{{ MainJS }}", ExporterResources.MainJS)
-            .Replace("{{ StylesCSS }}", ExporterResources.StyleCSS);
+            .Replace("{{ StylesCSS }}", css);
     }
 
     public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
@@ -104,11 +105,13 @@ public class SqlCacheHtmlExporter
     {
         string valueString;
         if (value is long l)
-            valueString = l == 0 ? "" : l.ToString("n0");
+            // valueString = l == 0 ? "" : l.ToString("n0");
+            valueString = HtmlNumberFormatter.Format(l, 0, "");
         else if (value is double d)
-            valueString = Math.Abs(d) <= Double.Epsilon ? "" : d.ToString("n2");
+            // valueString = Math.Abs(d) <= Double.Epsilon ? "" : d.ToString("n2");
+            valueString = HtmlNumberFormatter.Format(d, 2, "");
         else if (value is TimeSpan t)
-            valueString = ElapsedFormatter.FormatElapsed(t);
+            valueString = ElapsedFormatter.FormatElapsedAsHtml(t);
         else
             valueString = Convert.ToString(value);
 

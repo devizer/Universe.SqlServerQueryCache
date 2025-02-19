@@ -1,0 +1,19 @@
+﻿.SqlFragmentText {
+    color: light-dark(black, #F0F0F0);
+}
+
+.SqlFragmentComment {
+    color: light-dark(green, #A5FF7F);
+}
+
+.SqlFragmentString {
+    color: light-dark(red, #FFA0A0);
+}
+
+.SqlFragmentKeyword {
+    color: light-dark(blue, #93B0FF);
+}
+
+.SqlFragmentDataType {
+    color: light-dark(fuchsia, #FF7AFF);
+}

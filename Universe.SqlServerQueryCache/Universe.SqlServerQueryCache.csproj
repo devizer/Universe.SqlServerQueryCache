@@ -14,12 +14,14 @@
   <ItemGroup>
     <None Remove="Exporter\HtmlTemplate.html" />
     <None Remove="Exporter\Main.js" />
+    <None Remove="Exporter\SqlSyntaxHighlighter.css" />
     <None Remove="Exporter\Style.css" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Exporter\HtmlTemplate.html" />
     <EmbeddedResource Include="Exporter\Main.js" />
+    <EmbeddedResource Include="Exporter\SqlSyntaxHighlighter.css" />
     <EmbeddedResource Include="Exporter\Style.css" />
   </ItemGroup>
 

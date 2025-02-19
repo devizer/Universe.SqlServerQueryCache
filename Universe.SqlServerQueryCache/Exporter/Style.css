@@ -135,18 +135,10 @@ tr.SqlRow td pre {
     font-size: 15px;
 }
 
-.SqlFragmentText {
-    color: light-dark(black, #F0F0F0);
+.Fractional {
+    color: light-dark(#555, #BBB);
+    font-size: 13px;
 }
-.SqlFragmentComment {
-    color: light-dark(green, #A5FF7F);
-}
-.SqlFragmentString {
-    color: light-dark(red, #FFA0A0);
-}
-.SqlFragmentKeyword {
-    color: light-dark(blue, #93B0FF);
-}
-.SqlFragmentDataType {
-    color: light-dark(fuchsia, #FF7AFF);
+.Thousand, .Hours {
+    color: light-dark(#700029, #FFB993);
 }
