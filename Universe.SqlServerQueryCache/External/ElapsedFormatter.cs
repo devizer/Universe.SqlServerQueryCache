@@ -18,7 +18,7 @@ public class ElapsedFormatter
 
         else if (totalSeconds < 24 * 3600)
             // return hoursTotalInt.ToString("00") + ":" + new DateTime(0).Add(elapsed).ToString("mm':'ss'.'f");
-            return $"<span class='Hours'>{hoursTotalInt:00}:</span>" + new DateTime(0).Add(elapsed).ToString("mm':'ss'.'f");
+            return $"<span class='Hours'>{hoursTotalInt:00}:</span>" + new DateTime(0).Add(elapsed).ToString("mm':'ss");
         else
         {
             // return elapsed.ToString("d'.'hh':'mm':'ss'.'f");

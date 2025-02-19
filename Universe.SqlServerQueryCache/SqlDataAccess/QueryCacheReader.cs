@@ -10,8 +10,9 @@ public class QueryCacheReader
     {
         var con = dbProvider.CreateConnection();
         con.ConnectionString = connectionString;
+        var jit1 = con.Query<int>("Select 1 as Jit", null).ToList();
+        var jit2 = new QueryCacheRow().AvgElapsedTime;
         var now = DateTime.Now;
-        var jit = con.Query<QueryCacheRow>("Select 1 as Jit", null).ToList();
         var ret = con.Query<QueryCacheRow>(TheQueryV3.SqlServerQueryCache, null).ToList();
         foreach (var row in ret)
             row.Lifetime = now - row.CreationTime;
