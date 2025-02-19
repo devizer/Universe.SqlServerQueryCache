@@ -9,7 +9,7 @@ public class QueryCacheRow
 
     public long PlanGenerationNum { get; set; }
     public DateTime LastExecutionTime { get; set; }
-    public TimeSpan Lifetime => DateTime.Now - CreationTime;
+    public TimeSpan Lifetime { get; set; }
 
     double GetAverage(long total)
     {

@@ -9,6 +9,11 @@ public class QueryCacheReader
     {
         var con = dbProvider.CreateConnection();
         con.ConnectionString = connectionString;
-        return con.Query<QueryCacheRow>(TheQueryV3.SqlServerQueryCache, null);
+        var now = DateTime.Now;
+        var ret = con.Query<QueryCacheRow>(TheQueryV3.SqlServerQueryCache, null).ToList();
+        foreach (var row in ret)
+            row.Lifetime = now - row.CreationTime;
+
+        return ret;
     }
 }
