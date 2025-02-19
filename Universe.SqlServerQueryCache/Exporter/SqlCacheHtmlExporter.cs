@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using Universe.SqlServerQueryCache.External;
 using Universe.SqlServerQueryCache.SqlDataAccess;
 using Universe.SqlServerQueryCache.TSqlSyntax;
 
@@ -101,11 +102,16 @@ public class SqlCacheHtmlExporter
 
     private static string GetValueAsHtml(object value, QueryCacheRow row, ColumnDefinition column)
     {
-        var valueString = Convert.ToString(value);
+        string valueString;
         if (value is long l)
             valueString = l == 0 ? "" : l.ToString("n0");
-        if (value is double d)
+        else if (value is double d)
             valueString = Math.Abs(d) <= Double.Epsilon ? "" : d.ToString("n2");
+        else if (value is TimeSpan t)
+            valueString = ElapsedFormatter.FormatElapsed(t);
+        else
+            valueString = Convert.ToString(value);
+
         return valueString;
     }
 }
