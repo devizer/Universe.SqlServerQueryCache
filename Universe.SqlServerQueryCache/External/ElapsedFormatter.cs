@@ -2,15 +2,27 @@
 
 public class ElapsedFormatter
 {
+    static string GetFractional(TimeSpan elapsed, int fractionalCount)
+    {
+        double totalSeconds = elapsed.TotalSeconds;
+        var fracSeconds = totalSeconds - Math.Floor(totalSeconds);
+        // TODO: Optimize
+        return fracSeconds.ToString($"0.{new string('0', fractionalCount)}").Substring(2);
+    }
+
     public static string FormatElapsedAsHtml(TimeSpan elapsed)
     {
-        var totalSeconds = elapsed.TotalSeconds;
+        double totalSeconds = elapsed.TotalSeconds;
 
         int hoursTotalInt = (int)Math.Floor(totalSeconds / 3600);
         int daysTotalInt = hoursTotalInt / 24;
 
         if (totalSeconds < 60)
-            return elapsed.TotalSeconds.ToString("0.00") + "s";
+            // return elapsed.TotalSeconds.ToString("0.00") + "s";
+            return 
+                Math.Floor(elapsed.TotalSeconds).ToString("0") 
+                + "<span class='SecondsFractional'>." + GetFractional(elapsed, 2) + "</span>"
+                + "<span class='SecondsSign'>s</span>";
 
         else if (totalSeconds < 60 * 60)
             // return elapsed.ToString("mm':'ss'.'f");

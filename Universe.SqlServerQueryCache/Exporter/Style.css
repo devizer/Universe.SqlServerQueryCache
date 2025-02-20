@@ -135,10 +135,14 @@ tr.SqlRow td pre {
     font-size: 15px;
 }
 
-.Fractional {
+.Fractional, .SecondsFractional, .SecondsSign {
     color: light-dark(#555, #BBB);
     font-size: 13px;
+}
+.SecondsSign {
+    font-size: 12px;
 }
 .Thousand, .Hours {
     color: light-dark(#700029, #FFB993);
 }
+
