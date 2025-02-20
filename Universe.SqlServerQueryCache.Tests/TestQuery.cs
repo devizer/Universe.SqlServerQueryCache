@@ -6,34 +6,6 @@ using Universe.SqlServerQueryCache.SqlDataAccess;
 
 namespace Universe.SqlServerQueryCache.Tests;
 
-public class TestElapsedFormatter
-{
-    [Test]
-    public void TestFormat()
-    {
-        var testCases = new[] { 0.0001, 
-            0.01, 
-            0.1, 
-            9.9, 
-            59.9, 
-            60.1, 
-            3599, 
-            3599.9, 
-            3600, 
-            3600.1,
-            24*3600-0.1,
-            24*3600,
-            24*3600+0.1,
-        };
-        foreach (object sec in testCases)
-        {
-            decimal seconds = Convert.ToDecimal(sec);
-            string columnArgument = $"{seconds} Seconds:";
-            Console.WriteLine($"{columnArgument,-17} {ElapsedFormatter.FormatElapsedAsHtml(TimeSpan.FromSeconds((double)seconds))}");
-        }
-    }
-}
-
 public class TestQuery
 {
     [SetUp]
@@ -75,7 +47,7 @@ public class TestQuery
         rows = rows.OrderByDescending(r => r.ExecutionCount).ToArray();
         Console.WriteLine($"{rows.Count()} QUERIES ON SERVER [{server}]");
         Console.WriteLine(rows.ToJsonString());
-        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, SafeFileName.Get(server.DataSource) + ".json");
+        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".json");
         File.WriteAllText(dumpFile, rows.ToJsonString());
     }
 
@@ -83,15 +55,35 @@ public class TestQuery
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
     public void D_Produce_Html_Report(SqlServerRef server)
     {
-        SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
-        b.Encrypt = false;
-        var cs = b.ConnectionString;
+        var cs = GetConnectionString(server);
         var rows = QueryCacheReader.Read(SqlClientFactory.Instance, cs);
+        var mediumVersion = GetMediumVersion(cs);
         SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(rows);
         var singleFileHtml = e.Export();
-        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, SafeFileName.Get(server.DataSource) + ".html");
+        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".html");
         Console.WriteLine($"Store HTML Report to {dumpFile}");
         File.WriteAllText(dumpFile, singleFileHtml);
     }
 
+    private static string GetSafeFileOnlyName(SqlServerRef server)
+    {
+        var cs = GetConnectionString(server);
+        var mediumVersion = GetMediumVersion(cs);
+        var platform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
+        return SafeFileName.Get($"{server.DataSource}: v{mediumVersion} on {platform}");
+    }
+
+    private static string GetMediumVersion(string cs)
+    {
+        var mediumVersion = SqlClientFactory.Instance.CreateConnection(cs).Manage().MediumServerVersion;
+        return mediumVersion;
+    }
+
+    private static string GetConnectionString(SqlServerRef server)
+    {
+        SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
+        b.Encrypt = false;
+        var cs = b.ConnectionString;
+        return cs;
+    }
 }
