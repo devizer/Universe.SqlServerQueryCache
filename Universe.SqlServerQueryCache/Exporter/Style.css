@@ -134,6 +134,9 @@ tr.SqlRow td pre {
     word-wrap: break-word; /* Internet Explorer 5.5+ */
     font-size: 15px;
 }
+tr.SqlRow td pre span {
+    font-size: 15px;
+}
 
 .Fractional, .SecondsFractional, .SecondsSign {
     color: light-dark(#555, #BBB);
