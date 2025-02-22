@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Universe.SqlServerQueryCache\Universe.SqlServerQueryCache.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Universe.CpuUsage" Version="2.2.778.893" />
+    <PackageReference Include="Universe.SqlServerJam" Version="1.0.586" />
+  </ItemGroup>
+
+
+</Project>
