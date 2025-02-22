@@ -63,6 +63,14 @@ public class TestQuery
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".html");
         Console.WriteLine($"Store HTML Report to {dumpFile}");
         File.WriteAllText(dumpFile, singleFileHtml);
+
+        var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
+        var summaryReport = SqlCacheSummaryTextExporter.Export(rows, $"SQL Server {mediumVersion} on {hostPlatform}");
+        var dumpSummaryFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".QueryCacheSummary.txt");
+        Console.WriteLine(summaryReport);
+        File.WriteAllText(dumpSummaryFile, summaryReport);
+
+
     }
 
     private static string GetSafeFileOnlyName(SqlServerRef server)

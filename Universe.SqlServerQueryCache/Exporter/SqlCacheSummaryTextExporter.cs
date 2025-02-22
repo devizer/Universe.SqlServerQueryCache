@@ -9,10 +9,10 @@ namespace Universe.SqlServerQueryCache.Exporter
 {
     public class SqlCacheSummaryTextExporter
     {
-        public static string Export(IEnumerable<QueryCacheRow> rows, string mediumVersion)
+        public static string Export(IEnumerable<QueryCacheRow> rows, string title)
         {
             StringBuilder ret = new StringBuilder();
-            ret.AppendLine($"Summary on SQL Server {mediumVersion}");
+            ret.AppendLine($"Summary on {title}");
             ret.AppendLine($"   Queries:             {rows.Count()}");
             ret.AppendLine($"   Execution Count:     {rows.Sum(x => x.ExecutionCount):n0}");
             ret.AppendLine($"   Duration:            {rows.Sum(x => x.TotalElapsedTime / 1000d):n2} milliseconds");

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NDesk.Options;
 using Universe.SqlServerJam;
+using Universe.SqlServerQueryCache.Exporter;
 using Universe.SqlServerQueryCache.External;
 using Universe.SqlServerQueryCache.SqlDataAccess;
 
@@ -58,16 +59,10 @@ internal class MainProgram
         {
             rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString);
             Console.WriteLine(" OK");
-            Console.WriteLine($"Summary on {mediumVersion}");
-            Console.WriteLine($"   Queries:             {rows.Count()}");
-            Console.WriteLine($"   Execution Count:     {rows.Sum(x => x.ExecutionCount):n0}");
-            Console.WriteLine($"   Duration:            {rows.Sum(x => x.TotalElapsedTime / 1000d):n2} milliseconds");
-            Console.WriteLine($"   CPU Usage:           {rows.Sum(x => x.TotalWorkerTime / 1000d):n2}");
-            Console.WriteLine($"   Total Pages Read:    {rows.Sum(x => x.TotalLogicalReads):n0}");
-            Console.WriteLine($"   Cached Pages Read:   {rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads)):n0}");
-            Console.WriteLine($"   Physical Pages Read: {rows.Sum(x => x.TotalPhysicalReads):n0}");
-            Console.WriteLine($"   Total Pages Writes:  {rows.Sum(x => x.TotalLogicalWrites):n0}");
-            Console.WriteLine($"   The Oldest Lifetime: {rows.Max(x => x.Lifetime)}");
+            // Medium Version already got, so HostPlatform error is not visualized explicitly
+            var hostPlatform = SqlClientFactory.Instance.CreateConnection(connectionString).Manage().HostPlatform;
+            var summaryReport = SqlCacheSummaryTextExporter.Export(rows, $"SQL Server {mediumVersion} on {hostPlatform}");
+            Console.WriteLine(summaryReport);
         }
         catch (Exception ex)
         {
