@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Universe.SqlServerQueryCache.SqlDataAccess
 {
-    public static class TheQueryV3
+    public static class TheQueryCacheQueryV3
     {
         public const string SqlServerQueryCache = @"SELECT -- Query Cache Report https://github.com/devizer/Universe.SqlServerQueryCache
     s2.dbid,
