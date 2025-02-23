@@ -1,4 +1,5 @@
 using System.Data.SqlClient;
+using Dapper;
 using Universe.SqlServerJam;
 using Universe.SqlServerQueryCache.Exporter;
 using Universe.SqlServerQueryCache.External;
@@ -81,6 +82,17 @@ public class TestQuery
         Console.WriteLine(summaryCountersAsString);
         File.AppendAllText(dumpSummaryFile, summaryCountersAsString);
     }
+
+    [Test]
+    [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    public void E_Get_SQL_OS_Sys_Info(SqlServerRef server)
+    {
+        var cs = GetConnectionString(server);
+        object osSysInfo = SqlClientFactory.Instance.CreateConnection(cs).QueryFirst("Select * from sys.dm_os_sys_info");
+        Console.WriteLine(osSysInfo.ToJsonString());
+        Console.WriteLine(Environment.NewLine + osSysInfo.ToString());
+    }
+
 
     private static string GetSafeFileOnlyName(SqlServerRef server)
     {
