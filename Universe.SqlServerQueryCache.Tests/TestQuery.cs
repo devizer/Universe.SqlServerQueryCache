@@ -73,10 +73,10 @@ public class TestQuery
         SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(SqlClientFactory.Instance, cs);
         var summaryCounters = perfReader.ReadBasicCounters();
         var padding = "   ";
-        Func<long, string, string> formatPagesAsString = (pages, units) => $"  (is {(pages * 8196 / 1024):n1} {units})";
-        string summaryCountersAsString = $@"{padding}Database Pages: {summaryCounters.BufferPages:n0} {formatPagesAsString(summaryCounters.BufferPages, "MB")}
-{padding}Page Reads/sec: {summaryCounters.PageReadsPerSecond:n0} {formatPagesAsString(summaryCounters.PageReadsPerSecond, "MB/s")}
-{padding}Page Writes/sec: {summaryCounters.PageWritesPerSecond:n0}{formatPagesAsString(summaryCounters.PageWritesPerSecond, "MB/s")} ";
+        Func<long, string, string> formatPagesAsString = (pages, units) => $"  (is {(pages * 8196 / 1024d / 1024):n1} {units})";
+        string summaryCountersAsString = $@"{padding}Database Pages:      {summaryCounters.BufferPages:n0} {formatPagesAsString(summaryCounters.BufferPages, "MB")}
+{padding}Page Reads/sec:      {summaryCounters.PageReadsPerSecond:n0} {formatPagesAsString(summaryCounters.PageReadsPerSecond, "MB/s")}
+{padding}Page Writes/sec:     {summaryCounters.PageWritesPerSecond:n0}{formatPagesAsString(summaryCounters.PageWritesPerSecond, "MB/s")} ";
 
         Console.WriteLine(summaryCountersAsString);
         File.AppendAllText(dumpSummaryFile, summaryCountersAsString);
