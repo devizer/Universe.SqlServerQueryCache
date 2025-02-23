@@ -65,12 +65,21 @@ public class TestQuery
         File.WriteAllText(dumpFile, singleFileHtml);
 
         var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
-        var summaryReport = SqlCacheSummaryTextExporter.Export(rows, $"SQL Server {mediumVersion} on {hostPlatform}");
+        string summaryReport = SqlCacheSummaryTextExporter.Export(rows, $"SQL Server {mediumVersion} on {hostPlatform}");
         var dumpSummaryFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".QueryCacheSummary.txt");
         Console.WriteLine(summaryReport);
         File.WriteAllText(dumpSummaryFile, summaryReport);
 
+        SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(SqlClientFactory.Instance, cs);
+        var summaryCounters = perfReader.ReadBasicCounters();
+        var padding = "   ";
+        Func<long, string, string> formatPagesAsString = (pages, units) => $"  (is {(pages * 8196 / 1024):n1} {units})";
+        string summaryCountersAsString = $@"{padding}Database Pages: {summaryCounters.BufferPages:n0} {formatPagesAsString(summaryCounters.BufferPages, "MB")}
+{padding}Page Reads/sec: {summaryCounters.PageReadsPerSecond:n0} {formatPagesAsString(summaryCounters.PageReadsPerSecond, "MB/s")}
+{padding}Page Writes/sec: {summaryCounters.PageWritesPerSecond:n0}{formatPagesAsString(summaryCounters.PageWritesPerSecond, "MB/s")} ";
 
+        Console.WriteLine(summaryCountersAsString);
+        File.AppendAllText(dumpSummaryFile, summaryCountersAsString);
     }
 
     private static string GetSafeFileOnlyName(SqlServerRef server)

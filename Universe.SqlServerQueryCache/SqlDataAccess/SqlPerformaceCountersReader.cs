@@ -14,7 +14,7 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
         public static SqlBasicPerformanceCounters ReadBasicCounters(this SqlPerformanceCountersReader reader)
         {
             var rows = reader.Select("WHERE counter_name in ('Database pages', 'Page reads/sec', 'Page writes/sec') And object_name like '%Buffer Manager%'");
-            var grouped = rows.GroupByCounterName();
+            var grouped = rows.GroupByCounterName().ToList();
             return new SqlBasicPerformanceCounters()
             {
                 BufferPages = grouped.FirstOrDefault(x => x.CounterName == "Database pages")?.Value ?? 0L,
@@ -33,6 +33,7 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
         public long PageWritesPerSecond { get; set; }
     }
 
+    // Supported Versions: 2005 ... 2022+
     public class SqlPerformanceCountersReader
     {
         private DbProviderFactory _dbProvider;
@@ -50,7 +51,8 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
             con.ConnectionString = _connectionString;
             var ret = con.Query<SqlPerformanceCounterDataRow>(
                 "Select * From sys.dm_os_performance_counters"
-                + (string.IsNullOrEmpty(whereClause) ? "" : $" {whereClause}"), null);
+                + (string.IsNullOrEmpty(whereClause) ? "" : $" {whereClause}"), null)
+                .ToList();
 
             return ret;
         }
@@ -79,9 +81,9 @@ And object_name like '%Buffer Manager%'
 
     public class SqlPerformanceCounterDataRow
     {
-        public string ObjectName => ObjectName;
-        public string CounterName => Counter_Name;
-        public string InstanceName => Instance_Name;
+        public string ObjectName => Object_Name.TrimEnd();
+        public string CounterName => Counter_Name.TrimEnd();
+        public string InstanceName => Instance_Name.TrimEnd();
         public long Value => Cntr_Value;
         public long Type => Cntr_Type;
 
