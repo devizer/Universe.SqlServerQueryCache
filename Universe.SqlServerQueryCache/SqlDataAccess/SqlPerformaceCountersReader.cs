@@ -89,15 +89,15 @@ And object_name like '%Buffer Manager%'
 
         // Data Access
         [JsonIgnore]
-        public string Object_Name { get; set; }
+        internal string Object_Name { get; set; }
         [JsonIgnore]
-        public string Counter_Name { get; set; }
+        internal string Counter_Name { get; set; }
         [JsonIgnore]
-        public string Instance_Name { get; set; }
+        internal string Instance_Name { get; set; }
         [JsonIgnore]
-        public long Cntr_Value { get; set; }
+        internal long Cntr_Value { get; set; }
         [JsonIgnore]
-        public long Cntr_Type { get; set; }
+        internal long Cntr_Type { get; set; }
     }
 
     public static class SqlPerformanceCounterDataRowExtensions

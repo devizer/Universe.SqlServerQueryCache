@@ -81,6 +81,9 @@ public class TestQuery
 
         Console.WriteLine(summaryCountersAsString);
         File.AppendAllText(dumpSummaryFile, summaryCountersAsString);
+
+        object osSysInfo = SqlClientFactory.Instance.CreateConnection(cs).QueryFirst("Select * from sys.dm_os_sys_info");
+        File.AppendAllText(dumpSummaryFile, Environment.NewLine + osSysInfo.ToJsonString());
     }
 
     [Test]
