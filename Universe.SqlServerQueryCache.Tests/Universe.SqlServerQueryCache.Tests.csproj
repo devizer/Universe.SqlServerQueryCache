@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net6.0;net472</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;net472;net35</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
 
@@ -9,6 +9,16 @@
     <IsTestProject>true</IsTestProject>
 	<LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Universe.SqlServerQueryCache.Tests.dll.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Universe.SqlServerQueryCache.Tests.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />

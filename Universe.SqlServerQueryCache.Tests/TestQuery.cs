@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Data.SqlClient;
 using Dapper;
 using Universe.SqlServerJam;
@@ -82,7 +83,10 @@ public class TestQuery
         Console.WriteLine(summaryCountersAsString);
         File.AppendAllText(dumpSummaryFile, summaryCountersAsString);
 
-        object osSysInfo = SqlClientFactory.Instance.CreateConnection(cs).QueryFirst("Select * from sys.dm_os_sys_info");
+        var sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
+        File.AppendAllText(dumpSummaryFile, Environment.NewLine + Environment.NewLine + sqlSysInfo.Format("   "));
+
+        object osSysInfo = SqlClientFactory.Instance.CreateConnection(cs).Query<object>("Select * from sys.dm_os_sys_info").FirstOrDefault();
         File.AppendAllText(dumpSummaryFile, Environment.NewLine + osSysInfo.ToJsonString());
     }
 
@@ -91,9 +95,16 @@ public class TestQuery
     public void E_Get_SQL_OS_Sys_Info(SqlServerRef server)
     {
         var cs = GetConnectionString(server);
-        object osSysInfo = SqlClientFactory.Instance.CreateConnection(cs).QueryFirst("Select * from sys.dm_os_sys_info");
-        Console.WriteLine(osSysInfo.ToJsonString());
-        Console.WriteLine(Environment.NewLine + osSysInfo.ToString());
+        var sysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
+
+        object osSysInfoRaw = SqlClientFactory.Instance.CreateConnection(cs).Query<object>("Select * from sys.dm_os_sys_info").FirstOrDefault();
+        var props2 = TypeDescriptor.GetProperties(osSysInfoRaw);
+        var properties = osSysInfoRaw.GetType().GetProperties();
+        Console.WriteLine(osSysInfoRaw.ToJsonString());
+        Console.WriteLine(Environment.NewLine + osSysInfoRaw.ToString());
+
+        var sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
+        var letsDebug = sqlSysInfo.ToString();
     }
 
 
