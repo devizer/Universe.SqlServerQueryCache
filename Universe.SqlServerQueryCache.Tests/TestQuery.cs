@@ -84,14 +84,13 @@ public class TestQuery
         File.AppendAllText(dumpSummaryFile, summaryCountersAsString);
 
         var sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
+        Console.WriteLine(sqlSysInfo.Format("   "));
         File.AppendAllText(dumpSummaryFile, Environment.NewLine + Environment.NewLine + sqlSysInfo.Format("   "));
-
-        object osSysInfo = SqlClientFactory.Instance.CreateConnection(cs).Query<object>("Select * from sys.dm_os_sys_info").FirstOrDefault();
-        File.AppendAllText(dumpSummaryFile, Environment.NewLine + osSysInfo.ToJsonString());
     }
 
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    // TODO: Remove, because it was used for debugging only
     public void E_Get_SQL_OS_Sys_Info(SqlServerRef server)
     {
         var cs = GetConnectionString(server);
