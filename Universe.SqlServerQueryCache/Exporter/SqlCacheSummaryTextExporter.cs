@@ -31,7 +31,7 @@ namespace Universe.SqlServerQueryCache.Exporter
             ret.AppendLine($"   Cached Pages Read:   {formatPagesAsString(rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads)))}");
             ret.AppendLine($"   Physical Pages Read: {formatPagesAsString(rows.Sum(x => x.TotalPhysicalReads))}");
             ret.AppendLine($"   Total Pages Writes:  {formatPagesAsString(rows.Sum(x => x.TotalLogicalWrites))}");
-            ret.AppendLine($"   The Oldest Lifetime: {rows.Max(x => x.Lifetime)}");
+            ret.AppendLine($"   The Oldest Lifetime: {(rows.Any() ? rows.Max(x => x.Lifetime) : null)}");
 
             return ret.ToString();
         }
