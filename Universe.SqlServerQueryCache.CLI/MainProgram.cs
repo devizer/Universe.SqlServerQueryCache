@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NDesk.Options;
 using Universe.SqlServerJam;
 using Universe.SqlServerQueryCache.Exporter;
@@ -94,7 +89,7 @@ internal class MainProgram
                 Console.WriteLine(" OK");
                 // Medium Version already got, so HostPlatform error is not visualized explicitly
                 var hostPlatform = SqlClientFactory.Instance.CreateConnection(connectionString).Manage().HostPlatform;
-                string? summaryReport = SqlCacheSummaryTextExporter.Export(rows, $"SQL Server {mediumVersion} on {hostPlatform}");
+                string? summaryReport = SqlCacheSummaryTextExporter.Export(rows, $"SQL Server {mediumVersion}");
 
                 // 
                 SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(SqlClientFactory.Instance, connectionString);
