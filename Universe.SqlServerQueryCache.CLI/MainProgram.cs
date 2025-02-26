@@ -23,13 +23,15 @@ internal class MainProgram
         bool appendSqlServerVersion = false;
         bool justPrintHelp = false;
         string outputFile = null;
+        bool allLocalServers = false;
         int verbose = 0;
         string csFormat = "Data Source={0}; Integrated Security=SSPI; TrustServerCertificate=true; Encrypt=false";
         OptionSet p = new OptionSet()
             .Add("o=|output=", v => outputFile = v)
             .Add("s=|server=", v => ConnectionStrings.Add(string.Format(csFormat, v)))
             .Add("cs=|ConnectionString=", v => ConnectionStrings.Add(v))
-            .Add("a|AppendVersion", v => appendSqlServerVersion = true)
+            .Add("av|append-version", v => appendSqlServerVersion = true)
+            .Add("all|all-local-servers", v => allLocalServers = true)
             .Add("h|?|help", v => justPrintHelp = true);
 
         
@@ -40,6 +42,32 @@ internal class MainProgram
             return 0;
         }
 
+        if (allLocalServers)
+        {
+            var servers = SqlDiscovery.GetLocalDbAndServerList();
+            var localServers = servers
+                .Where(x => SqlServiceExtentions.IsLocalDbOrLocalServer(x.ConnectionString))
+                .ToArray();
+
+            bool IsOnline(SqlServerRef server)
+            {
+                return
+                    SqlServiceExtentions.IsLocalDB(server.DataSource)
+                    || SqlServiceExtentions.CheckServiceStatus(server.DataSource)?.State == SqlServiceStatus.ServiceStatus.Running;
+
+            }
+            var onlineServers = localServers
+                .Where(x => IsOnline(x))
+                .ToArray();
+
+            foreach (var s in localServers)
+            {
+                // Console.WriteLine($"{s} [Service={SqlServiceExtentions.GetServiceName(s.DataSource)}]: {SqlServiceExtentions.CheckServiceStatus(s.DataSource)}");
+            }
+
+            Console.WriteLine($"Found online {onlineServers.Length} local SQL Servers: [{string.Join(", ", onlineServers.Select(x => x.DataSource))}]");
+            ConnectionStrings.AddRange(onlineServers.Select(x => string.Format(csFormat, x.DataSource)));
+        }
         var argPadding = "    ";
         Console.WriteLine($@"SQL Server Query Cache CLI Arguments:");
         foreach (var connectionString in ConnectionStrings)
