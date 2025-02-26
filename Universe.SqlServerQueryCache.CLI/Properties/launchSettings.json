@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Universe.SqlServerQueryCache.CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "-s (local) -s (LocalDB)\\MSSQLLocalDB -o QueryCacheReports\\{InstanceName} -a"
+    }
+  }
+}
