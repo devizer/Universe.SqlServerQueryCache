@@ -33,6 +33,10 @@ namespace Universe.SqlServerQueryCache.External
             var argumentLength = argument.Length;
             do
             {
+                if (startIndex >= argumentLength)
+                {
+                    return hasDoneAnyReplacements ? result.ToString() : argument;
+                }
                 // index =  ci.IndexOf(argument, oldValue, startIndex, argumentLength - startIndex, options);
                 index = argument.IndexOf(oldValue, startIndex, comparison);
                 if (index >= 0)
@@ -57,7 +61,7 @@ namespace Universe.SqlServerQueryCache.External
                 }
             } while (index >= 0);
 
-            return result.ToString();
+            return hasDoneAnyReplacements ? result.ToString() : argument;
         }
 
         // public static string ReplaceCore(this string argument, string oldValue, string newValue, CultureInfo culture, CompareOptions options)
@@ -87,6 +91,10 @@ namespace Universe.SqlServerQueryCache.External
             var argumentLength = argument.Length;
             do
             {
+                if (startIndex >= argumentLength)
+                {
+                    return hasDoneAnyReplacements ? result.ToString() : argument;
+                }
                 index = ci.IndexOf(argument, oldValue, startIndex, argumentLength - startIndex, options);
                 if (index >= 0)
                 {

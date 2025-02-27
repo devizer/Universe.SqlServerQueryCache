@@ -60,7 +60,7 @@ internal class MainProgram
                 // Console.WriteLine($"{s} [Service={SqlServiceExtentions.GetServiceName(s.DataSource)}]: {SqlServiceExtentions.CheckServiceStatus(s.DataSource)}");
             }
 
-            Console.WriteLine($"Found online {onlineServers.Length} local SQL Servers: [{string.Join(", ", onlineServers.Select(x => x.DataSource))}]");
+            Console.WriteLine($"Found online {onlineServers.Length} local SQL Servers: [{string.Join(", ", onlineServers.Select(x => x.DataSource).ToArray())}]");
             ConnectionStrings.AddRange(onlineServers.Select(x => string.Format(csFormat, x.DataSource)));
         }
         var argPadding = "    ";
@@ -112,7 +112,9 @@ internal class MainProgram
                     var instanceName = GetInstanceName(connectionString);
                     // var realFolder = Path.GetFullPath(Path.GetDirectoryName(outputFile));
                     // var realFile = Path.GetFileName(outputFile);
-                    var realOutputFile = outputFile.Replace("{InstanceName}", SafeFileName.Get(instanceName), StringComparison.OrdinalIgnoreCase);
+                    // Does not supported by net framework
+                    // var realOutputFile = outputFile.Replace("{InstanceName}", SafeFileName.Get(instanceName), StringComparison.OrdinalIgnoreCase);
+                    var realOutputFile = outputFile.ReplaceCore("{InstanceName}", SafeFileName.Get(instanceName), StringComparison.OrdinalIgnoreCase);
                     if (appendSqlServerVersion) realOutputFile += $" {mediumVersion} on {hostPlatform}";
 
                     CreateDirectoryForFile(realOutputFile);

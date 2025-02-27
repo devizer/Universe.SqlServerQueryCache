@@ -9,4 +9,3 @@ foreach($rid in $NET6_RIDs) {
   Write-Host "[$rid]: $(if ($?) { "SUCCESS"} Else { "FAIL"})" -ForegroundColor Magenta
   Write-Host
 }
-
