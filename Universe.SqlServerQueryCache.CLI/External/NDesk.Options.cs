@@ -481,7 +481,7 @@ namespace NDesk.Options {
 			get {return this.option;}
 		}
 
-		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+		// [SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

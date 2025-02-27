@@ -1,13 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+
+  <Import Project="..\Shared.props" />
+  <Import Project="..\Shared-Files\Net-2x-4x-Support.proj" />
+
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+	  <OutputType>Exe</OutputType>
+	  <TargetFrameworks>net6.0</TargetFrameworks>
+	  <!-- Net Framework misses Replace Ignore Case -->
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>disable</Nullable>
+	  <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
     <ProjectReference Include="..\Universe.SqlServerQueryCache\Universe.SqlServerQueryCache.csproj" />
   </ItemGroup>
 
