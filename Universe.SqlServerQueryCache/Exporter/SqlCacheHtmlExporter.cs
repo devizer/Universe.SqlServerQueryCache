@@ -44,11 +44,50 @@ public class SqlCacheHtmlExporter
             GC.Collect();
         }
 
-        var css = ExporterResources.StyleCSS + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss + Environment.NewLine + ExporterResources.FloatButton;
+        var css = ExporterResources.StyleCSS
+                  + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss
+                  + Environment.NewLine + ExporterResources.FloatButtonCss
+                  + Environment.NewLine + ExporterResources.FlexedListCss
+                  + Environment.NewLine + ExporterResources.ModalSummaryCss;
+
+        var htmlSummary = ExportModalSummaryAsHtml();
+
+        var finalHtml = htmlSummary + Environment.NewLine + htmlTables;
+        var finalJs = ExporterResources.MainJS + Environment.NewLine + ExporterResources.ModalSummaryJS;
+
         return ExporterResources.HtmlTemplate
-            .Replace("{{ Body }}", htmlTables.ToString())
-            .Replace("{{ MainJS }}", ExporterResources.MainJS)
+            .Replace("{{ Body }}", finalHtml)
+            .Replace("{{ MainJS }}", finalJs)
             .Replace("{{ StylesCSS }}", css);
+    }
+
+    string ExportModalSummaryAsHtml()
+    {
+        return $@"
+    <div id=""modal-summary"" class=""Modal-Summary"">
+         <div class=""Modal-Summary-body"">
+{ExportSummaryAsHtml()}
+        </div>
+     </div>
+";
+    }
+    
+    private string ExportSummaryAsHtml()
+    {
+        var summaryRows = SqlSummaryTextExporter.Export(Rows).ToList();
+        StringBuilder ret = new StringBuilder();
+        ret.AppendLine("<div class='SqlSummaryContainer'>");
+        foreach (var summaryRow in summaryRows)
+        {
+            char padding = '\t';
+            ret.AppendLine($@"{padding}<dl class=""flexed-list"">
+{padding}{padding}<dt><span>{summaryRow.Title}:</span></dt>
+{padding}{padding}<dd>{summaryRow.Description}</dd>
+{padding}</dl>");
+        }
+        ret.AppendLine("</div>");
+
+        return ret.ToString();
     }
 
     public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)

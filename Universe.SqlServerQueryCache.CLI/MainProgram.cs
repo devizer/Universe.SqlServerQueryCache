@@ -19,7 +19,6 @@ internal class MainProgram
         bool justPrintHelp = false;
         string outputFile = null;
         bool allLocalServers = false;
-        int verbose = 0;
         string csFormat = "Data Source={0}; Integrated Security=SSPI; TrustServerCertificate=true; Encrypt=false";
         OptionSet p = new OptionSet()
             .Add("o=|output=", v => outputFile = v)
@@ -82,14 +81,14 @@ internal class MainProgram
             };
 
             Console.Write($"Analyzing Query Cache for {GetInstanceName(connectionString)}:");
-            IEnumerable<QueryCacheRow>? rows;
+            IEnumerable<QueryCacheRow> rows;
             try
             {
                 rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString);
                 Console.WriteLine(" OK");
                 // Medium Version already got, so HostPlatform error is not visualized explicitly
                 var hostPlatform = SqlClientFactory.Instance.CreateConnection(connectionString).Manage().HostPlatform;
-                string? summaryReport = SqlSummaryTextExporter.ExportAsText(rows, $"SQL Server {mediumVersion}");
+                string summaryReport = SqlSummaryTextExporter.ExportAsText(rows, $"SQL Server {mediumVersion}");
 
                 // 
                 SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(SqlClientFactory.Instance, connectionString);

@@ -12,17 +12,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Exporter\Flexed-List.css" />
     <None Remove="Exporter\FloatButton.css" />
     <None Remove="Exporter\HtmlTemplate.html" />
     <None Remove="Exporter\Main.js" />
+    <None Remove="Exporter\Modal-Summary.css" />
+    <None Remove="Exporter\Modal-Summary.js" />
     <None Remove="Exporter\SqlSyntaxHighlighter.css" />
     <None Remove="Exporter\Style.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Exporter\Flexed-List.css" />
     <EmbeddedResource Include="Exporter\FloatButton.css" />
     <EmbeddedResource Include="Exporter\HtmlTemplate.html" />
     <EmbeddedResource Include="Exporter\Main.js" />
+    <EmbeddedResource Include="Exporter\Modal-Summary.css" />
+    <EmbeddedResource Include="Exporter\Modal-Summary.js" />
     <EmbeddedResource Include="Exporter\SqlSyntaxHighlighter.css" />
     <EmbeddedResource Include="Exporter\Style.css" />
   </ItemGroup>

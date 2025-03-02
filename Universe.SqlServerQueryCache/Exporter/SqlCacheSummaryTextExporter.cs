@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Universe.SqlServerQueryCache.External;
 using Universe.SqlServerQueryCache.SqlDataAccess;
 
 namespace Universe.SqlServerQueryCache.Exporter
@@ -17,7 +18,7 @@ namespace Universe.SqlServerQueryCache.Exporter
                 var kb = pages * 8192d / 1024;
                 if (pages > 2048) ret += $"  (is {kb / 1024:n0} MB)";
                 else if (pages > 512) ret += $"  (is {kb / 1024:n1} MB)";
-                else if (pages > 0) ret += $"  (is {kb:n2} KB)";
+                else if (pages > 0) ret += $"  (is {kb:n0} KB)";
                 return ret;
             };
 
@@ -44,8 +45,8 @@ namespace Universe.SqlServerQueryCache.Exporter
             Add($"Physical Pages Read", physicalReads, $"{formatPagesAsString(physicalReads)}");
             var writes = rows.Sum(x => x.TotalLogicalWrites);
             Add($"Total Pages Writes", writes, $"{formatPagesAsString(writes)}");
-            var oldestLifetime = rows.Any() ? rows.Max(x => x.Lifetime) : (TimeSpan?)null;
-            Add($"The Oldest Lifetime", oldestLifetime, $"{oldestLifetime}");
+            TimeSpan? oldestLifetime = rows.Any() ? rows.Max(x => x.Lifetime) : (TimeSpan?)null;
+            Add($"The Oldest Lifetime", oldestLifetime,  oldestLifetime == null ? "" : ElapsedFormatter.FormatElapsedAsHtml(oldestLifetime.Value));
 
             return ret;
         }

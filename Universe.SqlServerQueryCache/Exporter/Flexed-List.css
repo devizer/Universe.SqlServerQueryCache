@@ -1,0 +1,52 @@
+﻿.SqlSummaryContainer {
+    width: 500px;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flexed-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin: 0 0 1px 0;
+}
+
+.flexed-list dt {
+    width: 55%;
+    margin: 0 0 8px 0;
+    padding: 0;
+    display: flex;
+    box-sizing: border-box;
+    align-items: flex-end;
+    position: relative;
+    word-break: break-word;
+    color: light-dark(var(--light-fore), var(--dark-fore));
+}
+
+.flexed-list dt:before {
+    content: "";
+    display: block;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: .2em;
+    border-bottom: 1px dotted #d6dbe0;
+}
+
+.flexed-list dt span {
+    padding-right: 5px;
+    background-color: light-dark(var(--light-back), var(--dark-back));
+    position: relative;
+}
+
+.flexed-list dd {
+    width: 45%;
+    display: flex;
+    box-sizing: border-box;
+    align-items: flex-end;
+    margin: 0 0 8px 0;
+    padding: 0 0 0 5px;
+    word-break: break-word;
+}

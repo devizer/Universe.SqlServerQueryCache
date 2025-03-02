@@ -13,7 +13,16 @@ namespace Universe.SqlServerQueryCache.Exporter
         public static string MainJS => ReadResource("Main.js");
         public static string StyleCSS => ReadResource("Style.css");
         public static string SqlSyntaxHighlighterCss => ReadResource("SqlSyntaxHighlighter.css");
-        public static string FloatButton => ReadResource("FloatButton.css");
+        public static string FloatButtonCss => ReadResource("FloatButton.css");
+        public static string FlexedListCss => ReadResource("Flexed-List.css");
+
+        // Modal-Summary
+        public static string ModalSummaryCss => ReadResource("Modal-Summary.css");
+        public static string ModalSummaryJS => ReadResource("Modal-Summary.js");
+
+
+
+
 
         static string ReadResource(string name)
         {
