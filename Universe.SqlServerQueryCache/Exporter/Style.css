@@ -138,6 +138,9 @@ tr.SqlRow td pre span {
     font-size: 15px;
 }
 
+.NotImportant {
+    color: light-dark(#666, #AAA);
+}
 .Fractional, .SecondsFractional, .SecondsSign {
     color: light-dark(#555, #BBB);
     font-size: 13px;

@@ -6,6 +6,10 @@ public class HtmlNumberFormatter
 {
     public static volatile bool DisableFormat = false;
 
+    public static string Format(object numericArg, int fractionalCount)
+    {
+        return Format(numericArg, fractionalCount, "");
+    }
     public static string Format(object numericArg, int fractionalCount, string classPrefix)
     {
         if (numericArg == null) return "";
