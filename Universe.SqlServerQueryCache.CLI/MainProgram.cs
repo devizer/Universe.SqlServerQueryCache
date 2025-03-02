@@ -48,8 +48,8 @@ internal class MainProgram
                 return
                     SqlServiceExtentions.IsLocalDB(server.DataSource)
                     || SqlServiceExtentions.CheckServiceStatus(server.DataSource)?.State == SqlServiceStatus.ServiceStatus.Running;
-
             }
+            
             var onlineServers = localServers
                 .Where(x => IsOnline(x))
                 .ToArray();
