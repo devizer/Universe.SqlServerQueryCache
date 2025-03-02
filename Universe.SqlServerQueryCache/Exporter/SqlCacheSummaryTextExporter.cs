@@ -10,7 +10,7 @@ namespace Universe.SqlServerQueryCache.Exporter
 {
     public class SqlSummaryTextExporter
     {
-        public static IEnumerable<SummaryRow> Export(IEnumerable<QueryCacheRow> rows)
+        public static IEnumerable<SummaryRow> Export(IEnumerable<QueryCacheRow> rows, bool needHtml)
         {
             Func<long, string> formatPagesAsString = pages =>
             {
@@ -29,12 +29,15 @@ namespace Universe.SqlServerQueryCache.Exporter
                 ret.Add(new SummaryRow(title, value, description));
             }
 
-            Add("Queries", rows.Count(), rows.Count().ToString("n0"));
+            var rowsCountFormatted = needHtml ? HtmlNumberFormatter.Format(rows.Count(), 0, "") : rows.Count().ToString("n0");
+            Add("Queries", rows.Count(), rowsCountFormatted);
             
             var executionCount = rows.Sum(x => x.ExecutionCount);
-            Add($"Execution Count", executionCount, $"{executionCount:n0}");
+            var executionCountFormatted = !needHtml ? $"{executionCount:n0}" : HtmlNumberFormatter.Format(executionCount, 0, "");
+            Add($"Execution Count", executionCount, executionCountFormatted);
+
             var duration = rows.Sum(x => x.TotalElapsedTime / 1000d);
-            Add($"Duration", duration, $"{duration:n2} milliseconds");
+            Add($"Duration (milliseconds)", duration, $"{duration:n2}");
             var cpuUsage = rows.Sum(x => x.TotalWorkerTime / 1000d);
             Add($"CPU Usage", cpuUsage, $"{cpuUsage:n2}");
             var totalLogicalReads = rows.Sum(x => x.TotalLogicalReads);
@@ -46,7 +49,9 @@ namespace Universe.SqlServerQueryCache.Exporter
             var writes = rows.Sum(x => x.TotalLogicalWrites);
             Add($"Total Pages Writes", writes, $"{formatPagesAsString(writes)}");
             TimeSpan? oldestLifetime = rows.Any() ? rows.Max(x => x.Lifetime) : (TimeSpan?)null;
-            Add($"The Oldest Lifetime", oldestLifetime,  oldestLifetime == null ? "" : ElapsedFormatter.FormatElapsedAsHtml(oldestLifetime.Value));
+            var oldestLifetimeFormatted = oldestLifetime == null ? "" : 
+                needHtml ? ElapsedFormatter.FormatElapsedAsHtml(oldestLifetime.Value) : oldestLifetime.Value.ToString();
+            Add($"The Oldest Lifetime", oldestLifetime,  oldestLifetimeFormatted);
 
             return ret;
         }
@@ -54,7 +59,7 @@ namespace Universe.SqlServerQueryCache.Exporter
         {
             StringBuilder ret = new StringBuilder();
             ret.AppendLine($"Summary on {title}");
-            var summaryRows = Export(rows);
+            var summaryRows = Export(rows, false);
             var maxTitleLength = summaryRows.Max(x => x.Title.Length);
             foreach (var summaryRow in summaryRows)
                 ret.AppendLine("   " + (summaryRow.Title + ":").PadRight(maxTitleLength + 2) + summaryRow.Description);
