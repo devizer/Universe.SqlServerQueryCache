@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using Universe.SqlServerJam;
 using Universe.SqlServerQueryCache.External;
 using Universe.SqlServerQueryCache.SqlDataAccess;
 using Universe.SqlServerQueryCache.TSqlSyntax;
@@ -13,20 +16,26 @@ namespace Universe.SqlServerQueryCache.Exporter;
 
 public class SqlCacheHtmlExporter
 {
-    private IEnumerable<QueryCacheRow> Rows;
+    public readonly DbProviderFactory DbProvider;
+    public readonly string ConnectionString;
+
+    public IEnumerable<QueryCacheRow> Rows { get; protected set; } // Available after Export
+    public IEnumerable<SummaryRow> Summary { get; protected set; } // Available after Export
+
     private IEnumerable<TableHeaderDefinition> _tableTopHeaders;
 
-    public SqlCacheHtmlExporter(IEnumerable<QueryCacheRow> rows)
+    public SqlCacheHtmlExporter(DbProviderFactory dbProvider, string connectionString)
     {
-        Rows = rows;
-        _tableTopHeaders = AllSortingDefinitions.GetHeaders().ToArray();
-        _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
+        DbProvider = dbProvider;
+        ConnectionString = connectionString;
     }
-
-
 
     public string Export()
     {
+        Rows = QueryCacheReader.Read(DbProvider, ConnectionString).ToList();
+        _tableTopHeaders = AllSortingDefinitions.GetHeaders().ToArray();
+        _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
+
         var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
         htmlTables.AppendLine($"<script>selectedSortProperty = '{selectedSortProperty}';</script>");
@@ -75,7 +84,27 @@ public class SqlCacheHtmlExporter
     
     private string ExportSummaryAsHtml()
     {
-        var summaryRows = SqlSummaryTextExporter.ExportStructured(Rows, true).ToList();
+        List<SummaryRow> summaryRows = SqlSummaryTextExporter.ExportStructured(Rows).ToList();
+        Summary = summaryRows;
+
+        var con = DbProvider.CreateConnection();
+        con.ConnectionString = ConnectionString;
+        var man = con.Manage();
+        var hostPlatform = man.HostPlatform;
+        var mediumVersion = man.MediumServerVersion;
+        string summaryReportAsText = SqlSummaryTextExporter.ExportAsText(Rows, $"SQL Server {mediumVersion} on {hostPlatform}");
+
+        // SQL Performance Counters
+        SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(DbProvider, ConnectionString);
+        var summaryCounters = perfReader.ReadBasicCounters();
+        summaryRows.Add(new SummaryRow("Database Pages", FormatKind.Pages, summaryCounters.BufferPages));
+        summaryRows.Add(new SummaryRow("Page Reads/sec", FormatKind.Pages, summaryCounters.PageReadsPerSecond));
+        summaryRows.Add(new SummaryRow("Page Writes/sec", FormatKind.Pages, summaryCounters.PageWritesPerSecond));
+
+        // version
+        var versionRow = new SummaryRow("Version", FormatKind.Unknown, $"{mediumVersion} on {hostPlatform}");
+        summaryRows.Add(versionRow);
+
         StringBuilder ret = new StringBuilder();
         ret.AppendLine("<div class='SqlSummaryContainer'>");
         foreach (var summaryRow in summaryRows)
@@ -83,7 +112,7 @@ public class SqlCacheHtmlExporter
             char padding = '\t';
             ret.AppendLine($@"{padding}<dl class=""flexed-list"">
 {padding}{padding}<dt><span>{summaryRow.Title}:</span></dt>
-{padding}{padding}<dd>{summaryRow.Description}</dd>
+{padding}{padding}<dd>{summaryRow.GetFormatted(true)}</dd>
 {padding}</dl>");
         }
         ret.AppendLine("</div>");

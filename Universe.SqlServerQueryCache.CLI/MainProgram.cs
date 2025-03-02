@@ -81,14 +81,15 @@ internal class MainProgram
             };
 
             Console.Write($"Analyzing Query Cache for {GetInstanceName(connectionString)}:");
-            IEnumerable<QueryCacheRow> rows;
             try
             {
-                rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString).ToArray();
+                SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, connectionString);
+                var singleFileHtml = e.Export();
+                // rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString).ToArray();
                 Console.WriteLine(" OK");
                 // Medium Version already got, so HostPlatform error is not visualized explicitly
                 var hostPlatform = SqlClientFactory.Instance.CreateConnection(connectionString).Manage().HostPlatform;
-                string summaryReport = SqlSummaryTextExporter.ExportAsText(rows, $"SQL Server {mediumVersion}");
+                string summaryReport = SqlSummaryTextExporter.ExportAsText(e.Rows, $"SQL Server {mediumVersion}");
 
                 // 
                 SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(SqlClientFactory.Instance, connectionString);
@@ -118,9 +119,8 @@ internal class MainProgram
 
                     CreateDirectoryForFile(realOutputFile);
                     File.WriteAllText(realOutputFile + ".txt", summaryReport);
-                    File.WriteAllText(realOutputFile + ".json", rows.ToJsonString(false, JsonNaming.PascalCase));
-                    SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(rows);
-                    var singleFileHtml = e.Export();
+                    File.WriteAllText(realOutputFile + ".json", e.Rows.ToJsonString(false, JsonNaming.PascalCase));
+
                     File.WriteAllText(realOutputFile + ".html", singleFileHtml);
                 }
             }

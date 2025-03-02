@@ -60,7 +60,7 @@ public class TestQuery
         var cs = GetConnectionString(server);
         var rows = QueryCacheReader.Read(SqlClientFactory.Instance, cs);
         var mediumVersion = GetMediumVersion(cs);
-        SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(rows);
+        SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, cs);
         var singleFileHtml = e.Export();
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".html");
         Console.WriteLine($"Store HTML Report to {dumpFile}");

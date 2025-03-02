@@ -6,92 +6,63 @@ using System.Threading.Tasks;
 using Universe.SqlServerQueryCache.External;
 using Universe.SqlServerQueryCache.SqlDataAccess;
 
-namespace Universe.SqlServerQueryCache.Exporter
+namespace Universe.SqlServerQueryCache.Exporter;
+
+public class SqlSummaryTextExporter
 {
-    public class SqlSummaryTextExporter
+    public static IEnumerable<SummaryRow> ExportStructured(IEnumerable<QueryCacheRow> rows)
     {
-        public static IEnumerable<SummaryRow> ExportStructured(IEnumerable<QueryCacheRow> rows, bool needHtml)
+        List<SummaryRow> ret = new List<SummaryRow>();
+
+        void Add(string title, FormatKind kind, object value)
         {
-            Func<long, string> formatPagesAsString = pages =>
-            {
-                string ret = !needHtml ? $"{pages:n0}" : HtmlNumberFormatter.Format(pages, 0, ""); 
-                var kb = pages * 8192d / 1024;
-                Func<string, string> toSmall = arg => $"&nbsp;<span class='Units'>{arg}</span>";
-                var mbFormatted = needHtml ? $"{toSmall("MB")}" : " MB";
-                var kbFormatted = needHtml ? $"{toSmall("KB")}" : " KB";
-                Func<string, string> toNotImportant = arg => needHtml ? $"&nbsp;&nbsp;<span class='NotImportant'>{arg}</span>" : arg;
-                if (pages > 2048) ret += toNotImportant($"  (is {kb / 1024:n0}{mbFormatted})");
-                else if (pages > 512) ret += toNotImportant($"  (is {kb / 1024:n1}{mbFormatted})");
-                else if (pages > 0) ret += toNotImportant($"  (is {kb:n0}{kbFormatted})");
-                return ret;
-            };
-
-            List<SummaryRow> ret = new List<SummaryRow>();
-
-            void Add(string title, object value, string description)
-            {
-                ret.Add(new SummaryRow(title, value, description));
-            }
-
-            var rowsCountFormatted = needHtml ? HtmlNumberFormatter.Format(rows.Count(), 0) : rows.Count().ToString("n0");
-            Add("Queries", rows.Count(), rowsCountFormatted);
-            
-            var executionCount = rows.Sum(x => x.ExecutionCount);
-            var executionCountFormatted = !needHtml ? $"{executionCount:n0}" : HtmlNumberFormatter.Format(executionCount, 0);
-            Add($"Execution Count", executionCount, executionCountFormatted);
-
-            var duration = rows.Sum(x => x.TotalElapsedTime / 1000d);
-            var durationFormatted = !needHtml ? $"{duration:n2}" : HtmlNumberFormatter.Format(duration, 2); 
-            Add($"Duration (milliseconds)", duration, durationFormatted);
-            
-            var cpuUsage = rows.Sum(x => x.TotalWorkerTime / 1000d);
-            var cpuUsageFormatted = !needHtml ? $"{cpuUsage:n2}" : HtmlNumberFormatter.Format(cpuUsage, 2);
-            Add($"CPU Usage", cpuUsage, cpuUsageFormatted);
-
-            var totalLogicalReads = rows.Sum(x => x.TotalLogicalReads);
-            Add($"Total Pages Read", totalLogicalReads, $"{formatPagesAsString(totalLogicalReads)}");
-            var cachedReads = rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads));
-            Add($"Cached Pages Read", cachedReads, $"{formatPagesAsString(cachedReads)}");
-            var physicalReads = rows.Sum(x => x.TotalPhysicalReads);
-            Add($"Physical Pages Read", physicalReads, $"{formatPagesAsString(physicalReads)}");
-            var writes = rows.Sum(x => x.TotalLogicalWrites);
-            Add($"Total Pages Writes", writes, $"{formatPagesAsString(writes)}");
-
-            TimeSpan? oldestLifetime = rows.Any() ? rows.Max(x => x.Lifetime) : (TimeSpan?)null;
-            var oldestLifetimeFormatted = oldestLifetime == null ? "" : 
-                needHtml ? ElapsedFormatter.FormatElapsedAsHtml(oldestLifetime.Value) : oldestLifetime.Value.ToString();
-            Add($"The Oldest Lifetime", oldestLifetime,  oldestLifetimeFormatted);
-
-            return ret;
+            ret.Add(new SummaryRow(title, kind, value));
         }
-        public static string ExportAsText(IEnumerable<QueryCacheRow> rows, string title)
-        {
-            StringBuilder ret = new StringBuilder();
-            ret.AppendLine($"Summary on {title}");
-            var summaryRows = ExportStructured(rows, false);
-            var maxTitleLength = summaryRows.Max(x => x.Title.Length);
-            foreach (var summaryRow in summaryRows)
-                ret.AppendLine("   " + (summaryRow.Title + ":").PadRight(maxTitleLength + 2) + summaryRow.Description);
 
-            return ret.ToString();
-        }
+        Add("Queries", FormatKind.Natural, rows.Count());
+            
+        var executionCount = rows.Sum(x => x.ExecutionCount);
+        Add($"Execution Count", FormatKind.Natural, executionCount);
+
+        var duration = rows.Sum(x => x.TotalElapsedTime / 1000d);
+        Add($"Duration (milliseconds)", FormatKind.Numeric2, duration);
+            
+        var cpuUsage = rows.Sum(x => x.TotalWorkerTime / 1000d);
+        Add($"CPU Usage", FormatKind.Numeric2, cpuUsage);
+
+        var totalLogicalReads = rows.Sum(x => x.TotalLogicalReads);
+        Add($"Total Pages Read", FormatKind.Pages, totalLogicalReads);
+        var cachedReads = rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads));
+        Add($"Cached Pages Read", FormatKind.Pages, cachedReads);
+        var physicalReads = rows.Sum(x => x.TotalPhysicalReads);
+        Add($"Physical Pages Read", FormatKind.Pages, physicalReads);
+        var writes = rows.Sum(x => x.TotalLogicalWrites);
+        Add($"Total Pages Writes", FormatKind.Pages, writes);
+
+        TimeSpan? oldestLifetime = rows.Any() ? rows.Max(x => x.Lifetime) : (TimeSpan?)null;
+        Add($"The Oldest Lifetime", FormatKind.Timespan, oldestLifetime);
+
+        return ret;
     }
-
-    public class SummaryRow
+    public static string ExportAsText(IEnumerable<QueryCacheRow> rows, string title)
     {
-        public string Title { get; set; }
-        public object Value { get; set; }
-        public string Description { get; set; }
+        StringBuilder ret = new StringBuilder();
+        ret.AppendLine($"Summary on {title}");
+        var summaryRows = ExportStructured(rows);
+        var maxTitleLength = summaryRows.Max(x => x.Title.Length);
+        foreach (var summaryRow in summaryRows)
+            ret.AppendLine("   " + (summaryRow.Title + ":").PadRight(maxTitleLength + 2) + summaryRow.GetFormatted(false));
 
-        public SummaryRow()
-        {
-        }
-
-        public SummaryRow(string title, object value, string description)
-        {
-            Title = title;
-            Value = value;
-            Description = description;
-        }
+        return ret.ToString();
     }
+}
+
+public enum FormatKind
+{
+    Unknown,
+    Natural,
+    Numeric1,
+    Numeric2,
+    Pages,
+    Timespan,
 }
