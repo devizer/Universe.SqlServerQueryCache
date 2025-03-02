@@ -92,7 +92,7 @@ public class SqlCacheHtmlExporter
         var man = con.Manage();
         var hostPlatform = man.HostPlatform;
         var mediumVersion = man.MediumServerVersion;
-        string summaryReportAsText = SqlSummaryTextExporter.ExportAsText(Rows, $"SQL Server {mediumVersion} on {hostPlatform}");
+        // string summaryReportAsText = SqlSummaryTextExporter.ExportAsText(Rows, $"SQL Server {mediumVersion} on {hostPlatform}");
 
         // SQL Performance Counters
         SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(DbProvider, ConnectionString);

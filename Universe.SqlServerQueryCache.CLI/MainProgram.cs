@@ -89,17 +89,8 @@ internal class MainProgram
                 Console.WriteLine(" OK");
                 // Medium Version already got, so HostPlatform error is not visualized explicitly
                 var hostPlatform = SqlClientFactory.Instance.CreateConnection(connectionString).Manage().HostPlatform;
-                string summaryReport = SqlSummaryTextExporter.ExportAsText(e.Rows, $"SQL Server {mediumVersion}");
-
-                // 
-                SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(SqlClientFactory.Instance, connectionString);
-                var summaryCounters = perfReader.ReadBasicCounters();
-                var padding = "   ";
-                Func<long, string, string> formatPagesAsString = (pages, units) => $"  (is {(pages * 8196 / 1024d / 1024):n1} {units})";
-                string summaryCountersAsString = $@"{padding}Database Pages:      {summaryCounters.BufferPages:n0} {formatPagesAsString(summaryCounters.BufferPages, "MB")}
-{padding}Page Reads/sec:      {summaryCounters.PageReadsPerSecond:n0} {formatPagesAsString(summaryCounters.PageReadsPerSecond, "MB/s")}
-{padding}Page Writes/sec:     {summaryCounters.PageWritesPerSecond:n0}{formatPagesAsString(summaryCounters.PageWritesPerSecond, "MB/s")} ";
-                summaryReport += summaryCountersAsString;
+                var summary = e.Summary;
+                string summaryReport = SqlSummaryTextExporter.ExportAsText(summary, $"SQL Server {mediumVersion}");
 
                 // Sys Info
                 var sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, connectionString);
