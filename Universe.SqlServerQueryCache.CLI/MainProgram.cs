@@ -84,7 +84,7 @@ internal class MainProgram
             IEnumerable<QueryCacheRow> rows;
             try
             {
-                rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString);
+                rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString).ToArray();
                 Console.WriteLine(" OK");
                 // Medium Version already got, so HostPlatform error is not visualized explicitly
                 var hostPlatform = SqlClientFactory.Instance.CreateConnection(connectionString).Manage().HostPlatform;

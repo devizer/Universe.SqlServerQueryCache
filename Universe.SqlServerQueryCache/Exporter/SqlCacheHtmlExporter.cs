@@ -66,6 +66,7 @@ public class SqlCacheHtmlExporter
         return $@"
     <div id=""modal-summary-root"" class=""Modal-Summary"">
          <div class=""Modal-Summary-body Capped"">
+<center>SQL Server Summary</center><br/>
 {ExportSummaryAsHtml()}
         </div>
      </div>
@@ -74,7 +75,7 @@ public class SqlCacheHtmlExporter
     
     private string ExportSummaryAsHtml()
     {
-        var summaryRows = SqlSummaryTextExporter.Export(Rows, true).ToList();
+        var summaryRows = SqlSummaryTextExporter.ExportStructured(Rows, true).ToList();
         StringBuilder ret = new StringBuilder();
         ret.AppendLine("<div class='SqlSummaryContainer'>");
         foreach (var summaryRow in summaryRows)

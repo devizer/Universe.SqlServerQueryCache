@@ -10,7 +10,7 @@ namespace Universe.SqlServerQueryCache.Exporter
 {
     public class SqlSummaryTextExporter
     {
-        public static IEnumerable<SummaryRow> Export(IEnumerable<QueryCacheRow> rows, bool needHtml)
+        public static IEnumerable<SummaryRow> ExportStructured(IEnumerable<QueryCacheRow> rows, bool needHtml)
         {
             Func<long, string> formatPagesAsString = pages =>
             {
@@ -68,7 +68,7 @@ namespace Universe.SqlServerQueryCache.Exporter
         {
             StringBuilder ret = new StringBuilder();
             ret.AppendLine($"Summary on {title}");
-            var summaryRows = Export(rows, false);
+            var summaryRows = ExportStructured(rows, false);
             var maxTitleLength = summaryRows.Max(x => x.Title.Length);
             foreach (var summaryRow in summaryRows)
                 ret.AppendLine("   " + (summaryRow.Title + ":").PadRight(maxTitleLength + 2) + summaryRow.Description);
