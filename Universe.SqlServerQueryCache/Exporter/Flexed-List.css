@@ -4,7 +4,7 @@
     margin-left: auto;
     margin-right: auto;
 }
-.SqlSummaryContainer .Fractional, .SqlSummaryContainer .Units {
+.SqlSummaryContainer .Fractional, .SqlSummaryContainer .Units, .SqlSummaryContainer .SecondsFractional {
     display: inline-block;
     padding-bottom: 1px;
 }
