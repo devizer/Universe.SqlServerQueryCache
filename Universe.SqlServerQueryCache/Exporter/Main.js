@@ -1,4 +1,9 @@
-﻿document.addEventListener('DOMContentLoaded', function (e) {
+﻿quote1 = 'I love deadlines. I like the whooshing sound they make as they fly by.';
+function handleFloatInfoClick() {
+    alert(quote1);
+}
+
+document.addEventListener('DOMContentLoaded', function (e) {
     console.log("Document is Ready");
     var sortButtons = document.querySelectorAll("button.SortButton");
     sortButtons.forEach(function (b) {
@@ -40,8 +45,9 @@ function SelectContent(newSelectedSortProperty) {
     var prev = document.querySelector("#" + selectedSortProperty);
     var next = document.querySelector("#" + newSelectedSortProperty);
     if (prev !== null && next !== null) {
-         prev.classList.add('Hidden');
+        prev.classList.add('Hidden');
         next.classList.remove('Hidden');
         selectedSortProperty = newSelectedSortProperty;
     }
 }
+

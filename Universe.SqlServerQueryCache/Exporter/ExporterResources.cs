@@ -13,6 +13,7 @@ namespace Universe.SqlServerQueryCache.Exporter
         public static string MainJS => ReadResource("Main.js");
         public static string StyleCSS => ReadResource("Style.css");
         public static string SqlSyntaxHighlighterCss => ReadResource("SqlSyntaxHighlighter.css");
+        public static string FloatButton => ReadResource("FloatButton.css");
 
         static string ReadResource(string name)
         {

@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Exporter\FloatButton.css" />
     <None Remove="Exporter\HtmlTemplate.html" />
     <None Remove="Exporter\Main.js" />
     <None Remove="Exporter\SqlSyntaxHighlighter.css" />
@@ -19,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Exporter\FloatButton.css" />
     <EmbeddedResource Include="Exporter\HtmlTemplate.html" />
     <EmbeddedResource Include="Exporter\Main.js" />
     <EmbeddedResource Include="Exporter\SqlSyntaxHighlighter.css" />

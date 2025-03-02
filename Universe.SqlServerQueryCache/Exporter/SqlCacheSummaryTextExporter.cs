@@ -7,9 +7,9 @@ using Universe.SqlServerQueryCache.SqlDataAccess;
 
 namespace Universe.SqlServerQueryCache.Exporter
 {
-    public class SqlCacheSummaryTextExporter
+    public class SqlSummaryTextExporter
     {
-        public static string Export(IEnumerable<QueryCacheRow> rows, string title)
+        public static IEnumerable<SummaryRow> Export(IEnumerable<QueryCacheRow> rows)
         {
             Func<long, string> formatPagesAsString = pages =>
             {
@@ -21,19 +21,62 @@ namespace Universe.SqlServerQueryCache.Exporter
                 return ret;
             };
 
+            List<SummaryRow> ret = new List<SummaryRow>();
+
+            void Add(string title, object value, string description)
+            {
+                ret.Add(new SummaryRow(title, value, description));
+            }
+
+            Add("Queries", rows.Count(), rows.Count().ToString("n0"));
+            
+            var executionCount = rows.Sum(x => x.ExecutionCount);
+            Add($"Execution Count", executionCount, $"{executionCount:n0}");
+            var duration = rows.Sum(x => x.TotalElapsedTime / 1000d);
+            Add($"Duration", duration, $"{duration:n2} milliseconds");
+            var cpuUsage = rows.Sum(x => x.TotalWorkerTime / 1000d);
+            Add($"CPU Usage", cpuUsage, $"{cpuUsage:n2}");
+            var totalLogicalReads = rows.Sum(x => x.TotalLogicalReads);
+            Add($"Total Pages Read", totalLogicalReads, $"{formatPagesAsString(totalLogicalReads)}");
+            var cachedReads = rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads));
+            Add($"Cached Pages Read", cachedReads, $"{formatPagesAsString(cachedReads)}");
+            var physicalReads = rows.Sum(x => x.TotalPhysicalReads);
+            Add($"Physical Pages Read", physicalReads, $"{formatPagesAsString(physicalReads)}");
+            var writes = rows.Sum(x => x.TotalLogicalWrites);
+            Add($"Total Pages Writes", writes, $"{formatPagesAsString(writes)}");
+            var oldestLifetime = rows.Any() ? rows.Max(x => x.Lifetime) : (TimeSpan?)null;
+            Add($"The Oldest Lifetime", oldestLifetime, $"{oldestLifetime}");
+
+            return ret;
+        }
+        public static string ExportAsText(IEnumerable<QueryCacheRow> rows, string title)
+        {
             StringBuilder ret = new StringBuilder();
             ret.AppendLine($"Summary on {title}");
-            ret.AppendLine($"   Queries:             {rows.Count()}");
-            ret.AppendLine($"   Execution Count:     {rows.Sum(x => x.ExecutionCount):n0}");
-            ret.AppendLine($"   Duration:            {rows.Sum(x => x.TotalElapsedTime / 1000d):n2} milliseconds");
-            ret.AppendLine($"   CPU Usage:           {rows.Sum(x => x.TotalWorkerTime / 1000d):n2}");
-            ret.AppendLine($"   Total Pages Read:    {formatPagesAsString(rows.Sum(x => x.TotalLogicalReads))}");
-            ret.AppendLine($"   Cached Pages Read:   {formatPagesAsString(rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads)))}");
-            ret.AppendLine($"   Physical Pages Read: {formatPagesAsString(rows.Sum(x => x.TotalPhysicalReads))}");
-            ret.AppendLine($"   Total Pages Writes:  {formatPagesAsString(rows.Sum(x => x.TotalLogicalWrites))}");
-            ret.AppendLine($"   The Oldest Lifetime: {(rows.Any() ? rows.Max(x => x.Lifetime) : null)}");
+            var summaryRows = Export(rows);
+            var maxTitleLength = summaryRows.Max(x => x.Title.Length);
+            foreach (var summaryRow in summaryRows)
+                ret.AppendLine("   " + (summaryRow.Title + ":").PadRight(maxTitleLength + 2) + summaryRow.Description);
 
             return ret.ToString();
+        }
+    }
+
+    public class SummaryRow
+    {
+        public string Title { get; set; }
+        public object Value { get; set; }
+        public string Description { get; set; }
+
+        public SummaryRow()
+        {
+        }
+
+        public SummaryRow(string title, object value, string description)
+        {
+            Title = title;
+            Value = value;
+            Description = description;
         }
     }
 }

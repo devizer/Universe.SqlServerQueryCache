@@ -44,7 +44,7 @@ public class SqlCacheHtmlExporter
             GC.Collect();
         }
 
-        var css = ExporterResources.StyleCSS + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss;
+        var css = ExporterResources.StyleCSS + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss + Environment.NewLine + ExporterResources.FloatButton;
         return ExporterResources.HtmlTemplate
             .Replace("{{ Body }}", htmlTables.ToString())
             .Replace("{{ MainJS }}", ExporterResources.MainJS)

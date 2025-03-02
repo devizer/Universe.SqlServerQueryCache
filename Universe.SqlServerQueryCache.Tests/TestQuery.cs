@@ -67,7 +67,7 @@ public class TestQuery
         File.WriteAllText(dumpFile, singleFileHtml);
 
         var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
-        string summaryReport = SqlCacheSummaryTextExporter.Export(rows, $"SQL Server {mediumVersion} on {hostPlatform}");
+        string summaryReport = SqlSummaryTextExporter.ExportAsText(rows, $"SQL Server {mediumVersion} on {hostPlatform}");
         var dumpSummaryFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".QueryCacheSummary.txt");
         Console.WriteLine(summaryReport);
         File.WriteAllText(dumpSummaryFile, summaryReport);
