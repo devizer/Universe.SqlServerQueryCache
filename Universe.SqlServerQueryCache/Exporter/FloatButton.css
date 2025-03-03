@@ -22,12 +22,13 @@
     padding: 0px 4px 0px 4px;
     margin: 20px;
     z-index: 1000;
-
+    transition: 0.4s
 }
 
 
 .Float:hover {
     background: #1f64c4;
+    transform: rotate(-360deg);
 }
 
 .FloatContent {

@@ -42,6 +42,10 @@ table.Metrics thead th {
 
 table.Metrics th.TableHeaderGroupCell {
     padding: 8px 4px;
+    border-bottom: none;
+}
+table.Metrics th.TableHeaderGroupCell:not(:last-child), table.Metrics th.TableHeaderCell:not(:last-child) {
+    border-right: none;
 }
 
 
@@ -57,7 +61,7 @@ table.Metrics thead th button {
 }
 
 table.Metrics thead th button:after {
-    content: " ↡";
+    content: " 🡓";
     visibility: hidden
 }
 
@@ -67,12 +71,12 @@ table.Metrics thead button:hover {
 }
 
 table.Metrics thead th button:hover:after {
-    content: " ↡" !important;
+    content: " 🡓" !important;
     visibility: visible
 }
 
 table.Metrics thead th.Selected button:after {
-    content: " ↡" !important;
+    content: " 🡓" !important;
     visibility: visible
 }
 
@@ -107,9 +111,12 @@ table.Metrics tbody td {
 tr.MetricsRow td, .TableHeaderCell {
     white-space: nowrap;
 }
-.TableHeaderCell {
-    /*border: 1px solid #999;*/
+.TableHeaderCell.Selected {
+    border-bottom: 3px solid yellow;
+    border-bottom-color: light-dark(var(--light-metrics), var(--dark-metrics));
+    transition: 0.5s;
 }
+
 tr.SqlRow td {
     text-align: left !important;
     padding: 8px 4px 16px 4px;
