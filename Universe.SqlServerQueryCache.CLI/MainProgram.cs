@@ -93,7 +93,27 @@ internal class MainProgram
                 string summaryReport = SqlSummaryTextExporter.ExportAsText(summary, $"SQL Server {mediumVersion}");
 
                 // Sys Info
-                var sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, connectionString);
+                ICollection<SqlSysInfoReader.Info> sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, connectionString);
+                var sysInfoKeys = new string[]
+                {
+                    "Cpu_Count",
+                    "bpool_committed", "physical_memory_in_bytes", // up to 2008 r2
+                    "physical_memory_kb", // on azure use process_memory_limit_mb column in sys.dm_os_job_object
+                    "committed_kb", // 2012+
+                    // sqlserver_start_time_ms_ticks - Ms_Ticks - sql server uptime
+                    "sqlserver_start_time_ms_ticks", "Ms_Ticks",
+                    // Used and Available memory on 2005...2008R2
+                    "Bpool_Committed",
+                    "Bpool_Commit_Target",
+                    "Bpool_Visible",
+                    // Used and Available memory on 2012+
+                    "Committed_Kb",
+                    "Committed_Target_Kb",
+                    "Visible_Target_Kb",
+                    // Total CPU Usage on 2012+
+                    "Process_Kernel_Time_Ms",
+                    "Process_User_Time_Ms",
+                };
                 summaryReport += Environment.NewLine + sqlSysInfo.Format("   ");
 
 
