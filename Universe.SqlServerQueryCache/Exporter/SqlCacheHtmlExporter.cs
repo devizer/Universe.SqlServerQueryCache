@@ -154,6 +154,13 @@ public class SqlCacheHtmlExporter
         var visibleKb = GetMin(Committed_Target_Kb, Visible_Target_Kb);
         if (visibleKb.HasValue) yield return new SummaryRow("Visible Memory (MB)", FormatKind.Natural, visibleKb.Value / 1024);
 
+        // uptime
+        var sqlserver_start_time_ms_ticks = getLong("sqlserver_start_time_ms_ticks");
+        var Ms_Ticks = getLong("Ms_Ticks");
+        if (sqlserver_start_time_ms_ticks.HasValue && Ms_Ticks.HasValue)
+            yield return new SummaryRow("Uptime", FormatKind.Timespan, TimeSpan.FromMilliseconds(Math.Abs(Ms_Ticks.Value - sqlserver_start_time_ms_ticks.Value)));
+
+
         var sysInfoKeys = new string[]
         {
             "Cpu_Count",
