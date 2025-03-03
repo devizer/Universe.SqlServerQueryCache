@@ -138,6 +138,7 @@ public class SqlCacheHtmlExporter
         long? memKb = physical_memory_kb ?? physical_memory_in_bytes / 1024;
         if (memKb.HasValue) yield return new SummaryRow("Physical Memory (MB)", FormatKind.Natural, memKb.Value / 1024);
 
+        // 2005...2008R2
         var bpool_Committed = getLong("Bpool_Committed");
         if (bpool_Committed.HasValue) yield return new SummaryRow("Buffer Pages", FormatKind.Pages, bpool_Committed.Value);
         var bpool_Commit_Target = getLong("Bpool_Commit_Target");
@@ -145,9 +146,13 @@ public class SqlCacheHtmlExporter
         var visiblePages = GetMin(bpool_Commit_Target, bpool_Visible);
         if (visiblePages.HasValue) yield return new SummaryRow("Visible Buffer Pages", FormatKind.Pages, visiblePages.Value);
 
+        // 2012+
         var Committed_Kb = getLong("Committed_Kb");
+        if (Committed_Kb.HasValue) yield return new SummaryRow("Committed Memory (MB)", FormatKind.Natural, Committed_Kb.Value / 1024);
         var Committed_Target_Kb = getLong("Committed_Target_Kb");
         var Visible_Target_Kb = getLong("Visible_Target_Kb");
+        var visibleKb = GetMin(Committed_Target_Kb, Visible_Target_Kb);
+        if (visibleKb.HasValue) yield return new SummaryRow("Visible Memory (MB)", FormatKind.Natural, visibleKb.Value / 1024);
 
         var sysInfoKeys = new string[]
         {
