@@ -44,14 +44,15 @@ public class SummaryRow
             var formatted = ts == null ? "" : needHtml ? ElapsedFormatter.FormatElapsedAsHtml(ts.Value) : ts.Value.ToString();
             return formatted;
         }
-        else if (Kind == FormatKind.Pages)
+        else if (Kind == FormatKind.Pages || Kind == FormatKind.PagesPerSecond)
         {
+            string suffix = Kind == FormatKind.PagesPerSecond ? "/s" : "";
             long pages = Convert.ToInt64(Value);
             string ret = !needHtml ? $"{pages:n0}" : HtmlNumberFormatter.Format(pages, 0, "");
             var kb = pages * 8192d / 1024;
             Func<string, string> toSmall = arg => $"&nbsp;<span class='Units'>{arg}</span>";
-            var mbFormatted = needHtml ? $"{toSmall("MB")}" : " MB";
-            var kbFormatted = needHtml ? $"{toSmall("KB")}" : " KB";
+            var mbFormatted = needHtml ? $"{toSmall($"MB{suffix}")}" : $" MB{suffix}";
+            var kbFormatted = needHtml ? $"{toSmall($"KB{suffix}")}" : $" KB{suffix}";
             Func<string, string> toNotImportant = arg => needHtml ? $"&nbsp;&nbsp;<span class='NotImportant'>{arg}</span>" : arg;
             if (pages > 2048) ret += toNotImportant($"  (is {kb / 1024:n0}{mbFormatted})");
             else if (pages > 512) ret += toNotImportant($"  (is {kb / 1024:n1}{mbFormatted})");

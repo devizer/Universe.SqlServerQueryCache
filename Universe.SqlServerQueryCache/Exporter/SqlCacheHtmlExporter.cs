@@ -100,9 +100,9 @@ public class SqlCacheHtmlExporter
         if (summaryCounters.BufferPages > 0)
             summaryRows.Add(new SummaryRow("Database Pages", FormatKind.Pages, summaryCounters.BufferPages));
         if (summaryCounters.PageReadsPerSecond > 0)
-            summaryRows.Add(new SummaryRow("Page Reads/sec", FormatKind.Pages, summaryCounters.PageReadsPerSecond));
+            summaryRows.Add(new SummaryRow("Page Reads/sec", FormatKind.PagesPerSecond, summaryCounters.PageReadsPerSecond));
         if (summaryCounters.PageWritesPerSecond > 0)
-            summaryRows.Add(new SummaryRow("Page Writes/sec", FormatKind.Pages, summaryCounters.PageWritesPerSecond));
+            summaryRows.Add(new SummaryRow("Page Writes/sec", FormatKind.PagesPerSecond, summaryCounters.PageWritesPerSecond));
 
         // Sys Info
         var summarySysInfo = BuildSysInfoSummary().ToArray();

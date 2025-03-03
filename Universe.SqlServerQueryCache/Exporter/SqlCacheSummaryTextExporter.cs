@@ -75,5 +75,6 @@ public enum FormatKind
     Numeric1,
     Numeric2,
     Pages,
+    PagesPerSecond,
     Timespan,
 }
