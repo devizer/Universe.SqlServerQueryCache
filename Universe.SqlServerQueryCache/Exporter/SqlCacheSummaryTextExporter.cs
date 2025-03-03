@@ -30,14 +30,15 @@ public class SqlSummaryTextExporter
         var cpuUsage = rows.Sum(x => x.TotalWorkerTime / 1000d);
         Add($"CPU Usage", FormatKind.Numeric2, cpuUsage);
 
-        var totalLogicalReads = rows.Sum(x => x.TotalLogicalReads);
-        Add($"Total Pages Read", FormatKind.Pages, totalLogicalReads);
-        var cachedReads = rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads));
-        Add($"Cached Pages Read", FormatKind.Pages, cachedReads);
-        var physicalReads = rows.Sum(x => x.TotalPhysicalReads);
-        Add($"Physical Pages Read", FormatKind.Pages, physicalReads);
-        var writes = rows.Sum(x => x.TotalLogicalWrites);
-        Add($"Total Pages Writes", FormatKind.Pages, writes);
+        long totalLogicalReads = rows.Sum(x => x.TotalLogicalReads);
+        if (totalLogicalReads > 0) Add($"Total Pages Read", FormatKind.Pages, totalLogicalReads);
+        long cachedReads = rows.Sum(x => Math.Max(0, x.TotalLogicalReads - x.TotalPhysicalReads));
+        if (cachedReads > 0) Add($"Cached Pages Read", FormatKind.Pages, cachedReads);
+        long physicalReads = rows.Sum(x => x.TotalPhysicalReads);
+        if (physicalReads > 0) Add($"Physical Pages Read", FormatKind.Pages, physicalReads);
+        long writes = rows.Sum(x => x.TotalLogicalWrites);
+        if (writes > 0) Add($"Total Pages Writes", FormatKind.Pages, writes);
+
 
         TimeSpan? oldestLifetime = rows.Any() ? rows.Max(x => x.Lifetime) : (TimeSpan?)null;
         Add($"The Oldest Lifetime", FormatKind.Timespan, oldestLifetime);

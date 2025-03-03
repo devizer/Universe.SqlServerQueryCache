@@ -97,9 +97,12 @@ public class SqlCacheHtmlExporter
         // SQL Performance Counters
         SqlPerformanceCountersReader perfReader = new SqlPerformanceCountersReader(DbProvider, ConnectionString);
         var summaryCounters = perfReader.ReadBasicCounters();
-        summaryRows.Add(new SummaryRow("Database Pages", FormatKind.Pages, summaryCounters.BufferPages));
-        summaryRows.Add(new SummaryRow("Page Reads/sec", FormatKind.Pages, summaryCounters.PageReadsPerSecond));
-        summaryRows.Add(new SummaryRow("Page Writes/sec", FormatKind.Pages, summaryCounters.PageWritesPerSecond));
+        if (summaryCounters.BufferPages > 0)
+            summaryRows.Add(new SummaryRow("Database Pages", FormatKind.Pages, summaryCounters.BufferPages));
+        if (summaryCounters.PageReadsPerSecond > 0)
+            summaryRows.Add(new SummaryRow("Page Reads/sec", FormatKind.Pages, summaryCounters.PageReadsPerSecond));
+        if (summaryCounters.PageWritesPerSecond > 0)
+            summaryRows.Add(new SummaryRow("Page Writes/sec", FormatKind.Pages, summaryCounters.PageWritesPerSecond));
 
         // Sys Info
         var summarySysInfo = BuildSysInfoSummary().ToArray();
