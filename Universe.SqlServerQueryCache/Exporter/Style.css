@@ -111,10 +111,16 @@ table.Metrics tbody td {
 tr.MetricsRow td, .TableHeaderCell {
     white-space: nowrap;
 }
+.TableHeaderCell {
+    /* ok 5px */
+    padding-bottom: 8px !important;
+}
 .TableHeaderCell.Selected {
     border-bottom: 3px solid yellow;
     border-bottom-color: light-dark(var(--light-metrics), var(--dark-metrics));
     transition: 0.5s;
+    /* ok 2px */
+    padding-bottom: 6px !important;
 }
 
 tr.SqlRow td {
