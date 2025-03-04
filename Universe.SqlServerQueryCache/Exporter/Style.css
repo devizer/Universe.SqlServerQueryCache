@@ -70,9 +70,20 @@ table.Metrics thead button:hover {
     color: light-dark(#B9375E, #FF8F95);
 }
 
+@keyframes hover-arrow {
+    0% {
+        transform: rotate(0deg) translate(0);
+    }
+
+    100% {
+        transform: rotate(360deg) translate(0px, -10px);
+    }
+}
+
 table.Metrics thead th button:hover:after {
     content: " 🡓" !important;
-    visibility: visible
+    visibility: visible;
+    animation: hover-arrow 0.9s;
 }
 
 table.Metrics thead th.Selected button:after {
