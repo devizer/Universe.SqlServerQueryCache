@@ -82,7 +82,7 @@ public class SqlCacheHtmlExporter
         return $@"
     <div id=""modal-summary-root"" class=""Modal-Summary"">
          <div class=""Modal-Summary-body Capped"">
-<center>SQL Server Summary<br/>v{mediumVersion}</center><br/>
+             <center>SQL Server Summary<br/>v{mediumVersion}</center><br/>
 {ExportSummaryAsHtml()}
         </div>
      </div>
@@ -120,16 +120,17 @@ public class SqlCacheHtmlExporter
         // summaryRows.Add(versionRow); Already on the header
 
         StringBuilder ret = new StringBuilder();
-        ret.AppendLine("<div class='SqlSummaryContainer'>");
+        string padding = "\t\t";
+        ret.AppendLine($"{padding}{padding}<div class='SqlSummaryContainer'>");
         foreach (var summaryRow in summaryRows)
         {
-            char padding = '\t';
-            ret.AppendLine($@"{padding}<dl class=""flexed-list"">
-{padding}{padding}<dt><span>{summaryRow.Title}:</span></dt>
-{padding}{padding}<dd>{summaryRow.GetFormatted(true)}</dd>
-{padding}</dl>");
+            ret.AppendLine($@"
+{padding}{padding}<dl class=""flexed-list"">
+{padding}{padding}{padding}<dt><span>{summaryRow.Title}:</span></dt>
+{padding}{padding}{padding}<dd>{summaryRow.GetFormatted(true)}</dd>
+{padding}{padding}</dl>");
         }
-        ret.AppendLine("</div>");
+        ret.AppendLine($"{padding}{padding}</div>");
 
         return ret.ToString();
     }
@@ -217,11 +218,11 @@ public class SqlCacheHtmlExporter
         {
             bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
             const string arrows = " ⇓ ⇩ ↓ ↡";
-            var attrs = "";
-            var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
-            if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
-            var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
-            htmlTable.AppendLine($"    <th class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button {attrs}>{column.TheCaption}</button></th>");
+            // var attrs = "";
+            // var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
+            // if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
+            // var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
+            htmlTable.AppendLine($"    <th class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button>{column.TheCaption}</button></th>");
         }
         htmlTable.AppendLine("  </tr>");
         htmlTable.AppendLine("  </thead>");
