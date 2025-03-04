@@ -72,18 +72,32 @@ table.Metrics thead button:hover {
 
 @keyframes hover-arrow {
     0% {
-        transform: rotate(0deg) translate(0);
+        transform: translate(0, 0) scale(1,1);
+        color: light-dark(var(--light-fore), var(--dark-fore));
+        transform-origin: 50% 50%;
+        opacity: 1;
     }
-
+    33% {
+        /* bigger shift removes hover state */
+        transform: translate(0, -2px) scale(1.2,1.2);
+        color: light-dark(#B9375E, #FF8F95);
+        transform-origin: 50% 50%;
+        opacity: 0.5;
+    }
     100% {
-        transform: rotate(360deg) translate(0px, -10px);
+        transform: translate(0px, 0px) scale(1,1);
+        color: light-dark(#B9375E, #FF8F95);
+        transform-origin: 50% 50%;
+        opacity: 1;
     }
 }
 
 table.Metrics thead th button:hover:after {
     content: " 🡓" !important;
     visibility: visible;
-    animation: hover-arrow 0.9s;
+}
+table.Metrics thead th button:hover {
+    animation: hover-arrow 0.20s;
 }
 
 table.Metrics thead th.Selected button:after {

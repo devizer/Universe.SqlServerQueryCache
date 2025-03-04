@@ -117,7 +117,7 @@ public class SqlCacheHtmlExporter
 
         // version
         var versionRow = new SummaryRow("Version", FormatKind.Unknown, $"{mediumVersion} on {hostPlatform}");
-        // summaryRows.Add(versionRow); Already on the header
+        // summaryRows.Add(versionRow); // Already on the HTML header
 
         StringBuilder ret = new StringBuilder();
         string padding = "\t\t";
