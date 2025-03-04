@@ -28,6 +28,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Universe.CpuUsage" Version="2.2.778.893" />
     <PackageReference Include="Universe.SqlServerJam" Version="1.0.586" />
+	<PackageReference Include="Universe.NUnitPipeline" Version="3.14.0.203" />
   </ItemGroup>
 
   <ItemGroup>
