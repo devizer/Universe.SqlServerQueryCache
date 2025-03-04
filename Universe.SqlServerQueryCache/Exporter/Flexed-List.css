@@ -21,7 +21,7 @@
 }
 
 .flexed-list dt {
-    width: 45%;
+    width: 50%;
     margin: 0 0 8px 0;
     padding: 0;
     display: flex;
@@ -50,7 +50,7 @@
 }
 
 .flexed-list dd {
-    width: 55%;
+    width: 50%;
     display: flex;
     box-sizing: border-box;
     align-items: flex-end;

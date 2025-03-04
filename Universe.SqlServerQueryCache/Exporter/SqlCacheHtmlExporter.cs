@@ -72,10 +72,17 @@ public class SqlCacheHtmlExporter
 
     string ExportModalSummaryAsHtml()
     {
+        var con = DbProvider.CreateConnection();
+        con.ConnectionString = ConnectionString;
+        var man = con.Manage();
+        var hostPlatform = man.HostPlatform;
+        var mediumVersion = man.MediumServerVersion;
+        if (man.ShortServerVersion.Major >= 14) mediumVersion += $" on {hostPlatform}";
+
         return $@"
     <div id=""modal-summary-root"" class=""Modal-Summary"">
          <div class=""Modal-Summary-body Capped"">
-<center>SQL Server Summary</center><br/>
+<center>SQL Server Summary<br/>v{mediumVersion}</center><br/>
 {ExportSummaryAsHtml()}
         </div>
      </div>
@@ -110,8 +117,7 @@ public class SqlCacheHtmlExporter
 
         // version
         var versionRow = new SummaryRow("Version", FormatKind.Unknown, $"{mediumVersion} on {hostPlatform}");
-        summaryRows.Add(versionRow);
-
+        // summaryRows.Add(versionRow); Already on the header
 
         StringBuilder ret = new StringBuilder();
         ret.AppendLine("<div class='SqlSummaryContainer'>");
