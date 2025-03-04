@@ -24,11 +24,11 @@ public class SqlSummaryTextExporter
         var executionCount = rows.Sum(x => x.ExecutionCount);
         Add($"Execution Count", FormatKind.Natural, executionCount);
 
-        var duration = rows.Sum(x => x.TotalElapsedTime / 1000d);
-        Add($"Duration (milliseconds)", FormatKind.Numeric2, duration);
-            
+        double duration = rows.Sum(x => x.TotalElapsedTime / 1000d);
+        if (duration > double.Epsilon) Add($"Duration (milliseconds)", FormatKind.Numeric2, duration);
+
         var cpuUsage = rows.Sum(x => x.TotalWorkerTime / 1000d);
-        Add($"CPU Usage", FormatKind.Numeric2, cpuUsage);
+        if (cpuUsage > double.Epsilon) Add($"CPU Usage", FormatKind.Numeric2, cpuUsage);
 
         long totalLogicalReads = rows.Sum(x => x.TotalLogicalReads);
         if (totalLogicalReads > 0) Add($"Total Pages Read", FormatKind.Pages, totalLogicalReads);
