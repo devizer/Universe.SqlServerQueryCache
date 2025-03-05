@@ -41,9 +41,9 @@ namespace Universe.SqlServerQueryCache.Exporter
                         var varName = $"{ENV_NAME_BASE}{prefix}_{property}".ToUpper();
                         var realVarName = allKeys.FirstOrDefault(x => x == varName);
                         Console.WriteLine(@$"[DEBUG property '{property}' for '{titleKey}'] 
-   realVarName=[{realVarName}]
-   prefix=[{prefix}]
-   varName=[{varName}]");
+   prefix=     [{prefix}]
+   varName=    [{varName}]
+   realVarName=[{realVarName}]");
                         if (realVarName != null)
                         {
                             ret = Environment.GetEnvironmentVariable(varName);
@@ -58,8 +58,8 @@ namespace Universe.SqlServerQueryCache.Exporter
                 string rawValue = getProperty("VALUE") ?? null;
                 string rawPosition = getProperty("POSITION") ?? "2000000000";
                 Console.WriteLine(@$"[DEBUG for '{titleKey}'] 
-   rawKind=[{rawKind}]
-   rawValue=[{rawValue}]
+   rawKind=    [{rawKind}]
+   rawValue=   [{rawValue}]
    rawPosition=[{rawPosition}]");
 
                 FormatKind? kind = TryParseKind(rawKind);
