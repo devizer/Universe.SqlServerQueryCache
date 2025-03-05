@@ -27,6 +27,7 @@ namespace Universe.SqlServerQueryCache.Exporter
                 .OrderBy(x => x)
                 .ToList();
 
+            Console.WriteLine($"[Debug] ALL VARS: {allKeys.ToJsonString()}");
             var titleKeys = allKeys.Where(x => x.ToUpper().EndsWith("_TITLE")).ToList();
             Console.WriteLine($"[Debug] TITLES: {titleKeys.ToJsonString()}");
             foreach (var titleKey in titleKeys)
