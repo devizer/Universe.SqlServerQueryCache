@@ -119,6 +119,14 @@ public class SqlCacheHtmlExporter
         var versionRow = new SummaryRow("Version", FormatKind.Unknown, $"{mediumVersion} on {hostPlatform}");
         // summaryRows.Add(versionRow); // Already on the HTML header
 
+        var customSummaryRows = CustomSummaryRowReader.GetCustomSummary();
+        foreach (var customSummaryRow in customSummaryRows)
+        {
+            var pos = Math.Max(0, customSummaryRow.Position);
+            pos = Math.Min(summaryRows.Count, pos);
+            if (pos > summaryRows.Count) summaryRows.Add(customSummaryRow); else summaryRows.Insert(pos, customSummaryRow);
+        }
+
         StringBuilder ret = new StringBuilder();
         string padding = "\t\t";
         ret.AppendLine($"{padding}{padding}<div class='SqlSummaryContainer'>");

@@ -77,12 +77,14 @@ table.Metrics thead button:hover {
         transform-origin: 50% 50%;
         opacity: 1;
     }
-    33% {
-        /* bigger shift removes hover state */
-        transform: translate(0, -2px) scale(1.2,1.2);
-        color: light-dark(#B9375E, #FF8F95);
+    50% {
+        /* bigger shift removes hover state, 
+            translate(0, -2px) scale(1.2,1.2) is ok */
+        transform: translate(0, 0px) scale(1,1);
+        /*color: light-dark(#B9375E, #FF8F95);*/
+        color: light-dark(#000, #FFF);
         transform-origin: 50% 50%;
-        opacity: 0.5;
+        opacity: 1.0;
     }
     100% {
         transform: translate(0px, 0px) scale(1,1);
@@ -97,7 +99,7 @@ table.Metrics thead th button:hover:after {
     visibility: visible;
 }
 table.Metrics thead th button:hover {
-    animation: hover-arrow 0.20s;
+    animation: hover-arrow 0.12s;
 }
 
 table.Metrics thead th.Selected button:after {
