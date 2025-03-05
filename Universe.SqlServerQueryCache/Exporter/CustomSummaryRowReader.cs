@@ -32,6 +32,12 @@ namespace Universe.SqlServerQueryCache.Exporter
             Console.WriteLine($"[Debug] ALL VARS: {allKeys.ToJsonString()}");
             var titleKeys = allKeys.Where(x => x.ToUpper().EndsWith("_TITLE")).ToList();
             Console.WriteLine($"[Debug] TITLES: {titleKeys.ToJsonString()}");
+            Func<string, string> getVarValue = name =>
+            {
+                var nameUpper = name?.ToUpper();
+                var realName = allKeys.FirstOrDefault(x => x == nameUpper);
+                return realName == null ? null : Environment.GetEnvironmentVariable(realName);
+            };
             foreach (var titleKey in titleKeys)
             {
                 Func<string, string> getProperty = property =>
@@ -55,7 +61,7 @@ namespace Universe.SqlServerQueryCache.Exporter
                     Console.WriteLine($"[DEBUG property '{property}' for '{titleKey}'] ret=[{ret}]");
                     return string.IsNullOrEmpty(ret) ? null : ret;
                 };
-                string title = Environment.GetEnvironmentVariable(titleKey);
+                string title = getVarValue(titleKey);
                 if (string.IsNullOrEmpty(title)) continue;
                 string rawKind = getProperty("KIND") ?? "Unknown";
                 string rawValue = getProperty("VALUE") ?? null;
