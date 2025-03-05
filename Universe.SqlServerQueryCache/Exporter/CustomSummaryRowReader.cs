@@ -21,7 +21,7 @@ namespace Universe.SqlServerQueryCache.Exporter
         {
             var allKeys = Environment.GetEnvironmentVariables().Keys
                 .OfType<object>()
-                .Select(x => Convert.ToString(x)?.Trim())
+                .Select(x => Convert.ToString(x)?.Trim()?.ToUpper())
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Where(x => x.StartsWith(ENV_NAME_BASE))
                 .OrderBy(x => x)
