@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Universe.SqlServerQueryCache.External;
 
 namespace Universe.SqlServerQueryCache.Exporter
 {
@@ -26,7 +27,8 @@ namespace Universe.SqlServerQueryCache.Exporter
                 .OrderBy(x => x)
                 .ToList();
 
-            var titleKeys = allKeys.Where(x => x.ToUpper().EndsWith("_TITLE"));
+            var titleKeys = allKeys.Where(x => x.ToUpper().EndsWith("_TITLE")).ToList();
+            Console.WriteLine($"[Debug] TITLES: {titleKeys.ToJsonString()}");
             foreach (var titleKey in titleKeys)
             {
                 Func<string, string> getProperty = property =>
@@ -35,9 +37,13 @@ namespace Universe.SqlServerQueryCache.Exporter
                     if (titleKey.Length > ENV_NAME_BASE.Length && len > 0)
                     {
                         var prefix = titleKey.Substring(ENV_NAME_BASE.Length, len);
-                        var varName = $"{ENV_NAME_BASE}{prefix}_{property}";
-                        var ret = Environment.GetEnvironmentVariable(varName);
-                        return string.IsNullOrEmpty(ret) ? null : ret;
+                        var varName = $"{ENV_NAME_BASE}{prefix}_{property}".ToUpper();
+                        var realVarName = allKeys.FirstOrDefault(x => x == varName);
+                        if (realVarName != null)
+                        {
+                            var ret = Environment.GetEnvironmentVariable(varName);
+                            return string.IsNullOrEmpty(ret) ? null : ret;
+                        }
                     }
                     return null;
                 };
