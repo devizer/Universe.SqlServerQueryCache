@@ -21,11 +21,13 @@ namespace Universe.SqlServerQueryCache.Exporter
         {
             var allKeys = Environment.GetEnvironmentVariables().Keys
                 .OfType<object>()
-                .Select(x => Convert.ToString(x)?.Trim()?.ToUpper())
+                .Select(x => Convert.ToString(x)?.Trim())
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Where(x => x.StartsWith(ENV_NAME_BASE))
                 .OrderBy(x => x)
                 .ToList();
+
+            var allKeysUpper = allKeys.Select(x => x.ToUpper()).ToList();
 
             Console.WriteLine($"[Debug] ALL VARS: {allKeys.ToJsonString()}");
             var titleKeys = allKeys.Where(x => x.ToUpper().EndsWith("_TITLE")).ToList();
@@ -47,7 +49,7 @@ namespace Universe.SqlServerQueryCache.Exporter
    realVarName=[{realVarName}]");
                         if (realVarName != null)
                         {
-                            ret = Environment.GetEnvironmentVariable(varName);
+                            ret = Environment.GetEnvironmentVariable(realVarName);
                         }
                     }
                     Console.WriteLine($"[DEBUG property '{property}' for '{titleKey}'] ret=[{ret}]");
