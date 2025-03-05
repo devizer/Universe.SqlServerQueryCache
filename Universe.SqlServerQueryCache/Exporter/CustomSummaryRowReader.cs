@@ -57,6 +57,11 @@ namespace Universe.SqlServerQueryCache.Exporter
                 string rawKind = getProperty("KIND") ?? "Unknown";
                 string rawValue = getProperty("VALUE") ?? null;
                 string rawPosition = getProperty("POSITION") ?? "2000000000";
+                Console.WriteLine(@$"[DEBUG for '{titleKey}'] 
+   rawKind=[{rawKind}]
+   rawValue=[{rawValue}]
+   rawPosition=[{rawPosition}]");
+
                 FormatKind? kind = TryParseKind(rawKind);
                 int position = Int32.TryParse(rawPosition, out var tempPosition) ? tempPosition : 2000000000;
                 object value = kind.GetValueOrDefault() == FormatKind.Unknown ? Convert.ToString(rawValue) :
