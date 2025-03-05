@@ -34,18 +34,23 @@ namespace Universe.SqlServerQueryCache.Exporter
                 Func<string, string> getProperty = property =>
                 {
                     int len = titleKey.Length - "_TITLE".Length - ENV_NAME_BASE.Length;
+                    string ret = null;
                     if (titleKey.Length > ENV_NAME_BASE.Length && len > 0)
                     {
                         var prefix = titleKey.Substring(ENV_NAME_BASE.Length, len);
                         var varName = $"{ENV_NAME_BASE}{prefix}_{property}".ToUpper();
                         var realVarName = allKeys.FirstOrDefault(x => x == varName);
+                        Console.WriteLine(@$"[DEBUG property '{property}' for '{titleKey}'] 
+   realVarName=[{realVarName}]
+   prefix=[{prefix}]
+   varName=[{varName}]");
                         if (realVarName != null)
                         {
-                            var ret = Environment.GetEnvironmentVariable(varName);
-                            return string.IsNullOrEmpty(ret) ? null : ret;
+                            ret = Environment.GetEnvironmentVariable(varName);
                         }
                     }
-                    return null;
+                    Console.WriteLine($"[DEBUG property '{property}' for '{titleKey}'] ret=[{ret}]");
+                    return string.IsNullOrEmpty(ret) ? null : ret;
                 };
                 string title = Environment.GetEnvironmentVariable(titleKey);
                 if (string.IsNullOrEmpty(title)) continue;
