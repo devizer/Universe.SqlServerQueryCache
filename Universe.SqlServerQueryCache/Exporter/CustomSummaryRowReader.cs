@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,12 +50,7 @@ namespace Universe.SqlServerQueryCache.Exporter
                         var prefix = titleKey.Substring(ENV_NAME_BASE.Length, len);
                         var varName = $"{ENV_NAME_BASE}{prefix}_{property}";
                         ret = getVarValue(varName);
-                        Console.WriteLine(@$"[DEBUG property '{property}' for '{titleKey}'] 
-   prefix= [{prefix}]
-   varName=[{varName}]
-   ret=    [{ret}]");
                     }
-                    Console.WriteLine($"[DEBUG property '{property}' for '{titleKey}'] ret=[{ret}]");
                     return string.IsNullOrEmpty(ret) ? null : ret;
                 };
                 string title = getVarValue(titleKey);
@@ -62,15 +58,11 @@ namespace Universe.SqlServerQueryCache.Exporter
                 string rawKind = getProperty("KIND") ?? "Unknown";
                 string rawValue = getProperty("VALUE") ?? null;
                 string rawPosition = getProperty("POSITION") ?? "2000000000";
-                Console.WriteLine(@$"[DEBUG for '{titleKey}'] 
-   rawKind=    [{rawKind}]
-   rawValue=   [{rawValue}]
-   rawPosition=[{rawPosition}]");
-
+                // Parse 
                 FormatKind? kind = TryParseKind(rawKind);
                 int position = Int32.TryParse(rawPosition, out var tempPosition) ? tempPosition : 2000000000;
                 object value = kind.GetValueOrDefault() == FormatKind.Unknown ? Convert.ToString(rawValue) :
-                    double.TryParse(rawValue, out var tempValue) ? tempPosition : null;
+                    double.TryParse(rawValue, out var tempValue) ? tempValue : null;
 
                 yield return new CustomSummaryRow()
                 {
