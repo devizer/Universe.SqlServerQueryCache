@@ -11,11 +11,13 @@ namespace Universe.SqlServerQueryCache.Exporter
     public static class CustomSummaryRowReader
     {
         private const string ENV_NAME_BASE = "SQL_QUERY_CACHE_SUMMARY_";
+        private const string Header_Position_Value = "Header";
 
         public class CustomSummaryRow : SummaryRow
         {
             // Default is 2000000000, at the end
             public int Position { get; set; } = 2000000000;
+            public bool IsHeader { get; set; }
         }
 
         public static IEnumerable<CustomSummaryRow> GetCustomSummary()
@@ -52,12 +54,14 @@ namespace Universe.SqlServerQueryCache.Exporter
                     return string.IsNullOrEmpty(ret) ? null : ret;
                 };
                 string title = getVarValue(titleKey);
-                if (string.IsNullOrEmpty(title)) continue;
+                // if (string.IsNullOrEmpty(title)) continue;
+                if (title == null) continue;
                 string rawKind = getProperty("KIND") ?? "Unknown";
                 string rawValue = getProperty("VALUE") ?? null;
                 string rawPosition = getProperty("POSITION") ?? "2000000000";
                 // Parse 
                 FormatKind? kind = TryParseKind(rawKind);
+                bool isHeader = rawPosition?.ToUpper() == Header_Position_Value.ToUpper();
                 int position = Int32.TryParse(rawPosition, out var tempPosition) ? tempPosition : 2000000000;
                 object value = kind.GetValueOrDefault() == FormatKind.Unknown ? Convert.ToString(rawValue) :
                     double.TryParse(rawValue, out var tempValue) ? tempValue : null;
@@ -67,7 +71,8 @@ namespace Universe.SqlServerQueryCache.Exporter
                     Title = title,
                     Value = value,
                     Kind = kind.GetValueOrDefault(),
-                    Position = position
+                    Position = position,
+                    IsHeader = isHeader,
                 };
             }
         }

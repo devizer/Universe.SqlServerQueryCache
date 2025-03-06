@@ -79,10 +79,23 @@ public class SqlCacheHtmlExporter
         var mediumVersion = man.MediumServerVersion;
         if (man.ShortServerVersion.Major >= 14) mediumVersion += $" on {hostPlatform}";
 
+        var customSummaryRows = CustomSummaryRowReader.GetCustomSummary();
+        var customHeaders = customSummaryRows.Where(x => x.IsHeader);
+        var sep = Environment.NewLine + "\t\t\t\t\t";
+
+        string GetSummaryHeaderRowHtml(CustomSummaryRowReader.CustomSummaryRow customSummaryRow)
+        {
+            return
+                ((string.IsNullOrEmpty(customSummaryRow.Title) ? "" : $"{customSummaryRow.Title} ")
+                + customSummaryRow.DescriptionAsHtml).Trim();
+        }
+        var customHeadersHtml = string.Join(sep, customHeaders.Select(x => $"<br/>{GetSummaryHeaderRowHtml(x)}").ToArray());
+
+
         return $@"
     <div id=""modal-summary-root"" class=""Modal-Summary"">
          <div class=""Modal-Summary-body Capped"">
-             <center>SQL Server Summary<br/>v{mediumVersion}</center><br/>
+             <center>SQL Server Summary<br/>v{mediumVersion}{customHeadersHtml}</center><br/>
 {ExportSummaryAsHtml()}
         </div>
      </div>
@@ -119,7 +132,7 @@ public class SqlCacheHtmlExporter
         var versionRow = new SummaryRow("Version", FormatKind.Unknown, $"{mediumVersion} on {hostPlatform}");
         // summaryRows.Add(versionRow); // Already on the HTML header
 
-        var customSummaryRows = CustomSummaryRowReader.GetCustomSummary();
+        var customSummaryRows = CustomSummaryRowReader.GetCustomSummary().Where(x => !x.IsHeader);
         foreach (var customSummaryRow in customSummaryRows)
         {
             var pos = Math.Max(0, customSummaryRow.Position);
