@@ -17,7 +17,6 @@ namespace Universe.SqlServerQueryCache.Exporter
         {
             // Default is 2000000000, at the end
             public int Position { get; set; } = 2000000000;
-            public bool IsHeader { get; set; }
         }
 
         public static IEnumerable<CustomSummaryRow> GetCustomSummary()

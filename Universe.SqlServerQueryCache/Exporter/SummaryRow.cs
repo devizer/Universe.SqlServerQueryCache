@@ -1,12 +1,17 @@
-﻿using Universe.SqlServerQueryCache.External;
+﻿using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using Universe.SqlServerQueryCache.External;
 
 namespace Universe.SqlServerQueryCache.Exporter;
 
 public class SummaryRow
 {
     public string Title { get; set; }
+    [JsonConverter(typeof(StringEnumConverter))]
     public FormatKind Kind { get; set; }
     public object Value { get; set; }
+    public bool IsHeader { get; set; }
+
 
     public SummaryRow()
     {

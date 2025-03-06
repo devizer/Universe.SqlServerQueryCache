@@ -10,6 +10,7 @@ public class TestCustomSummaryProperties
     {
         var customSummary = CustomSummaryRowReader.GetCustomSummary();
         Console.WriteLine($"CUSTOM SUMMARY:{customSummary.ToJsonString()}");
+        /*
         var allEnvVars = Environment.GetEnvironmentVariables().Keys
             .OfType<object>()
             .Select(x => Convert.ToString(x))
@@ -18,6 +19,7 @@ public class TestCustomSummaryProperties
             .ToArray();
 
         Console.WriteLine($"All Env Vars:{allEnvVars.ToJsonString()}");
+        */
 
     }
 }

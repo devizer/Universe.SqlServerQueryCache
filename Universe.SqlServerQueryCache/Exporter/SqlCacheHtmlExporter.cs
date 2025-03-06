@@ -79,10 +79,10 @@ public class SqlCacheHtmlExporter
         var mediumVersion = man.MediumServerVersion;
         if (man.ShortServerVersion.Major >= 14) mediumVersion += $" on {hostPlatform}";
 
+        // Custom Headers
         var customSummaryRows = CustomSummaryRowReader.GetCustomSummary();
         var customHeaders = customSummaryRows.Where(x => x.IsHeader);
         var sep = Environment.NewLine + "\t\t\t\t\t";
-
         string GetSummaryHeaderRowHtml(CustomSummaryRowReader.CustomSummaryRow customSummaryRow)
         {
             return
@@ -90,7 +90,7 @@ public class SqlCacheHtmlExporter
                 + customSummaryRow.DescriptionAsHtml).Trim();
         }
         var customHeadersHtml = string.Join(sep, customHeaders.Select(x => $"<br/>{GetSummaryHeaderRowHtml(x)}").ToArray());
-
+        // Done: Custom Header
 
         return $@"
     <div id=""modal-summary-root"" class=""Modal-Summary"">
@@ -132,7 +132,7 @@ public class SqlCacheHtmlExporter
         var versionRow = new SummaryRow("Version", FormatKind.Unknown, $"{mediumVersion} on {hostPlatform}");
         // summaryRows.Add(versionRow); // Already on the HTML header
 
-        var customSummaryRows = CustomSummaryRowReader.GetCustomSummary().Where(x => !x.IsHeader);
+        var customSummaryRows = CustomSummaryRowReader.GetCustomSummary().ToList();
         foreach (var customSummaryRow in customSummaryRows)
         {
             var pos = Math.Max(0, customSummaryRow.Position);
@@ -143,7 +143,7 @@ public class SqlCacheHtmlExporter
         StringBuilder ret = new StringBuilder();
         string padding = "\t\t";
         ret.AppendLine($"{padding}{padding}<div class='SqlSummaryContainer'>");
-        foreach (var summaryRow in summaryRows)
+        foreach (SummaryRow summaryRow in summaryRows.Where(x => !x.IsHeader))
         {
             ret.AppendLine($@"
 {padding}{padding}<dl class=""flexed-list"">

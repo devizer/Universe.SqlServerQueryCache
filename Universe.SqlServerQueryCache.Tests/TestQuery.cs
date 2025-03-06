@@ -49,7 +49,7 @@ public class TestQuery
         rows = rows.OrderByDescending(r => r.ExecutionCount).ToArray();
         Console.WriteLine($"{rows.Count()} QUERIES ON SERVER [{server}]");
         Console.WriteLine(rows.ToJsonString());
-        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".json");
+        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".Rows.json");
         File.WriteAllText(dumpFile, rows.ToJsonString());
     }
 
@@ -65,6 +65,12 @@ public class TestQuery
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".html");
         Console.WriteLine($"Store HTML Report to {dumpFile}");
         File.WriteAllText(dumpFile, singleFileHtml);
+
+        var jsonExport = new { Summary = e.Summary, Queries = e.Rows };
+        var jsonFileName = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".json");
+        File.WriteAllText(jsonFileName, jsonExport.ToJsonString(false, JsonNaming.PascalCase));
+
+
 
         var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
         string summaryReport = SqlSummaryTextExporter.ExportAsText(e.Summary, $"SQL Server {mediumVersion} on {hostPlatform}");

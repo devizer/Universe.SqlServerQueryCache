@@ -130,7 +130,8 @@ internal class MainProgram
 
                     CreateDirectoryForFile(realOutputFile);
                     File.WriteAllText(realOutputFile + ".txt", summaryReport);
-                    File.WriteAllText(realOutputFile + ".json", e.Rows.ToJsonString(false, JsonNaming.PascalCase));
+                    var jsonExport = new { Summary = e.Summary, Queries = e.Rows };
+                    File.WriteAllText(realOutputFile + ".json", jsonExport.ToJsonString(false, JsonNaming.PascalCase));
 
                     File.WriteAllText(realOutputFile + ".html", singleFileHtml);
                 }
