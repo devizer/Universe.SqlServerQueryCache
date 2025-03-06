@@ -30,9 +30,7 @@ namespace Universe.SqlServerQueryCache.Exporter
 
             // var allKeysUpper = allKeys.Select(x => x.ToUpper()).ToList();
 
-            Console.WriteLine($"[Debug] ALL VARS: {allKeys.ToJsonString()}");
             var titleKeys = allKeys.Where(x => x.ToUpper().EndsWith("_TITLE")).ToList();
-            Console.WriteLine($"[Debug] TITLES: {titleKeys.ToJsonString()}");
             Func<string, string> getVarValue = name =>
             {
                 var nameUpper = name?.ToUpper();
