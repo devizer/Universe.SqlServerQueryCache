@@ -21,13 +21,13 @@ namespace Universe.SqlServerQueryCache.Exporter
         {
             var allKeys = Environment.GetEnvironmentVariables().Keys
                 .OfType<object>()
-                .Select(x => Convert.ToString(x)?.Trim()?.ToUpper())
+                .Select(x => Convert.ToString(x)?.Trim())
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Where(x => x.StartsWith(ENV_NAME_BASE))
                 .OrderBy(x => x)
                 .ToList();
 
-            var allKeysUpper = allKeys.Select(x => x.ToUpper()).ToList();
+            // var allKeysUpper = allKeys.Select(x => x.ToUpper()).ToList();
 
             Console.WriteLine($"[Debug] ALL VARS: {allKeys.ToJsonString()}");
             var titleKeys = allKeys.Where(x => x.ToUpper().EndsWith("_TITLE")).ToList();
@@ -35,7 +35,7 @@ namespace Universe.SqlServerQueryCache.Exporter
             Func<string, string> getVarValue = name =>
             {
                 var nameUpper = name?.ToUpper();
-                var realName = allKeys.FirstOrDefault(x => x == nameUpper);
+                var realName = allKeys.FirstOrDefault(x => x.ToUpper() == nameUpper);
                 return realName == null ? null : Environment.GetEnvironmentVariable(realName);
             };
             foreach (var titleKey in titleKeys)
@@ -47,16 +47,12 @@ namespace Universe.SqlServerQueryCache.Exporter
                     if (titleKey.Length > ENV_NAME_BASE.Length && len > 0)
                     {
                         var prefix = titleKey.Substring(ENV_NAME_BASE.Length, len);
-                        var varName = $"{ENV_NAME_BASE}{prefix}_{property}".ToUpper();
-                        var realVarName = allKeys.FirstOrDefault(x => x == varName);
+                        var varName = $"{ENV_NAME_BASE}{prefix}_{property}";
+                        ret = getVarValue(varName);
                         Console.WriteLine(@$"[DEBUG property '{property}' for '{titleKey}'] 
-   prefix=     [{prefix}]
-   varName=    [{varName}]
-   realVarName=[{realVarName}]");
-                        if (realVarName != null)
-                        {
-                            ret = Environment.GetEnvironmentVariable(realVarName);
-                        }
+   prefix= [{prefix}]
+   varName=[{varName}]
+   ret=    [{ret}]");
                     }
                     Console.WriteLine($"[DEBUG property '{property}' for '{titleKey}'] ret=[{ret}]");
                     return string.IsNullOrEmpty(ret) ? null : ret;
