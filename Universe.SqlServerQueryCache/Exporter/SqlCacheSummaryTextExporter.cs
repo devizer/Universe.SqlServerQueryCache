@@ -45,17 +45,6 @@ public class SqlSummaryTextExporter
 
         return ret;
     }
-    public static string ExportAsText_KillIt(IEnumerable<QueryCacheRow> rows, string title)
-    {
-        StringBuilder ret = new StringBuilder();
-        ret.AppendLine($"Summary on {title}");
-        var summaryRows = ExportStructured(rows);
-        var maxTitleLength = summaryRows.Max(x => x.Title.Length);
-        foreach (var summaryRow in summaryRows)
-            ret.AppendLine("   " + (summaryRow.Title + ":").PadRight(maxTitleLength + 2) + summaryRow.GetFormatted(false));
-
-        return ret.ToString();
-    }
     public static string ExportAsText(IEnumerable<SummaryRow> summaryRows, string title)
     {
         StringBuilder ret = new StringBuilder();

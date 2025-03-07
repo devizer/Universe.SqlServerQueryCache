@@ -191,6 +191,14 @@ public class SqlCacheHtmlExporter
         if (sqlserver_start_time_ms_ticks.HasValue && Ms_Ticks.HasValue)
             yield return new SummaryRow("Uptime", FormatKind.Timespan, TimeSpan.FromMilliseconds(Math.Abs(Ms_Ticks.Value - sqlserver_start_time_ms_ticks.Value)));
 
+        // Total Cpu Usage
+        var process_User_Time_Ms = getLong("Process_User_Time_Ms");
+        if (process_User_Time_Ms.HasValue) yield return new SummaryRow("CPU User Time (seconds)", FormatKind.Numeric2, process_User_Time_Ms.Value / 1000d);
+        var process_Kernel_Time_Ms = getLong("Process_Kernel_Time_Ms");
+        if (process_Kernel_Time_Ms.HasValue) yield return new SummaryRow("CPU Kernel Time (seconds)", FormatKind.Numeric2, process_Kernel_Time_Ms.Value / 1000d);
+
+
+
 
         var sysInfoKeys = new string[]
         {
