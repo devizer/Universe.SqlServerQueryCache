@@ -30,7 +30,7 @@ internal class MainProgram
 
         
         List<string> extra = p.Parse(args);
-        if (justPrintHelp)
+        if (justPrintHelp || args.Length == 0)
         {
             p.WriteOptionDescriptions(Console.Out);
             return 0;
@@ -67,7 +67,11 @@ internal class MainProgram
         foreach (var connectionString in ConnectionStrings)
             Console.WriteLine($@"{argPadding}Connection String: {connectionString}");
 
-        Console.WriteLine($@"{argPadding}Output File: {outputFile}");
+        if (string.IsNullOrEmpty(outputFile))
+            Console.WriteLine($@"{argPadding}Output File argument is missing. Results will not be stored");
+        else
+            Console.WriteLine($@"{argPadding}Output File: {outputFile}");
+
         if (appendSqlServerVersion) Console.WriteLine($@"{argPadding}Append version to file name: true");
 
         int errorReturn = 0;
@@ -144,8 +148,7 @@ internal class MainProgram
 
         }
 
-
-        return 0;
+        return errorReturn;
     }
 
     static void CreateDirectoryForFile(string fileName)
