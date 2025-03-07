@@ -95,7 +95,7 @@ public class SqlCacheHtmlExporter
         return $@"
     <div id=""modal-summary-root"" class=""Modal-Summary"">
          <div class=""Modal-Summary-body Capped"">
-             <center>SQL Server Summary<br/>v{mediumVersion}{customHeadersHtml}</center><br/>
+             <center>SQL Server Summary<br/>v{mediumVersion}{customHeadersHtml}<br/></center>
 {ExportSummaryAsHtml()}
         </div>
      </div>
