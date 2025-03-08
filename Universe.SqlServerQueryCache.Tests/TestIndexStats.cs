@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.SqlClient;
+using Universe.GenericTreeTable;
 using Universe.SqlServerJam;
 using Universe.SqlServerQueryCache.External;
 using Universe.SqlServerQueryCache.SqlDataAccess;
@@ -90,6 +91,11 @@ Where
 
         var dumpFileJson = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsStructured.json");
         File.WriteAllText(dumpFileJson, structuredIndexStats.ToJsonString());
+
+        var dumpFileTable = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsTable.txt");
+        ConsoleTable t = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable();
+        File.WriteAllText(dumpFileTable, t.ToString());
+
     }
 
 

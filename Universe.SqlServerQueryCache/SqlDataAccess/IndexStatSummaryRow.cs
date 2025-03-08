@@ -1,4 +1,6 @@
-﻿namespace Universe.SqlServerQueryCache.SqlDataAccess;
+﻿using Universe.GenericTreeTable;
+
+namespace Universe.SqlServerQueryCache.SqlDataAccess;
 
 public class IndexStatSummaryRow
 {
@@ -19,5 +21,30 @@ public class IndexStatSummaryRow
     public long PageIoLatchWaitInMs { get; set; }
     public IDictionary<string, long> Metrics { get; set; }
 
+
+}
+
+public static class IndexStatSummaryRowExtensions
+{
+    public static ConsoleTable BuildPlainConsoleTable(this IEnumerable<IndexStatSummaryRow> arg)
+    {
+        ConsoleTable ret = new ConsoleTable("DB", "Table", "Index");
+        foreach (var r in arg)
+            ret.AddRow(r.Database, $"[{r.SchemaName}].{r.ObjectName}", r.IndexName);
+
+        return ret;
+    }
+
+    public static IEnumerable<IndexStatSummaryRow> GetRidOfUnnamedIndexes(this IEnumerable<IndexStatSummaryRow> arg)
+    {
+        foreach (var r in arg)
+            if (!string.IsNullOrEmpty(r.IndexName)) yield return r;
+    }
+
+    public static IEnumerable<IndexStatSummaryRow> GetRidOfMicrosoftShippedObjects(this IEnumerable<IndexStatSummaryRow> arg)
+    {
+        foreach (var r in arg)
+            if (!r.IsMsShipped) yield return r;
+    }
 
 }

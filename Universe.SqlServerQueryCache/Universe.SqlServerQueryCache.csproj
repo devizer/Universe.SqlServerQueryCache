@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Universe.GenericTreeTable" Version="1.1.14" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Universe.SqlServerJam" Version="1.0.586" />
