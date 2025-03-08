@@ -49,7 +49,7 @@ public class TestQuery
         rows = rows.OrderByDescending(r => r.ExecutionCount).ToArray();
         Console.WriteLine($"{rows.Count()} QUERIES ON SERVER [{server}]");
         Console.WriteLine(rows.ToJsonString());
-        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".Rows.json");
+        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".Rows.json");
         File.WriteAllText(dumpFile, rows.ToJsonString());
     }
 
@@ -57,24 +57,24 @@ public class TestQuery
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
     public void D_Produce_Html_Report(SqlServerRef server)
     {
-        var cs = GetConnectionString(server);
+        var cs = SqlServerReferenceExtensions.GetConnectionString(server);
         var rows = QueryCacheReader.Read(SqlClientFactory.Instance, cs);
-        var mediumVersion = GetMediumVersion(cs);
+        var mediumVersion = SqlServerReferenceExtensions.GetMediumVersion(cs);
         SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, cs);
         var singleFileHtml = e.Export();
-        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".html");
+        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".html");
         Console.WriteLine($"Store HTML Report to {dumpFile}");
         File.WriteAllText(dumpFile, singleFileHtml);
 
         var jsonExport = new { Summary = e.Summary, Queries = e.Rows };
-        var jsonFileName = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".json");
+        var jsonFileName = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".json");
         File.WriteAllText(jsonFileName, jsonExport.ToJsonString(false, JsonNaming.PascalCase));
 
 
 
         var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
         string summaryReport = SqlSummaryTextExporter.ExportAsText(e.Summary, $"SQL Server {mediumVersion} on {hostPlatform}");
-        var dumpSummaryFile = Path.Combine(TestEnvironment.DumpFolder, GetSafeFileOnlyName(server) + ".QueryCacheSummary.txt");
+        var dumpSummaryFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".QueryCacheSummary.txt");
         Console.WriteLine(summaryReport);
         File.WriteAllText(dumpSummaryFile, summaryReport);
 
@@ -88,7 +88,7 @@ public class TestQuery
     // TODO: Remove, because it was used for debugging only
     public void E_Get_SQL_OS_Sys_Info(SqlServerRef server)
     {
-        var cs = GetConnectionString(server);
+        var cs = SqlServerReferenceExtensions.GetConnectionString(server);
         var sysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
 
         object osSysInfoRaw = SqlClientFactory.Instance.CreateConnection(cs).Query<object>("Select * from sys.dm_os_sys_info").FirstOrDefault();
@@ -99,28 +99,5 @@ public class TestQuery
 
         var sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
         var letsDebug = sqlSysInfo.ToString();
-    }
-
-
-    private static string GetSafeFileOnlyName(SqlServerRef server)
-    {
-        var cs = GetConnectionString(server);
-        var mediumVersion = GetMediumVersion(cs);
-        var platform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
-        return SafeFileName.Get($"{server.DataSource}: v{mediumVersion} on {platform}");
-    }
-
-    private static string GetMediumVersion(string cs)
-    {
-        var mediumVersion = SqlClientFactory.Instance.CreateConnection(cs).Manage().MediumServerVersion;
-        return mediumVersion;
-    }
-
-    private static string GetConnectionString(SqlServerRef server)
-    {
-        SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
-        b.Encrypt = false;
-        var cs = b.ConnectionString;
-        return cs;
     }
 }
