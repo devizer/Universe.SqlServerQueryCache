@@ -8,8 +8,10 @@ public class IndexStatSummaryRow
     public string SchemaName { get; set; }
     public int ObjectId { get; set; }
     public string ObjectName { get; set; }
+    public bool IsMsShipped { get; set; }
     public int IndexId { get; set; }
     public string IndexName { get; set; }
+    public string IndexType { get; set; }
     public int PartitionNumber { get; set; }
     public long PageLatchWaitCount { get; set; }
     public long PageLatchWaitInMs { get; set; }

@@ -43,22 +43,35 @@ public class SqlIndexStatsReader
             retRow.Database = dbNameById.TryGetValue(retRow.DatabaseId, out var dbName) ? dbName : $"#{retRow.DatabaseId}";
 
         // Populate ObjectName and IndexName
-        var allDatabasesIndexes = new List<SysIndexDetailsRow>();
+        Dictionary<SysIndexDetailsRow, SysIndexDetailsRow> dictionaryAllIndexes = new Dictionary<SysIndexDetailsRow, SysIndexDetailsRow>();
         foreach (var idDatabase in idDatabaseList)
         {
             if (dbNameById.TryGetValue(idDatabase, out var dbName))
             {
                 string sqlQueryIndexDetails = $"Use [{dbName}]; " + SqlSelectIndexes;
                 List<SysIndexDetailsRow> indexDetailList = con.Query<SysIndexDetailsRow>(sqlQueryIndexDetails, null).ToList();
-                foreach (var sysIndexDetailsRow in indexDetailList) sysIndexDetailsRow.DatabaseId = idDatabase;
-                allDatabasesIndexes.AddRange(indexDetailList);
+                foreach (var sysIndexDetailsRow in indexDetailList)
+                {
+                    sysIndexDetailsRow.DatabaseId = idDatabase;
+                    dictionaryAllIndexes[sysIndexDetailsRow] = sysIndexDetailsRow;
+                }
             }
         }
-        ;
+        foreach (var retRow in ret)
+        {
+            if (dictionaryAllIndexes.TryGetValue(new SysIndexDetailsRow() { DatabaseId = retRow.DatabaseId, IndexId = retRow.IndexId, ObjectId = retRow.ObjectId }, out var indexInfo))
+            {
+                retRow.IndexName = indexInfo.IndexName;
+                retRow.ObjectName = indexInfo.ObjectName;
+                retRow.SchemaId = indexInfo.SchemaId;
+                retRow.SchemaName = indexInfo.SchemaName;
+                retRow.IsMsShipped = indexInfo.IsMsShipped;
+                retRow.IndexType = indexInfo.IndexType;
+            }
+        }
 
         return ret;
     }
-
 
     public IEnumerable<IndexStatSummaryRow> ReadStructured()
     {
@@ -106,7 +119,8 @@ Select
   i.type_desc IndexType,
   i.is_unique IsUnique,
   i.is_unique_constraint IsUniqueConstraint,
-  i.is_primary_key IsPrimaryKey
+  i.is_primary_key IsPrimaryKey,
+  o.is_ms_shipped IsMsShipped
 From 
   sys.schemas s
   Inner Join sys.objects o On (s.schema_id = o.schema_id)
@@ -119,6 +133,7 @@ From
         public string SchemaName { get; set; }
         public int ObjectId { get; set; }
         public string ObjectName { get; set; }
+        public bool IsMsShipped { get; set; }
         public int IndexId { get; set; }
         public string IndexName { get; set; }
         public short IndexTypeId { get; set; }

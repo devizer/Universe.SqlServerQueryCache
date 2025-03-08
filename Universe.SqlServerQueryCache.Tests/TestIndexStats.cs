@@ -80,7 +80,7 @@ Where
 
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
-    public void D_ReadAsRaw(SqlServerRef server)
+    public void D_ReadStructured(SqlServerRef server)
     {
         SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
         b.Encrypt = false;
