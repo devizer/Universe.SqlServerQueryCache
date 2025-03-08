@@ -48,8 +48,8 @@ public class SqlIndexStatsReader
         {
             if (dbNameById.TryGetValue(idDatabase, out var dbName))
             {
-                string sqlQueryIndexDetails = "Use @DbName; " + SqlSelectIndexes;
-                List<SysIndexDetailsRow> indexDetailList = con.Query<SysIndexDetailsRow>(sqlQueryIndexDetails, new { DbName = dbName }).ToList();
+                string sqlQueryIndexDetails = $"Use [{dbName}]; " + SqlSelectIndexes;
+                List<SysIndexDetailsRow> indexDetailList = con.Query<SysIndexDetailsRow>(sqlQueryIndexDetails, null).ToList();
                 foreach (var sysIndexDetailsRow in indexDetailList) sysIndexDetailsRow.DatabaseId = idDatabase;
                 allDatabasesIndexes.AddRange(indexDetailList);
             }
@@ -99,7 +99,7 @@ Select
   s.schema_id SchemaId,
   s.name SchemaName,
   o.object_id ObjectId,
-  o.name table_name ObjectName,
+  o.name ObjectName,
   i.index_id IndexId,
   i.name IndexName,
   i.type IndexTypeId,
