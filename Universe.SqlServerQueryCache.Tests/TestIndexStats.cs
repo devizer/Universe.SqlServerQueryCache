@@ -64,4 +64,34 @@ Where
         File.WriteAllText(dumpFileText, columnsText);
     }
 
+    [Test]
+    [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    public void C_ReadAsRaw(SqlServerRef server)
+    {
+        SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
+        b.Encrypt = false;
+        var cs = b.ConnectionString;
+        SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, cs);
+        var rawIndexStats = reader.ReadAsRaw();
+
+        var dumpFileJson = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStats.json");
+        File.WriteAllText(dumpFileJson, rawIndexStats.ToJsonString());
+    }
+
+    [Test]
+    [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    public void D_ReadAsRaw(SqlServerRef server)
+    {
+        SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
+        b.Encrypt = false;
+        var cs = b.ConnectionString;
+        SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, cs);
+        var structuredIndexStats = reader.ReadStructured();
+
+        var dumpFileJson = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsStructured.json");
+        File.WriteAllText(dumpFileJson, structuredIndexStats.ToJsonString());
+    }
+
+
+
 }
