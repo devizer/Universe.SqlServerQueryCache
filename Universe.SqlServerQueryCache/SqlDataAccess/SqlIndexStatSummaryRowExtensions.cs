@@ -59,6 +59,7 @@ public static class SqlIndexStatSummaryRowExtensions
                 .Replace(" In ms", $" in{(char)160}ms")
                 .Replace(" Bytes", " bytes")
                 .Replace(" Pages", " pages")
+                .Replace(" Count", " count")
                 .Replace(" In ", " in ");
         }
         List<string> metrics = new List<string>();
@@ -83,7 +84,7 @@ public static class SqlIndexStatSummaryRowExtensions
         List<string> reportMetrics = excludeEmptyColumns ? nonEmptyMetrics : metrics;
 
         List<List<string>> columns = new List<string>() { " DB", " Table / View", " Index" }.Select(x => new List<string>() { x }).ToList();
-        columns.AddRange(reportMetrics.Select(h => GetMetricTitle(h).Split(' ').ToList()));
+        columns.AddRange(reportMetrics.Select(h => $"-{GetMetricTitle(h)}".Split(' ').ToList()));
         ConsoleTable plainConsoleTable = new ConsoleTable(columns.ToArray());
         plainConsoleTable.NeedUnicode = true;
         foreach (var r in arg)
