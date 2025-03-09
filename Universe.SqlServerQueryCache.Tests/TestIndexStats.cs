@@ -73,7 +73,7 @@ Where
         b.Encrypt = false;
         var cs = b.ConnectionString;
         SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, cs);
-        var rawIndexStats = reader.ReadAsRaw();
+        var rawIndexStats = reader.ReadRaw();
 
         var dumpFileJson = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStats.json");
         File.WriteAllText(dumpFileJson, rawIndexStats.ToJsonString());

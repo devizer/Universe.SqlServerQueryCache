@@ -62,7 +62,7 @@ public static class IndexStatSummaryRowExtensions
         List<string> nonEmptyMetrics = metrics.Where(m => !emptyMetrics.Contains(m)).ToList();
         var reportMetrics = excludeEmptyColumns ? nonEmptyMetrics : metrics;
 
-        var columns = new List<string>() { "DB", "Table", "Index" };
+        var columns = new List<string>() { "DB", "Table/View", "Index" };
         columns.AddRange(reportMetrics.Select(GetMetricTitle));
         ConsoleTable ret = new ConsoleTable(columns.ToArray());
         foreach (var r in arg)
@@ -71,7 +71,8 @@ public static class IndexStatSummaryRowExtensions
             foreach (var metric in reportMetrics)
             {
                 long? valNullable = r.GetMetricValue(metric);
-                values.Add(valNullable.HasValue ? (object)valNullable.Value.ToString("n0") : null);
+                var valString = valNullable.GetValueOrDefault() == 0 ? null : (object)valNullable.Value.ToString("n0");
+                values.Add(valString);
             }
             ret.AddRow(values.ToArray());
         }

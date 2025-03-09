@@ -75,10 +75,10 @@ public class SqlIndexStatsReader
 
     public IEnumerable<SqlIndexStatSummaryRow> ReadStructured()
     {
-        return ReadStructured(ReadAsRaw());
+        return ReadStructured(ReadRaw());
     }
 
-    public IEnumerable<IDictionary<string, long>> ReadAsRaw()
+    public IEnumerable<IDictionary<string, long>> ReadRaw()
     {
         var con = _dbProvider.CreateConnection();
         con.ConnectionString = _connectionString;
