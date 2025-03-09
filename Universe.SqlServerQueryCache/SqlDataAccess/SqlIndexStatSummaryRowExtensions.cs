@@ -14,6 +14,17 @@ public class SqlIndexStatSummaryReport
 
     public ConsoleTable PlainTable { get; internal set; }
     public ConsoleTable TreeTable { get; internal set; }
+
+    public string EmptyMetricsFormatted
+    {
+        get
+        {
+            if (EmptyMetrics.Count == 0) return string.Empty;
+            string ret = ExcludeEmptyColumns ? "Empty Metrics below are excluded:" : "Below are empty metrics:";
+            ret += Environment.NewLine + string.Join(Environment.NewLine, EmptyMetrics.Select(x => $"\t{x}").ToArray()) + Environment.NewLine;
+            return ret;
+        }
+    }
 }
 
 public static class SqlIndexStatSummaryRowExtensions

@@ -147,7 +147,8 @@ internal class MainProgram
                     SqlIndexStatSummaryReport reportFull = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable();
                     File.WriteAllText(realOutputFile + ".IndexesFull.txt", reportFull.PlainTable.ToString());
                     SqlIndexStatSummaryReport reportShrunk = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable(true);
-                    File.WriteAllText(realOutputFile + ".Indexes.txt", reportShrunk.PlainTable.ToString());
+                    var reportShrunkContent = reportShrunk.PlainTable + Environment.NewLine + Environment.NewLine + reportShrunk.EmptyMetricsFormatted;
+                    File.WriteAllText(realOutputFile + ".Indexes.txt", reportShrunkContent);
                 }
             }
             catch (Exception ex)
