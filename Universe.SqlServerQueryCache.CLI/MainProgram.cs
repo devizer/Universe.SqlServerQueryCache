@@ -144,7 +144,9 @@ internal class MainProgram
                     SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, connectionString);
                     var structuredIndexStats = reader.ReadStructured();
                     File.WriteAllText(realOutputFile + ".Indexes.json", structuredIndexStats.ToJsonString());
-                    ConsoleTable plainTable = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable();
+                    ConsoleTable plainTableFull = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable();
+                    File.WriteAllText(realOutputFile + ".IndexesFull.txt", plainTableFull.ToString());
+                    ConsoleTable plainTable = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable(true);
                     File.WriteAllText(realOutputFile + ".Indexes.txt", plainTable.ToString());
 
                 }

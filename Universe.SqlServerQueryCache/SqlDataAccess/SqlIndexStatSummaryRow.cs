@@ -1,9 +1,10 @@
-﻿using System.Globalization;
+﻿using System.Data;
+using System.Globalization;
 using Universe.GenericTreeTable;
 
 namespace Universe.SqlServerQueryCache.SqlDataAccess;
 
-public class IndexStatSummaryRow
+public class SqlIndexStatSummaryRow
 {
     public int DatabaseId { get; set; }
     public string Database { get; set; }
@@ -32,7 +33,12 @@ public class IndexStatSummaryRow
 
 public static class IndexStatSummaryRowExtensions
 {
-    public static ConsoleTable BuildPlainConsoleTable(this IEnumerable<IndexStatSummaryRow> arg)
+    public static ConsoleTable BuildPlainConsoleTable(this IEnumerable<SqlIndexStatSummaryRow> arg)
+    {
+        return BuildPlainConsoleTable(arg, false);
+    }
+
+    public static ConsoleTable BuildPlainConsoleTable(this IEnumerable<SqlIndexStatSummaryRow> arg, bool excludeEmptyColumns)
     {
         string GetMetricTitle(string metricId)
         {
@@ -46,13 +52,23 @@ public static class IndexStatSummaryRowExtensions
             if (hasToInclude) metrics.Add(metricName);
         }
 
+        HashSet<string> emptyMetrics = new HashSet<string>();
+        foreach (var metric in metrics)
+        {
+            bool isNonEmpty = arg.Any(r => r.GetMetricValue(metric).GetValueOrDefault() != 0);
+            if (!isNonEmpty) emptyMetrics.Add(metric);
+        }
+
+        List<string> nonEmptyMetrics = metrics.Where(m => !emptyMetrics.Contains(m)).ToList();
+        var reportMetrics = excludeEmptyColumns ? nonEmptyMetrics : metrics;
+
         var columns = new List<string>() { "DB", "Table", "Index" };
-        columns.AddRange(metrics.Select(GetMetricTitle));
+        columns.AddRange(reportMetrics.Select(GetMetricTitle));
         ConsoleTable ret = new ConsoleTable(columns.ToArray());
         foreach (var r in arg)
         {
             List<object> values = new List<object>() { r.Database, $"[{r.SchemaName}].{r.ObjectName}", r.IndexName };
-            foreach (var metric in metrics)
+            foreach (var metric in reportMetrics)
             {
                 long? valNullable = r.GetMetricValue(metric);
                 values.Add(valNullable.HasValue ? (object)valNullable.Value.ToString("n0") : null);
@@ -63,13 +79,13 @@ public static class IndexStatSummaryRowExtensions
         return ret;
     }
 
-    public static IEnumerable<IndexStatSummaryRow> GetRidOfUnnamedIndexes(this IEnumerable<IndexStatSummaryRow> arg)
+    public static IEnumerable<SqlIndexStatSummaryRow> GetRidOfUnnamedIndexes(this IEnumerable<SqlIndexStatSummaryRow> arg)
     {
         foreach (var r in arg)
             if (!string.IsNullOrEmpty(r.IndexName)) yield return r;
     }
 
-    public static IEnumerable<IndexStatSummaryRow> GetRidOfMicrosoftShippedObjects(this IEnumerable<IndexStatSummaryRow> arg)
+    public static IEnumerable<SqlIndexStatSummaryRow> GetRidOfMicrosoftShippedObjects(this IEnumerable<SqlIndexStatSummaryRow> arg)
     {
         foreach (var r in arg)
             if (!r.IsMsShipped) yield return r;

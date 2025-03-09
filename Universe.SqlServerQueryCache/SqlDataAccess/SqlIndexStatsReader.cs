@@ -19,9 +19,9 @@ public class SqlIndexStatsReader
         _connectionString = connectionString;
     }
 
-    public IEnumerable<IndexStatSummaryRow> ReadStructured(IEnumerable<IDictionary<string, long>> argRawList)
+    public IEnumerable<SqlIndexStatSummaryRow> ReadStructured(IEnumerable<IDictionary<string, long>> argRawList)
     {
-        var ret = argRawList.Select(x => new IndexStatSummaryRow() { Metrics = x }).ToList();
+        var ret = argRawList.Select(x => new SqlIndexStatSummaryRow() { Metrics = x }).ToList();
         foreach (var retRow in ret)
         {
             retRow.DatabaseId = (int)(retRow.GetMetricValue("database_id") ?? -1);
@@ -73,7 +73,7 @@ public class SqlIndexStatsReader
         return ret;
     }
 
-    public IEnumerable<IndexStatSummaryRow> ReadStructured()
+    public IEnumerable<SqlIndexStatSummaryRow> ReadStructured()
     {
         return ReadStructured(ReadAsRaw());
     }
