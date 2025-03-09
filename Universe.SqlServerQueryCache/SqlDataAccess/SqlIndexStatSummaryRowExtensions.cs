@@ -74,9 +74,10 @@ public static class SqlIndexStatSummaryRowExtensions
         ret.NonEmptyMetrics = nonEmptyMetrics;
         List<string> reportMetrics = excludeEmptyColumns ? nonEmptyMetrics : metrics;
 
-        var columns = new List<string>() { "DB", "Table/View", "Index" };
-        columns.AddRange(reportMetrics.Select(GetMetricTitle));
+        List<List<string>> columns = new List<string>() { " DB", " Table / View", " Index" }.Select(x => new List<string>() { x }).ToList();
+        columns.AddRange(reportMetrics.Select(h => GetMetricTitle(h).Split(' ').ToList()));
         ConsoleTable plainConsoleTable = new ConsoleTable(columns.ToArray());
+        plainConsoleTable.NeedUnicode = true;
         foreach (var r in arg)
         {
             List<object> values = new List<object>() { r.Database, $"[{r.SchemaName}].{r.ObjectName}", r.IndexName };
