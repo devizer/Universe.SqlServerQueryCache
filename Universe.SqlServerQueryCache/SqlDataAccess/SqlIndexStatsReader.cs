@@ -24,9 +24,9 @@ public class SqlIndexStatsReader
         var ret = argRawList.Select(x => new IndexStatSummaryRow() { Metrics = x }).ToList();
         foreach (var retRow in ret)
         {
-            retRow.DatabaseId = (int)GetLong(retRow.Metrics, "database_id");
-            retRow.ObjectId = (int)GetLong(retRow.Metrics, "object_id");
-            retRow.IndexId= (int)GetLong(retRow.Metrics, "index_id");
+            retRow.DatabaseId = (int)(retRow.GetMetricValue("database_id") ?? -1);
+            retRow.ObjectId = (int)(retRow.GetMetricValue("object_id") ?? -1);
+            retRow.IndexId = (int)(retRow.GetMetricValue("index_id") ?? -1);
         }
 
         // Populate DatabaseName
@@ -95,10 +95,6 @@ public class SqlIndexStatsReader
         return ret;
     }
 
-    static long GetLong(IDictionary<string, long> rawRow, string propertyName)
-    {
-        return !string.IsNullOrEmpty(propertyName) && rawRow.TryGetValue(propertyName, out var rawRet) ? rawRet : -1;
-    }
 
     // IO
     public class SysDatabasesRow

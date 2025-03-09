@@ -1,4 +1,5 @@
-﻿using Universe.GenericTreeTable;
+﻿using System.Globalization;
+using Universe.GenericTreeTable;
 
 namespace Universe.SqlServerQueryCache.SqlDataAccess;
 
@@ -21,6 +22,11 @@ public class IndexStatSummaryRow
     public long PageIoLatchWaitInMs { get; set; }
     public IDictionary<string, long> Metrics { get; set; }
 
+    public long? GetMetricValue(string propertyName)
+    {
+        return !string.IsNullOrEmpty(propertyName) && Metrics.TryGetValue(propertyName, out var rawRet) ? rawRet : null;
+    }
+
 
 }
 
@@ -28,9 +34,31 @@ public static class IndexStatSummaryRowExtensions
 {
     public static ConsoleTable BuildPlainConsoleTable(this IEnumerable<IndexStatSummaryRow> arg)
     {
-        ConsoleTable ret = new ConsoleTable("DB", "Table", "Index");
+        string GetMetricTitle(string metricId)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(metricId.Replace("_", " "));
+        }
+        List<string> metrics = new List<string>();
+        bool hasToInclude = false;
+        foreach (var metricName in arg.FirstOrDefault()?.Metrics.Keys.ToList() ?? new List<string>())
+        {
+            hasToInclude = hasToInclude || metricName.ToLower() == "leaf_insert_count";
+            if (hasToInclude) metrics.Add(metricName);
+        }
+
+        var columns = new List<string>() { "DB", "Table", "Index" };
+        columns.AddRange(metrics.Select(GetMetricTitle));
+        ConsoleTable ret = new ConsoleTable(columns.ToArray());
         foreach (var r in arg)
-            ret.AddRow(r.Database, $"[{r.SchemaName}].{r.ObjectName}", r.IndexName);
+        {
+            List<object> values = new List<object>() { r.Database, $"[{r.SchemaName}].{r.ObjectName}", r.IndexName };
+            foreach (var metric in metrics)
+            {
+                long? valNullable = r.GetMetricValue(metric);
+                values.Add(valNullable.HasValue ? (object)valNullable.Value : null);
+            }
+            ret.AddRow(values.ToArray());
+        }
 
         return ret;
     }
