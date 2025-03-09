@@ -55,7 +55,7 @@ public static class IndexStatSummaryRowExtensions
             foreach (var metric in metrics)
             {
                 long? valNullable = r.GetMetricValue(metric);
-                values.Add(valNullable.HasValue ? (object)valNullable.Value : null);
+                values.Add(valNullable.HasValue ? (object)valNullable.Value.ToString("n0") : null);
             }
             ret.AddRow(values.ToArray());
         }
