@@ -60,7 +60,9 @@ public static class SqlIndexStatSummaryRowExtensions
                 .Replace(" Bytes", " bytes")
                 .Replace(" Pages", " pages")
                 .Replace(" Count", " count")
+                .Replace("Nonleaf ", "Non Leaf ")
                 .Replace(" In ", " in ");
+
         }
         List<string> metrics = new List<string>();
         bool hasToInclude = false;
