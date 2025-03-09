@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using NDesk.Options;
+using Universe.GenericTreeTable;
 using Universe.SqlServerJam;
 using Universe.SqlServerQueryCache.Exporter;
 using Universe.SqlServerQueryCache.External;
@@ -138,6 +139,14 @@ internal class MainProgram
                     File.WriteAllText(realOutputFile + ".json", jsonExport.ToJsonString(false, JsonNaming.PascalCase));
 
                     File.WriteAllText(realOutputFile + ".html", singleFileHtml);
+
+                    // Indexes
+                    SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, connectionString);
+                    var structuredIndexStats = reader.ReadStructured();
+                    File.WriteAllText(realOutputFile + ".Indexes.json", structuredIndexStats.ToJsonString());
+                    ConsoleTable plainTable = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable();
+                    File.WriteAllText(realOutputFile + ".Indexes.txt", plainTable.ToString());
+
                 }
             }
             catch (Exception ex)
