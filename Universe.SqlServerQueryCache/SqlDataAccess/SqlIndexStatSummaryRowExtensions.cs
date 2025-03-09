@@ -51,7 +51,15 @@ public static class SqlIndexStatSummaryRowExtensions
 
         string GetMetricTitle(string metricId)
         {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(metricId.Replace("_", " "));
+            var metricTitle = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(metricId.Replace("_", " "));
+            return metricTitle
+                .Replace(" Allocation ", " Alloc ")
+                .Replace(" Io ", " IO ")
+                .Replace(" Ms", " ms")
+                .Replace(" In ms", $" in{(char)160}ms")
+                .Replace(" Bytes", " bytes")
+                .Replace(" Pages", " pages")
+                .Replace(" In ", " in ");
         }
         List<string> metrics = new List<string>();
         bool hasToInclude = false;
