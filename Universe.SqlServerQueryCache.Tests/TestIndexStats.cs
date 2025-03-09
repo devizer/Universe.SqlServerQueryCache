@@ -93,12 +93,12 @@ Where
         File.WriteAllText(dumpFileJson, structuredIndexStats.ToJsonString());
 
         var dumpFileTableFull = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsTableFull.txt");
-        ConsoleTable plainTableFull = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable(false);
-        File.WriteAllText(dumpFileTableFull, plainTableFull.ToString());
+        SqlIndexStatSummaryReport reportFull = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable(false);
+        File.WriteAllText(dumpFileTableFull, reportFull.PlainTable.ToString());
 
         var dumpFileTable = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsTable.txt");
-        ConsoleTable plainTable = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable(true);
-        File.WriteAllText(dumpFileTable, plainTable.ToString());
+        SqlIndexStatSummaryReport reportShrunk = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable(true);
+        File.WriteAllText(dumpFileTable, reportShrunk.PlainTable.ToString());
 
     }
 
