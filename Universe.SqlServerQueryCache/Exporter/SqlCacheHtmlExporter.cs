@@ -268,7 +268,8 @@ public class SqlCacheHtmlExporter
             }
             htmlTable.AppendLine("\t</tr>");
             htmlTable.AppendLine("\t<tr class='SqlRow'>");
-            var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(row.SqlStatement, SqlSyntaxColors.DarkTheme);
+            var rowSqlStatement = string.IsNullOrEmpty(row.DatabaseName) ? row.SqlStatement : ($"Use [{row.DatabaseName}];{Environment.NewLine}{row.SqlStatement}");
+            var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(rowSqlStatement, SqlSyntaxColors.DarkTheme);
             htmlTable.AppendLine("\t\t<td colspan='2'></td>");
             htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length - 2}'><pre>{tsqlHtmlString}</pre></td>");
             htmlTable.AppendLine("\t</tr>");
