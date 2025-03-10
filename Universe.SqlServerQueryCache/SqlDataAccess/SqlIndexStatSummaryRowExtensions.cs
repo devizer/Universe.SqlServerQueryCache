@@ -10,7 +10,7 @@ public class SqlIndexStatSummaryReport
     public List<string> Metrics { get; internal set; } // Depends on SQL Server Version
     public HashSet<string> EmptyMetrics { get; internal set; }
     public List<string> NonEmptyMetrics { get; internal set; }
-    public List<string> PlainColumns { get; internal set; }
+    // public List<string> PlainColumns { get; internal set; }
 
     public ConsoleTable PlainTable { get; internal set; }
     public ConsoleTable TreeTable { get; internal set; }
@@ -29,13 +29,6 @@ public class SqlIndexStatSummaryReport
 
 public static class SqlIndexStatSummaryRowExtensions
 {
-    public static ConsoleTable BuildTreeConsoleTable(this IEnumerable<SqlIndexStatSummaryRow> arg)
-    {
-        SqlIndexStatTreeConfiguration treeConfiguration = new SqlIndexStatTreeConfiguration(/* depends on content */);
-        var builder = new TreeTableBuilder<string, SqlIndexStatSummaryRow>(treeConfiguration);
-        // builder.Build()
-        throw new NotImplementedException();
-    }
     public static SqlIndexStatSummaryReport BuildPlainConsoleTable(this IEnumerable<SqlIndexStatSummaryRow> arg)
     {
         return BuildPlainConsoleTable(arg, false);
@@ -87,23 +80,47 @@ public static class SqlIndexStatSummaryRowExtensions
         ret.NonEmptyMetrics = nonEmptyMetrics;
         List<string> reportMetrics = excludeEmptyColumns ? nonEmptyMetrics : metrics;
 
-        List<List<string>> columns = new List<string>() { " DB ", " Table / View ", " Index " }.Select(x => new List<string>() { x }).ToList();
-        columns.AddRange(reportMetrics.Select(h => $"-{GetMetricTitle(h)}".Split(' ').ToList()));
-        ConsoleTable plainConsoleTable = new ConsoleTable(columns.ToArray());
-        plainConsoleTable.NeedUnicode = true;
-        foreach (var r in arg)
+        List<List<string>> metricsColumns = reportMetrics.Select(h => $"-{GetMetricTitle(h)}".Split(' ').ToList()).ToList();
+
+        List<List<string>> plainColumns = new List<string>() { " DB ", " Table / View ", " Index " }.Select(x => new List<string>() { x }).ToList();
+        List<List<string>> treeColumns = new List<List<string>>() { new List<string>() { "DB / Table + Views / Index" } };
+        plainColumns.AddRange(metricsColumns);
+        treeColumns.AddRange(metricsColumns);
+
+        List<object> WriteMetricsCells(SqlIndexStatSummaryRow row)
         {
-            List<object> values = new List<object>() { r.Database, $"[{r.SchemaName}].{r.ObjectName}", r.IndexName };
+            // metricCells for both Plain and Tree table
+            List<object> metricCells = new List<object>();
             foreach (var metric in reportMetrics)
             {
-                long? valNullable = r.GetMetricValue(metric);
+                long? valNullable = row.GetMetricValue(metric);
                 var valString = valNullable.GetValueOrDefault() == 0 ? null : (object)valNullable.Value.ToString("n0");
-                values.Add(valString);
+                metricCells.Add(valString);
             }
-            plainConsoleTable.AddRow(values.ToArray());
+            return metricCells;
         }
 
+        SqlIndexStatTreeConfiguration treeConfiguration = new SqlIndexStatTreeConfiguration(treeColumns, WriteMetricsCells);
+        var treeBuilder = new TreeTableBuilder<string, SqlIndexStatSummaryRow>(treeConfiguration);
+        ConsoleTable plainConsoleTable = new ConsoleTable(plainColumns.ToArray());
+        plainConsoleTable.NeedUnicode = true;
+        foreach (SqlIndexStatSummaryRow r in arg)
+        {
+            // metricCells for both Plain and Tree table
+            List<object> metricCells = WriteMetricsCells(r);
+            // Row for Plain table
+            List<object> plainCells = new List<object>() { r.Database, $"[{r.SchemaName}].{r.ObjectName}", r.IndexName };
+            plainCells.AddRange(metricCells);
+            plainConsoleTable.AddRow(plainCells.ToArray());
+            // Row for Tree table
+        }
         ret.PlainTable = plainConsoleTable;
+
+        List<KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>> treeSource = new List<KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>>();
+        Func<SqlIndexStatSummaryRow,IEnumerable<string>> createKey = row => new List<string>() { row.Database, $"[{row.SchemaName}].{row.ObjectName}", row.IndexName };
+        treeSource = arg.OrderBy(x => x.Database).ThenBy(x => x.ObjectName).ThenBy(x => x.IndexName).Select(x => new KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>(createKey(x), x)).ToList();
+        ConsoleTable treeConsoleTable = treeBuilder.Build(treeSource);
+        ret.TreeTable = treeConsoleTable;
 
         return ret;
     }

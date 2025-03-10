@@ -14,15 +14,27 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
         public static readonly string TheSeparator = " \x2192 ";
         public string KeyPartToText(string keyPart) => keyPart;
 
+
+        public readonly List<List<string>> TreeColumns;
+        public readonly Func<SqlIndexStatSummaryRow, List<object>> WriteMetricsCell;
+
+        public SqlIndexStatTreeConfiguration(List<List<string>> treeColumns, Func<SqlIndexStatSummaryRow, List<object>> writeMetricsCell)
+        {
+            TreeColumns = treeColumns;
+            WriteMetricsCell = writeMetricsCell;
+        }
+
         public ConsoleTable CreateColumns()
         {
-            throw new NotImplementedException();
+            return new ConsoleTable(TreeColumns) { NeedUnicode = true };
         }
 
         public void WriteColumns(ConsoleTable table, string renderedKey, SqlIndexStatSummaryRow nodeData)
         {
-            throw new NotImplementedException();
+            List<object> row = new List<object>();
+            row.Add(renderedKey);
+            row.AddRange(WriteMetricsCell(nodeData));
+            table.AddRow(row.ToArray());
         }
-
     }
 }
