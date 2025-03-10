@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Globalization;
 
 namespace Universe.SqlServerQueryCache.SqlDataAccess;
 
@@ -8,6 +9,7 @@ public class SqlIndexStatSummaryRow
     public string Database { get; set; }
     public int SchemaId { get; set; }
     public string SchemaName { get; set; }
+    public string ObjectType { get; set; }
     public int ObjectId { get; set; }
     public string ObjectName { get; set; }
     public bool IsMsShipped { get; set; }
@@ -25,6 +27,8 @@ public class SqlIndexStatSummaryRow
     {
         return !string.IsNullOrEmpty(propertyName) && Metrics.TryGetValue(propertyName, out var rawRet) ? rawRet : null;
     }
+
+    public string ObjectTypeName => CultureInfo.InvariantCulture.TextInfo.ToTitleCase((ObjectType ?? "").Replace("_", " ").ToLower()).Replace("User Table", "Table");
 
 
 }

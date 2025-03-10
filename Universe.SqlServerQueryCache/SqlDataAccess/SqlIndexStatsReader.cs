@@ -62,6 +62,7 @@ public class SqlIndexStatsReader
             if (dictionaryAllIndexes.TryGetValue(new SysIndexDetailsRow() { DatabaseId = retRow.DatabaseId, IndexId = retRow.IndexId, ObjectId = retRow.ObjectId }, out var indexInfo))
             {
                 retRow.IndexName = indexInfo.IndexName;
+                retRow.ObjectType = indexInfo.ObjectType;
                 retRow.ObjectName = indexInfo.ObjectName;
                 retRow.SchemaId = indexInfo.SchemaId;
                 retRow.SchemaName = indexInfo.SchemaName;
@@ -107,6 +108,7 @@ public class SqlIndexStatsReader
 Select 
   s.schema_id SchemaId,
   s.name SchemaName,
+  o.type_desc ObjectType,
   o.object_id ObjectId,
   o.name ObjectName,
   i.index_id IndexId,
@@ -127,6 +129,7 @@ From
         public int DatabaseId { get; set; }
         public int SchemaId { get; set; }
         public string SchemaName { get; set; }
+        public string ObjectType { get; set; }
         public int ObjectId { get; set; }
         public string ObjectName { get; set; }
         public bool IsMsShipped { get; set; }

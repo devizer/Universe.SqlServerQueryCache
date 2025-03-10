@@ -117,7 +117,7 @@ public static class SqlIndexStatSummaryRowExtensions
         ret.PlainTable = plainConsoleTable;
 
         List<KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>> treeSource = new List<KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>>();
-        Func<SqlIndexStatSummaryRow,IEnumerable<string>> createKey = row => new List<string>() { row.Database, $"[{row.SchemaName}].{row.ObjectName}", row.IndexName };
+        Func<SqlIndexStatSummaryRow,IEnumerable<string>> createKey = row => new List<string>() { $"DB «{row.Database}»", $"[{row.SchemaName}].‹{row.ObjectName}› ({row.ObjectTypeName?.ToLower()})", row.IndexName };
         treeSource = arg.OrderBy(x => x.Database).ThenBy(x => x.ObjectName).ThenBy(x => x.IndexName).Select(x => new KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>(createKey(x), x)).ToList();
         ConsoleTable treeConsoleTable = treeBuilder.Build(treeSource);
         ret.TreeTable = treeConsoleTable;
