@@ -47,8 +47,8 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
     qs.max_logical_writes [MaxLogicalWrites]
 FROM sys.dm_exec_query_stats AS qs
 CROSS APPLY sys.dm_exec_sql_text(sql_handle) AS t
-OUTER APPLY sys.dm_exec_query_plan(qs.plan_handle) p   -- for database id only
-LEFT JOIN sys.databases d ON p.dbid = d.database_id    -- for database name only
+OUTER APPLY sys.dm_exec_query_plan(qs.plan_handle) p   -- join database id only
+LEFT JOIN sys.databases d ON p.dbid = d.database_id    -- join database name only
 Order By p.objectid Desc, qs.total_elapsed_time Desc;
 /* If creation_time changed then add else replace */
 ";
