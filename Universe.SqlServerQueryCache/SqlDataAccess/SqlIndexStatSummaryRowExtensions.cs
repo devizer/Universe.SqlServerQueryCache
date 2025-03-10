@@ -82,8 +82,8 @@ public static class SqlIndexStatSummaryRowExtensions
 
         List<List<string>> metricsColumns = reportMetrics.Select(h => $"-{GetMetricTitle(h)}".Split(' ').ToList()).ToList();
 
-        List<List<string>> plainColumns = new List<string>() { " DB ", " Table / View ", " Index " }.Select(x => new List<string>() { x }).ToList();
-        List<List<string>> treeColumns = new List<List<string>>() { new List<string>() { "DB / Table + Views / Index" } };
+        List<List<string>> plainColumns = new List<string>() { " DB ", " Table|View|Queue ", " Index " }.Select(x => new List<string>() { x }).ToList();
+        List<List<string>> treeColumns = new List<List<string>>() { new List<string>() { " DB → Table|View|Queue → Index " } };
         plainColumns.AddRange(metricsColumns);
         treeColumns.AddRange(metricsColumns);
 
@@ -117,7 +117,8 @@ public static class SqlIndexStatSummaryRowExtensions
         ret.PlainTable = plainConsoleTable;
 
         List<KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>> treeSource = new List<KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>>();
-        Func<SqlIndexStatSummaryRow,IEnumerable<string>> createKey = row => new List<string>() { $"DB «{row.Database}»", $"[{row.SchemaName}].‹{row.ObjectName}› ({row.ObjectTypeName?.ToLower()})", row.IndexName };
+        // ‹›
+        Func<SqlIndexStatSummaryRow,IEnumerable<string>> createKey = row => new List<string>() { $"DB «{row.Database}»", $"[{row.SchemaName}]∙{row.ObjectName} ({row.ObjectTypeName?.ToLower()})", row.IndexName };
         treeSource = arg.OrderBy(x => x.Database).ThenBy(x => x.ObjectName).ThenBy(x => x.IndexName).Select(x => new KeyValuePair<IEnumerable<string>, SqlIndexStatSummaryRow>(createKey(x), x)).ToList();
         ConsoleTable treeConsoleTable = treeBuilder.Build(treeSource);
         ret.TreeTable = treeConsoleTable;
