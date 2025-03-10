@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Security;
 using System.Text;
@@ -268,7 +269,14 @@ public class SqlCacheHtmlExporter
             }
             htmlTable.AppendLine("\t</tr>");
             htmlTable.AppendLine("\t<tr class='SqlRow'>");
-            var rowSqlStatement = string.IsNullOrEmpty(row.DatabaseName) ? row.SqlStatement : ($"Use [{row.DatabaseName}];{Environment.NewLine}{row.SqlStatement}");
+            // BUILD META LINE as SQL: Database, ObjectType and ObjectName
+            StringBuilder sqlMeta = new StringBuilder();
+            if (!string.IsNullOrEmpty(row.DatabaseName)) sqlMeta.Append($"Use [{row.DatabaseName}];");
+            var objectType = row.ObjectType?.Replace("_", " ");
+            if (objectType != null) objectType = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(objectType);
+            if (!string.IsNullOrEmpty(row.ObjectName)) sqlMeta.Append(sqlMeta.Length == 0 ? "": " ").Append($"-- For {objectType} [{row.ObjectName}]".Replace("  [", " ["));
+            // Done: sqlMeta
+            var rowSqlStatement = sqlMeta.Length == 0 ? row.SqlStatement : $"{sqlMeta}{Environment.NewLine}{row.SqlStatement}";
             var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(rowSqlStatement, SqlSyntaxColors.DarkTheme);
             htmlTable.AppendLine("\t\t<td colspan='2'></td>");
             htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length - 2}'><pre>{tsqlHtmlString}</pre></td>");

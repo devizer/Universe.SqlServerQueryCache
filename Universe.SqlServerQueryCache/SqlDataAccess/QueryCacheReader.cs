@@ -17,6 +17,21 @@ public class QueryCacheReader
         foreach (var row in ret)
             row.Lifetime = now - row.CreationTime;
 
+        // Populate ObjectName and ObjectType
+        SqlQueryObjectsReader objectMetaInfoReader = new SqlQueryObjectsReader(dbProvider, connectionString);
+        var dbIdList = ret.Select(x => x.DatabaseId).Distinct();
+        var objectList = objectMetaInfoReader.Read(dbIdList);
+        var objectsLookup = objectList.ToSpecializedLookup();
+        foreach (var row in ret)
+        {
+            var meta = objectsLookup[row.DatabaseId, row.ObjectId];
+            if (meta != null)
+            {
+                row.ObjectName = meta.ObjectName;
+                row.ObjectType = meta.ObjectType;
+            }
+        }
+
         return ret;
     }
 }
