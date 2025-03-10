@@ -4,6 +4,7 @@ public class QueryCacheRow
 {
     public int DatabaseId { get; set; }
     public string DatabaseName { get; set; }
+    public int ObjectId { get; set; }
     public byte[] SqlHandle { get; set; }
     public DateTime CreationTime { get; set; }
     public string SqlStatement { get; set; }
