@@ -53,15 +53,17 @@ public static class SqlIndexStatSummaryRowExtensions
         {
             var metricTitle = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(metricId.Replace("_", " "));
             return metricTitle
-                .Replace(" Allocation ", " Alloc ")
-                .Replace(" Io ", " IO ")
-                .Replace(" Ms", " ms")
-                .Replace(" In ms", $" in{(char)160}ms")
-                .Replace(" Bytes", " bytes")
-                .Replace(" Pages", " pages")
-                .Replace(" Count", " count")
-                .Replace("Nonleaf ", "Non Leaf ")
-                .Replace(" In ", " in ");
+                    .Replace(" Io ", " IO ")
+                    .Replace(" Ms", " ms")
+                    .Replace(" In ms", $" in{(char)160}ms")
+                    .Replace(" Bytes", " bytes")
+                    .Replace(" Pages", " pages")
+                    .Replace(" Count", " count")
+                    .Replace(" In ", " in ")
+                    .Replace("Nonleaf ", "Non Leaf ")
+                    .Replace(" Promotion ", " Promo ")
+                    .Replace(" Allocation ", " Alloc ")
+                ;
 
         }
         List<string> metrics = new List<string>();
@@ -85,7 +87,7 @@ public static class SqlIndexStatSummaryRowExtensions
         ret.NonEmptyMetrics = nonEmptyMetrics;
         List<string> reportMetrics = excludeEmptyColumns ? nonEmptyMetrics : metrics;
 
-        List<List<string>> columns = new List<string>() { " DB", " Table / View", " Index" }.Select(x => new List<string>() { x }).ToList();
+        List<List<string>> columns = new List<string>() { " DB ", " Table / View ", " Index " }.Select(x => new List<string>() { x }).ToList();
         columns.AddRange(reportMetrics.Select(h => $"-{GetMetricTitle(h)}".Split(' ').ToList()));
         ConsoleTable plainConsoleTable = new ConsoleTable(columns.ToArray());
         plainConsoleTable.NeedUnicode = true;
