@@ -43,11 +43,14 @@ public class SqlCacheHtmlExporter
         htmlTables.AppendLine($"<script>selectedSortProperty = '{selectedSortProperty}';theFile={{}};");
         foreach (var queryCacheRow in Rows)
         {
-            if (!string.IsNullOrEmpty(queryCacheRow.SqlStatement))
-                htmlTables.AppendLine($"\ttheFile[\"{Strings.GetOrAddThenReturnKey(queryCacheRow.SqlStatement)}\"] = {JsExtensions.EncodeJsString(queryCacheRow.SqlStatement)};");
+            // Download SQL STATEMENT IS NOT IMPLEMENTED
+            if (false && !string.IsNullOrEmpty(queryCacheRow.SqlStatement))
+                if (Strings.GetOrAddThenReturnKey(queryCacheRow.SqlStatement, out var keySqlStatement))
+                    htmlTables.AppendLine($"\ttheFile[\"{keySqlStatement}\"] = {JsExtensions.EncodeJsString(queryCacheRow.SqlStatement)};");
 
             if (!string.IsNullOrEmpty(queryCacheRow.QueryPlan))
-                htmlTables.AppendLine($"\ttheFile[\"{Strings.GetOrAddThenReturnKey(queryCacheRow.QueryPlan)}\"] = {JsExtensions.EncodeJsString(queryCacheRow.QueryPlan)};");
+                if (Strings.GetOrAddThenReturnKey(queryCacheRow.QueryPlan, out var keyQueryPlan))
+                    htmlTables.AppendLine($"\ttheFile[\"{keyQueryPlan}\"] = {JsExtensions.EncodeJsString(queryCacheRow.QueryPlan)};");
         }
         htmlTables.AppendLine($"</script>");
 
@@ -293,7 +296,8 @@ public class SqlCacheHtmlExporter
             var htmlSqlPlanButton = "";
             if (!string.IsNullOrEmpty(row.QueryPlan))
             {
-                var jsDownloadPlan = $"dynamicDownloading(theFile['{Strings.GetOrAddThenReturnKey(row.QueryPlan)}'], 'text/xml', 'SQL Execution Plan.sqlplan');";
+                var keyQueryPlan = Strings.GetKey(row.QueryPlan);
+                var jsDownloadPlan = $"dynamicDownloading(theFile['{keyQueryPlan}'], 'text/xml', 'SQL Execution Plan {keyQueryPlan}.sqlplan');";
                 htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"{jsDownloadPlan}; return false;\">⇓</div>";
             }
 
