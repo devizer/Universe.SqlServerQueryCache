@@ -199,7 +199,7 @@ tr.SqlRow td pre span {
 }
 .SqlPlanDownload {
     float: inline-end;
-    border-radius: 3px;
+    border-radius: 4px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     background: #555;
@@ -224,6 +224,6 @@ tr.SqlRow td pre span {
     padding: 1px 0px 0px 0px;
     margin: 0px 10px 0px 0px;
     z-index: 2000;
-    transition: 0.2s
+    transition: 0.1s
 }
 .SqlPadding { vertical-align: top}

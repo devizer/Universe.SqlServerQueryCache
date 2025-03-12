@@ -52,3 +52,10 @@ function SelectContent(newSelectedSortProperty) {
     }
 }
 
+function dynamicDownloading (data, contentType = 'text/plain', fileName = 'download file name placeholder') {
+    var element = window.document.createElement('a');
+    var file = new Blob([data], { type: contentType });
+    element.href = window.URL.createObjectURL(file);
+    element.download = fileName;
+    element.click();
+};

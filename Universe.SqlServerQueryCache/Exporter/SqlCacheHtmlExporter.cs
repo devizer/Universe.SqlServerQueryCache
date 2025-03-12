@@ -291,7 +291,10 @@ public class SqlCacheHtmlExporter
             var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(rowSqlStatement, SqlSyntaxColors.DarkTheme);
             var htmlSqlPlanButton = "";
             if (!string.IsNullOrEmpty(row.QueryPlan))
-                htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"alert('Download SQL Plan placeholder'); return false;\">⇓</div>";
+            {
+                var jsDownloadPlan = $"dynamicDownloading(theFile['{Strings.GetOrAddThenReturnKey(row.QueryPlan)}'], 'text/xml', 'SQL Execution Plan.sqlplan');";
+                htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"{jsDownloadPlan}; return false;\">⇓</div>";
+            }
 
             htmlTable.AppendLine($"\t\t<td colspan='2' class='SqlPadding'>{htmlSqlPlanButton}</td>");
             htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length - 2}'><pre>{tsqlHtmlString}</pre></td>");
