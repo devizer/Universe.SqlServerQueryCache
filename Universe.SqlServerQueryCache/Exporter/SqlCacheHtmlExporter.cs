@@ -289,7 +289,11 @@ public class SqlCacheHtmlExporter
             // Done: sqlMeta
             var rowSqlStatement = sqlMeta.Length == 0 ? row.SqlStatement : $"{sqlMeta}{Environment.NewLine}{row.SqlStatement}";
             var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(rowSqlStatement, SqlSyntaxColors.DarkTheme);
-            htmlTable.AppendLine("\t\t<td colspan='2'></td>");
+            var htmlSqlPlanButton = "";
+            if (!string.IsNullOrEmpty(row.QueryPlan))
+                htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"alert('Download SQL Plan placeholder'); return false;\">⇓</div>";
+
+            htmlTable.AppendLine($"\t\t<td colspan='2' class='SqlPadding'>{htmlSqlPlanButton}</td>");
             htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length - 2}'><pre>{tsqlHtmlString}</pre></td>");
             htmlTable.AppendLine("\t</tr>");
         }

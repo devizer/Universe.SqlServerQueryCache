@@ -192,3 +192,38 @@ tr.SqlRow td pre span {
     color: light-dark(#700029, #FFB993);
 }
 
+/* Float Download Sql Plan */
+.SqlPlanDownload:hover {
+    background: #222;
+    box-shadow: 0px 0px 16px rgba(0,0,0,0.6);
+}
+.SqlPlanDownload {
+    float: inline-end;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    background: #555;
+    border: 1px solid #bbb;
+    border-color: #bbb;
+    display: inline-block;
+    color: white;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 16px;
+    text-align: center;
+    font-family: Tahoma, Verdana;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    /* top right corner */
+    /*position: absolute;*/
+    /* position: sticky; */
+    /*top: 0px;*/
+    top: 0;
+    right: 0;
+    padding: 1px 0px 0px 0px;
+    margin: 0px 10px 0px 0px;
+    z-index: 2000;
+    transition: 0.2s
+}
+.SqlPadding { vertical-align: top}
