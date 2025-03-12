@@ -29,6 +29,8 @@ public class QueryCacheReader
             {
                 row.ObjectName = meta.ObjectName;
                 row.ObjectType = meta.ObjectType;
+                row.ObjectSchemaId = meta.SchemaId.GetValueOrDefault();
+                row.ObjectSchemaName = meta.SchemaName;
             }
         }
 

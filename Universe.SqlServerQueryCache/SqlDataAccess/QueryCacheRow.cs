@@ -5,8 +5,10 @@ public class QueryCacheRow
     public int DatabaseId { get; set; }
     public string DatabaseName { get; set; }
     public int ObjectId { get; set; }
-    public string ObjectName { get; set; } // TODO: Need Separate Query
-    public string ObjectType { get; set; } // TODO: Need Separate Query
+    public int ObjectSchemaId { get; set; } // Need Separate Query per DatabaseId
+    public string ObjectSchemaName { get; set; } // Need Separate Query per DatabaseId
+    public string ObjectName { get; set; } // Need Separate Query per DatabaseId
+    public string ObjectType { get; set; } // Need Separate Query per DatabaseId
     public byte[] SqlHandle { get; set; }
     public DateTime CreationTime { get; set; }
     public string SqlStatement { get; set; }

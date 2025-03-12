@@ -281,11 +281,12 @@ public class SqlCacheHtmlExporter
             htmlTable.AppendLine("\t</tr>");
             htmlTable.AppendLine("\t<tr class='SqlRow'>");
             // BUILD META LINE as SQL: Database, ObjectType and ObjectName
-            StringBuilder sqlMeta = new StringBuilder();
+            StringBuilder sqlMeta = new StringBuilder(); // Use [DB-Stress]; -- For SQL STORED PROCEDURE [Stress By Select]
             if (!string.IsNullOrEmpty(row.DatabaseName)) sqlMeta.Append($"Use [{row.DatabaseName}];");
             var objectType = row.ObjectType?.Replace("_", " ");
             if (objectType != null) objectType = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(objectType);
-            if (!string.IsNullOrEmpty(row.ObjectName)) sqlMeta.Append(sqlMeta.Length == 0 ? "": " ").Append($"-- For {objectType} [{row.ObjectName}]".Replace("  [", " ["));
+            string htmlObjectSchemaName = string.IsNullOrEmpty(row.ObjectSchemaName) ? "" : $"[{row.ObjectSchemaName}].";
+            if (!string.IsNullOrEmpty(row.ObjectName)) sqlMeta.Append(sqlMeta.Length == 0 ? "": " ").Append($"-- For {objectType} {htmlObjectSchemaName}[{row.ObjectName}]".Replace("  [", " ["));
             // Done: sqlMeta
             var rowSqlStatement = sqlMeta.Length == 0 ? row.SqlStatement : $"{sqlMeta}{Environment.NewLine}{row.SqlStatement}";
             var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(rowSqlStatement, SqlSyntaxColors.DarkTheme);
