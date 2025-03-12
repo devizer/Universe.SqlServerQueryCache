@@ -10,7 +10,8 @@ namespace Universe.SqlServerQueryCache.Exporter
     {
         private Dictionary<string, string> KeysByString = new Dictionary<string, string>();
         private readonly object Sync = new object();
-        
+        const string Alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ"; // 1234567890
+
         // Returns true if added
         public bool GetOrAddThenReturnKey(string theString, out string key)
         {
@@ -18,9 +19,10 @@ namespace Universe.SqlServerQueryCache.Exporter
             if (theString == null) return false;
             lock (Sync)
             {
-                if (KeysByString.TryGetValue(theString, out key)) return true;
+                if (KeysByString.TryGetValue(theString, out key)) return false;
                 var index = KeysByString.Count;
-                key = $"{(char)((index % 26) + 65)}{(index / 26):0}";
+                int prefixCount = Alphabet.Length;
+                key = $"{Alphabet[index % prefixCount]}{(index / prefixCount + 1):00}";
                 KeysByString[theString] = key;
                 return true;
             }
@@ -28,7 +30,8 @@ namespace Universe.SqlServerQueryCache.Exporter
 
         public string GetKey(string theString)
         {
-            return GetOrAddThenReturnKey(theString, out var ret) ? ret : null;
+            GetOrAddThenReturnKey(theString, out var ret);
+            return ret;
         }
     }
 }
