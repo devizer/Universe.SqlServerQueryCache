@@ -89,7 +89,7 @@ public class TestQuery
         {
             if (string.IsNullOrEmpty(queryCacheRow.QueryPlan)) continue;
             indexPlan++;
-            File.WriteAllText(Path.Combine(dumpXmlFolder, $"{indexPlan}.xml"), queryCacheRow.QueryPlan);
+            File.WriteAllText(Path.Combine(dumpXmlFolder, $"{indexPlan}.sqlplan"), queryCacheRow.QueryPlan);
         }
 
     }
