@@ -10,6 +10,7 @@ public class QueryCacheRow
     public byte[] SqlHandle { get; set; }
     public DateTime CreationTime { get; set; }
     public string SqlStatement { get; set; }
+    public string QueryPlan { get; set; }
     public long ExecutionCount { get; set; }
 
     public long PlanGenerationNum { get; set; }

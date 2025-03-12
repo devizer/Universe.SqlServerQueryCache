@@ -22,6 +22,7 @@ public class SqlCacheHtmlExporter
 
     public IEnumerable<QueryCacheRow> Rows { get; protected set; } // Available after Export
     public IEnumerable<SummaryRow> Summary { get; protected set; } // Available after Export
+    private JsStringConstants Strings = new JsStringConstants();
 
     private IEnumerable<TableHeaderDefinition> _tableTopHeaders;
 
@@ -39,7 +40,17 @@ public class SqlCacheHtmlExporter
 
         var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
-        htmlTables.AppendLine($"<script>selectedSortProperty = '{selectedSortProperty}';</script>");
+        htmlTables.AppendLine($"<script>selectedSortProperty = '{selectedSortProperty}';theFile={{}};");
+        foreach (var queryCacheRow in Rows)
+        {
+            if (!string.IsNullOrEmpty(queryCacheRow.SqlStatement))
+                htmlTables.AppendLine($"\ttheFile[\"{Strings.GetOrAddThenReturnKey(queryCacheRow.SqlStatement)}\"] = {JsExtensions.EncodeJsString(queryCacheRow.SqlStatement)};");
+
+            if (!string.IsNullOrEmpty(queryCacheRow.QueryPlan))
+                htmlTables.AppendLine($"\ttheFile[\"{Strings.GetOrAddThenReturnKey(queryCacheRow.QueryPlan)}\"] = {JsExtensions.EncodeJsString(queryCacheRow.QueryPlan)};");
+        }
+        htmlTables.AppendLine($"</script>");
+
         foreach (ColumnDefinition sortingDefinition in AllSortingDefinitions.Get())
         {
             bool isSelected = selectedSortProperty == sortingDefinition.GetHtmlId();
