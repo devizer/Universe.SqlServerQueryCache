@@ -84,7 +84,8 @@ public class SqlCacheHtmlExporter
                   + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss
                   + Environment.NewLine + ExporterResources.FloatButtonCss
                   + Environment.NewLine + ExporterResources.FlexedListCss
-                  + Environment.NewLine + ExporterResources.ModalSummaryCss;
+                  + Environment.NewLine + ExporterResources.ModalSummaryCss
+                  + Environment.NewLine + ExporterResources.DownloadIconCss;
 
         var htmlSummary = ExportModalSummaryAsHtml();
 
@@ -312,8 +313,9 @@ public class SqlCacheHtmlExporter
                 var jsDownloadPlan = $"dynamicDownloading(theFile['{keyQueryPlan}'], 'text/xml', 'SQL Execution Plan {keyQueryPlan}.sqlplan');";
                 var htmlDownloadIcon = "⇓";
                 htmlDownloadIcon = $"<img style='width: 20px; height: 20px' src='{DownloadIconSrcEmbedded}' />";
-                htmlDownloadIcon = "&nbsp;";
                 htmlDownloadIcon = $"<div class='Icon'><img style='width: 16px; height: 16px' src='{DownloadIconSrcEmbedded}' /></div>";
+                htmlDownloadIcon = "&nbsp;";
+                htmlDownloadIcon = "<div class='SvgIcon' />";
                 htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"{jsDownloadPlan}; return false;\">{htmlDownloadIcon}</div>";
             }
 
