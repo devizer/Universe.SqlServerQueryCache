@@ -194,7 +194,7 @@ tr.SqlRow td pre span {
 
 /* Float Download Sql Plan */
 .SqlPlanDownload:hover {
-    background: #222;
+    background: #555;
     box-shadow: 0px 0px 16px rgba(0,0,0,0.6);
 }
 .SqlPlanDownload {
@@ -202,7 +202,7 @@ tr.SqlRow td pre span {
     border-radius: 4px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    background: #555;
+    background: #222;
     border: 1px solid #bbb;
     border-color: #bbb;
     display: inline-block;
@@ -227,12 +227,16 @@ tr.SqlRow td pre span {
     transition: 0.1s;
     
 }
-#svgDownloadIcon, .SvgIcon {
+#svgDownloadIcon, .SvgIcon, #svgIconGraphics {
+    /*
     fill: green;
+*/
 }
 .SqlPlanDownload .Icon {
+    /*
     margin-left: 0px;
     fill: green;
+    */
     /*background-image: url("data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCwgMCwgNDAwLDQwMCI+PGcgaWQ9InN2Z2ciPjxwYXRoIGlkPSJwYXRoMCIgZD0iTTE4Ny44ODAgMTkuMDY5IEMgMTc4LjgyMiAyMi4xNTksMTcyLjI2MSAyOS40MzAsMTY5Ljk5NCAzOC44ODkgQyAxNjkuMzQ1IDQxLjU5NCwxNjkuMTc1IDU2LjcwNSwxNjkuMTU4IDExMy4yNDMgTCAxNjkuMTM2IDE4NC4yMDIgMTQyLjEzMCAxNTcuMzA2IEMgMTE2LjQ1MyAxMzEuNzM0LDExNC44OTYgMTMwLjMwMiwxMTAuNDk0IDEyOC4yMTggQyA4Ny42MjUgMTE3LjM5MCw2NC4wMjMgMTQwLjgxNyw3NC40MzMgMTY0LjAwOSBDIDc2LjUzNSAxNjguNjkxLDE3OS4xNDIgMjcxLjY2NiwxODMuOTUxIDI3My45MTkgQyAxOTIuNDQ0IDI3Ny44OTcsMjAwLjE0OSAyNzcuODk3LDIwOC42NDIgMjczLjkxOSBDIDIxMy4yODAgMjcxLjc0NiwzMTUuODkzIDE2OC43NjEsMzE4LjExNSAxNjQuMDQ5IEMgMzI4Ljg3NCAxNDEuMjMwLDMwNC44NjUgMTE3LjMzMywyODIuMDk5IDEyOC4yMDAgQyAyNzcuNzExIDEzMC4yOTUsMjc2LjA1OSAxMzEuODE0LDI1MC40NjMgMTU3LjMwNiBMIDIyMy40NTcgMTg0LjIwMiAyMjMuNDM1IDExMy4yNDMgQyAyMjMuNDExIDM2Ljc5MywyMjMuNDk1IDM4Ljg2NCwyMjAuMTUzIDMyLjI3NiBDIDIxNC4zNjYgMjAuODY3LDE5OS45MjkgMTQuOTU5LDE4Ny44ODAgMTkuMDY5IE04Mi4wOTkgMzIxLjU1MiBDIDU1Ljc0OCAzMjYuODE4LDU0LjU3NyAzNjYuMTg3LDgwLjU0NyAzNzMuNzM2IEMgODUuNTQwIDM3NS4xODgsMzA3LjA1MiAzNzUuMTg4LDMxMi4wNDYgMzczLjczNiBDIDMzNS42MjcgMzY2Ljg4MSwzMzcuOTc1IDMzNC42MTUsMzE1LjcwNiAzMjMuNDQ2IEwgMzExLjQyMCAzMjEuMjk2IDE5Ny44NDAgMzIxLjIwOCBDIDEzNS4zNzAgMzIxLjE2MCw4My4yODcgMzIxLjMxNCw4Mi4wOTkgMzIxLjU1MiAiIHN0cm9rZT0ibm9uZSIgZmlsbD0iI0QwMTExMSIgY2xhc3M9IiIgZmlsbC1ydWxlPSJldmVub2RkIj48L3BhdGg+PC9nPjwvc3ZnPg==");*/
     /*
     width: 20px;
