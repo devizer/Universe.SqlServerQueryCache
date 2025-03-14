@@ -5,11 +5,6 @@
         @content;
     }
 }
-@mixin dark-color-scheme($value: light) {
-    @media (prefers-color-scheme: dark) {
-        @content;
-    }
-}
 
 // COLORS
 $text: #101927;
@@ -21,7 +16,7 @@ $blue-dark: #A9B5ac;
 
 
 // STYLING
-.container {
+.container-for-tabs-demo {
     max-width: 980px;
     width: 100%;
     margin: 0 auto;
@@ -31,7 +26,8 @@ $blue-dark: #A9B5ac;
     justify-content: center;
 }
 
-.btn {
+.TabLink {
+    cursor: pointer;
     font-size: 12px;
     font-weight: 600;
     padding: 10px;
@@ -79,10 +75,10 @@ $blue-dark: #A9B5ac;
     border-radius: 8px;
     padding: 32px 32px 10px 32px;
 
+    /* links */
     &__pills {
         width: fit-content;
         border-bottom: 2px solid rgba($color: $text, $alpha: 0.2);
-
         @include color-scheme(dark) {
             border-bottom: 2px solid rgba($color: $text-dark, $alpha: 0.2);
         }
@@ -100,32 +96,6 @@ $blue-dark: #A9B5ac;
             display: none;
             //   display: flex;
             gap: 20px;
-
-            > figure {
-                max-width: 400px;
-                width: 100%;
-                flex-shrink: 0;
-
-                @media only screen and (max-width: 992px) {
-                    margin: 0 auto;
-                }
-
-                img {
-                    width: 100%;
-                    display: block;
-                }
-            }
-
-            > div {
-                > h4 {
-                    font-size: 24px;
-                    margin: 10px 0;
-                }
-
-                > p {
-                    line-height: 1.8;
-                }
-            }
         }
 
         > div.active {

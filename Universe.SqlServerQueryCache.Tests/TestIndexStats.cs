@@ -40,7 +40,7 @@ Where
 
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
-    public void B_GetIndexStatSchema(SqlServerRef server)
+    public void B1_GetIndexStatSchema(SqlServerRef server)
     {
         SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
         b.Encrypt = false;
@@ -64,6 +64,26 @@ Where
         var dumpFileText = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsSchema.txt");
         File.WriteAllText(dumpFileText, columnsText);
     }
+
+    [Test]
+    [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    public void B2_GetIndexStatSchema_V2(SqlServerRef server)
+    {
+        SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
+        b.Encrypt = false;
+        var cs = b.ConnectionString;
+        SqlResultSetSchemaReader reader = new SqlResultSetSchemaReader(SqlClientFactory.Instance, server.ConnectionString);
+        var columns = reader.GetSchema("select * from sys.dm_db_index_operational_stats(0,0,-1,0)");
+        var columnsText = string.Join(Environment.NewLine, columns.Select(x => x.ToString()).ToArray());
+        Console.WriteLine(columnsText);
+
+        var dumpFileJson = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsSchema-V2.json");
+        File.WriteAllText(dumpFileJson, columns.ToJsonString());
+
+        var dumpFileText = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".IndexStatsSchema-V2.txt");
+        File.WriteAllText(dumpFileText, columnsText);
+    }
+
 
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
