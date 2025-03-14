@@ -1,10 +1,23 @@
 ﻿// https: //dev.to/bek-dev/vanilla-javascript-tabs-21i8
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@mixin color-scheme($value: light) {
+    @media (prefers-color-scheme: $value) {
+        @content;
+    }
+}
+@mixin dark-color-scheme($value: light) {
+    @media (prefers-color-scheme: dark) {
+        @content;
+    }
+}
 
 // COLORS
 $text: #101927;
+$text-dark: #a58787;
 $white: #f7f7f7;
+$white-dark: #272727;
 $blue: #2955ac;
+$blue-dark: #A9B5ac;
 
 
 // STYLING
@@ -26,6 +39,10 @@ $blue: #2955ac;
     outline: transparent;
     border: transparent;
     color: $text;
+    @include color-scheme(dark) {
+        color: $text-dark;
+    }
+
     transition: 300ms all ease-in-out;
 
     @media only screen and (max-width: 576px) {
@@ -34,6 +51,10 @@ $blue: #2955ac;
 
     &.active {
         color: $blue;
+        @include color-scheme(dark) {
+            color: $blue-dark;
+        }
+
         position: relative;
 
         &::after {
@@ -50,16 +71,29 @@ $blue: #2955ac;
 
 .tabs {
     background-color: $white;
+
+    @include color-scheme(dark) {
+        background-color: $white-dark;
+    }
+
     border-radius: 8px;
     padding: 32px 32px 10px 32px;
 
     &__pills {
         width: fit-content;
         border-bottom: 2px solid rgba($color: $text, $alpha: 0.2);
+
+        @include color-scheme(dark) {
+            border-bottom: 2px solid rgba($color: $text-dark, $alpha: 0.2);
+        }
     }
 
     &__panels {
         padding: 20px 0;
+        color: $text;
+        @include color-scheme(dark) {
+            color: $text-dark;
+        }
 
         > div {
             width: 100%;
