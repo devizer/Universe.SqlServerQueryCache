@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace Universe.SqlServerQueryCache.External;
 
@@ -38,10 +34,9 @@ public static class JsExtensions
                     sb.Append("\\t");
                     break;
                 default:
-                    int i = (int)c;
-                    if (i < 32 || i > 127)
+                    if (c < 32 || c > 127)
                     {
-                        sb.AppendFormat("\\u{0:X04}", i);
+                        sb.AppendFormat("\\u{0:X04}", (int)c);
                     }
                     else
                     {
