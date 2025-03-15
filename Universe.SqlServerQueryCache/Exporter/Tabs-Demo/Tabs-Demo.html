@@ -12,35 +12,7 @@
     <!-- link rel="shortcut icon" href="http://example.com/myicon.ico" / -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/devizer/Universe.SqlServerQueryCache/main/HtmlIcon.png" />
     <link href="Tabs-Styles.css" rel="stylesheet" />
-    <script>
-
-window.addEventListener('load', function () {
-
-   const tabButtons = document.querySelectorAll('.tabs__pills .TabLink');
-   const tabContents = document.querySelectorAll('.tabs__panels > div');
-
-   if (tabButtons && tabContents) {
-     tabButtons.forEach((tabBtn) => {
-       tabBtn.addEventListener('click', () => {
-         const tabId = tabBtn.getAttribute('data-id');
-
-         tabButtons.forEach((btn) => btn.classList.remove('active'));
-         tabBtn.classList.add('active');
-
-         tabContents.forEach((content) => {
-           content.classList.remove('active');
-
-           if (content.id === tabId) {
-             content.classList.add('active');
-           }
-         });
-       });
-     });
-   }    
-});    
-    
-    </script>
-
+    <script type="text/javascript" src="Tabs-Summary.js"></script>
 </head>
 <body class='container'>
 
