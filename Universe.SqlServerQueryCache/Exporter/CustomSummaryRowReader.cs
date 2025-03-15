@@ -16,6 +16,7 @@ namespace Universe.SqlServerQueryCache.Exporter
         public class CustomSummaryRow : SummaryRow
         {
             // Default is 2000000000, at the end
+            // Used During Building Only
             public int Position { get; set; } = 2000000000;
         }
 
