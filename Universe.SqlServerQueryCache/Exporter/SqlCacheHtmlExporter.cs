@@ -52,7 +52,17 @@ public class SqlCacheHtmlExporter
 
         var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
-        htmlTables.AppendLine($"<script>selectedSortProperty = '{selectedSortProperty}';theFile={{}};");
+        htmlTables.AppendLine($"<script>");
+        // SCRIPT: Selected Sort Column
+        htmlTables.AppendLine($"selectedSortProperty = '{selectedSortProperty}';theFile={{}};");
+        // SCRIPT: Databases Id and Names
+        var dbIdNameList = Rows
+            .Select(x => new { dbId = x.DatabaseId, dbName = x.DatabaseName, isSystem = SqlDatabaseInfo.IsSystemDatabase(x.DatabaseName) })
+            .Where(x => !string.IsNullOrEmpty(x.dbName))
+            .Distinct()
+            .ToList();
+        htmlTables.AppendLine($"dbNameList={dbIdNameList.ToJsonString()};");
+        // SCRIPT: Query Plan (optional) for each Query
         foreach (var queryCacheRow in Rows)
         {
             // Download SQL STATEMENT IS NOT IMPLEMENTED

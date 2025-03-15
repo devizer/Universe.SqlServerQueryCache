@@ -26,7 +26,8 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
 
         public ConsoleTable CreateColumns()
         {
-            return new ConsoleTable(TreeColumns) { NeedUnicode = true };
+            var arg = TreeColumns.Select(x => (IEnumerable<string>)x.ToArray());
+            return new ConsoleTable(arg) { NeedUnicode = true };
         }
 
         public void WriteColumns(ConsoleTable table, string renderedKey, SqlIndexStatSummaryRow nodeData)
