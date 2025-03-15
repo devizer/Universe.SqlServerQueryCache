@@ -16,7 +16,7 @@ namespace Universe.SqlServerQueryCache.Tests
             Console.WriteLine($"Memory Usage");
             Console.WriteLine($"────────────");
             Console.WriteLine($"Working Set            │ {p.WorkingSet64:n0}");
-            Console.WriteLine($"PagedMemory Size       │ {p.PagedMemorySize64:n0}");
+            Console.WriteLine($"Paged Memory Size      │ {p.PagedMemorySize64:n0}");
             Console.WriteLine($"Peak Paged Memory Size │ {p.PeakPagedMemorySize64:n0}");
         }
     }

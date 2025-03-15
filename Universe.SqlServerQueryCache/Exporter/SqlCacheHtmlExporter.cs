@@ -76,14 +76,8 @@ public class SqlCacheHtmlExporter
         }
         htmlTables.AppendLine($"</script>");
 
-        foreach (ColumnDefinition sortingDefinition in AllSortingDefinitions.Get())
+        void CollectGarbage()
         {
-            bool isSelected = selectedSortProperty == sortingDefinition.GetHtmlId();
-            string htmlForSortedProperty = @$"<div id='{sortingDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>
-{Export(sortingDefinition, isSelected)}
-</div>";
-
-            htmlTables.AppendLine(htmlForSortedProperty);
             if (ReportBuilderConfiguration.NeedGarbageCollection)
             {
                 GC.WaitForPendingFinalizers();
@@ -91,6 +85,28 @@ public class SqlCacheHtmlExporter
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
             }
+        }
+
+        void IterateSortingColumn(ColumnDefinition columnDefinition)
+        {
+            bool isSelected = selectedSortProperty == columnDefinition.GetHtmlId();
+            /*
+            string htmlForSortedProperty = @$"<div id='{columnDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>
+{Export(columnDefinition, isSelected)}
+</div>";
+
+            htmlTables.AppendLine(htmlForSortedProperty);
+            */
+            htmlTables.AppendLine($"<div id='{columnDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>");
+            htmlTables.AppendLine(Export(columnDefinition, isSelected));
+            htmlTables.AppendLine($"</div>");
+
+            CollectGarbage();
+        }
+
+        foreach (ColumnDefinition sortingDefinition in AllSortingDefinitions.Get())
+        {
+            IterateSortingColumn(sortingDefinition);
         }
 
         var css = ExporterResources.StyleCSS
@@ -105,10 +121,13 @@ public class SqlCacheHtmlExporter
         var finalHtml = htmlSummary + Environment.NewLine + htmlTables;
         var finalJs = ExporterResources.MainJS + Environment.NewLine + ExporterResources.ModalSummaryJS;
 
-        return ExporterResources.HtmlTemplate
+        var ret = ExporterResources.HtmlTemplate
             .Replace("{{ Body }}", finalHtml)
             .Replace("{{ MainJS }}", finalJs)
             .Replace("{{ StylesCSS }}", css);
+
+        CollectGarbage();
+        return ret;
     }
 
     string ExportModalSummaryAsHtml()
