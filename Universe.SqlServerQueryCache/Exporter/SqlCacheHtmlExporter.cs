@@ -57,11 +57,15 @@ public class SqlCacheHtmlExporter
         htmlTables.AppendLine($"selectedSortProperty = '{selectedSortProperty}';theFile={{}};");
         // SCRIPT: Databases Id and Names
         var dbIdNameList = Rows
-            .Select(x => new { dbId = x.DatabaseId, dbName = x.DatabaseName, isSystem = SqlDatabaseInfo.IsSystemDatabase(x.DatabaseName) })
+            .ToLookup(x => new { dbId = x.DatabaseId, dbName = x.DatabaseName })
+            .Select(x => new {x.Key.dbId, x.Key.dbName, isSystem = SqlDatabaseInfo.IsSystemDatabase(x.Key.dbName), queriesCount = x.Count() })
             .Where(x => !string.IsNullOrEmpty(x.dbName))
             .Distinct()
+            .OrderBy(x => !x.isSystem)
+            .ThenBy(x => x.dbName)
             .ToList();
-        htmlTables.AppendLine($"dbNameList={dbIdNameList.ToJsonString()};");
+
+        htmlTables.AppendLine($"dbList={dbIdNameList.ToJsonString()};");
         // SCRIPT: Query Plan (optional) for each Query
         foreach (var queryCacheRow in Rows)
         {
@@ -220,7 +224,11 @@ public class SqlCacheHtmlExporter
         foreach (QueryCacheRow row in sortedRows)
         {
             // Metrics Row
-            htmlTable.AppendLine("  <tr class='MetricsRow'>");
+            var hasDatabase = row.DatabaseId != null && !string.IsNullOrEmpty(row.DatabaseName);
+            var trClass = hasDatabase ? $"DB-Id-{row.DatabaseId}" : null;
+            var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : null;
+            // TODO: Choose either DB-Id-? class or data-db-id attribute
+            htmlTable.AppendLine($"  <tr class='MetricsRow {trClass}'{trDataDbId}>");
             foreach (ColumnDefinition column in columnDefinitions)
             {
                 var value = column.PropertyAccessor(row);
@@ -228,7 +236,7 @@ public class SqlCacheHtmlExporter
                 htmlTable.AppendLine($"\t\t<td>{valueString}</td>");
             }
             htmlTable.AppendLine("\t</tr>");
-            htmlTable.AppendLine("\t<tr class='SqlRow'>");
+            htmlTable.AppendLine($"\t<tr class='SqlRow  {trClass}'{trDataDbId}>");
             
             // BUILD META LINE as SQL: Database, ObjectType and ObjectName
             StringBuilder sqlMeta = new StringBuilder(); // Use [DB-Stress]; -- For SQL STORED PROCEDURE [Stress By Select]

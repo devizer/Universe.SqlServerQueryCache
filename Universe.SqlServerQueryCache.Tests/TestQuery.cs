@@ -111,4 +111,13 @@ public class TestQuery
         var sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
         var letsDebug = sqlSysInfo.ToString();
     }
+
+    [TearDown]
+    public void TestTearDown()
+    {
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+    }
 }
