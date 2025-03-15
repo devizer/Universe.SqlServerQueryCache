@@ -1,0 +1,41 @@
+
+.DbListColumn {
+  border-top: solid 1px grey;
+  display222: flex;
+  margin: 1px 0;
+  padding: 3px 6px;
+}
+.DbListColumnCheckbox {
+  _width: 150px;
+  _max-width: 150px;
+  _min-width: 150px;
+  flex-grow: 0;
+  flex-shrink: 1; 
+  align-self: flex-start;
+  text-align: center;
+}
+.DbListColumnTitle {
+  flex-grow: 1;
+  __flex-shrink: 0;  
+}
+.DbListItem {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.DbListItem:first-child .DbListColumn {
+  border-top: none !important;
+}
+
+
+:root {
+    color-scheme: light dark;
+    --dark-back: #0C1011;
+    --dark-fore: #DFDFDD;
+    --light-back: #fafafa;
+    --light-fore: #484b6a;
+}
+body {
+    color: light-dark(var(--light-fore), var(--dark-fore));
+    background-color: light-dark(var(--light-back), var(--dark-back));
+}
+

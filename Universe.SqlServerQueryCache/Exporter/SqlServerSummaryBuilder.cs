@@ -105,8 +105,6 @@ public class SqlServerSummaryBuilder
         if (process_Kernel_Time_Ms.HasValue) yield return new SummaryRow("CPU Kernel Time (seconds)", FormatKind.Numeric2, process_Kernel_Time_Ms.Value / 1000d);
 
 
-
-
         var sysInfoKeys = new string[]
         {
             "Cpu_Count",
