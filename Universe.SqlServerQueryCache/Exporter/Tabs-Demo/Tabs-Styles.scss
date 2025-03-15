@@ -14,6 +14,8 @@ $white-dark: #272727;
 $blue: #2955ac;
 $blue-dark: #A9B5ac;
 
+$border-line-inactive: 2px;
+$border-line-active: 4px;
 
 // STYLING
 .container-for-tabs-demo {
@@ -35,6 +37,7 @@ $blue-dark: #A9B5ac;
     outline: transparent;
     border: transparent;
     color: $text;
+
     @include color-scheme(dark) {
         color: $text-dark;
     }
@@ -47,6 +50,7 @@ $blue-dark: #A9B5ac;
 
     &.active {
         color: $blue;
+
         @include color-scheme(dark) {
             color: $blue-dark;
         }
@@ -56,8 +60,28 @@ $blue-dark: #A9B5ac;
         &::after {
             content: '';
             width: 100%;
-            height: 2px;
+            height: $border-line-active;
             background-color: #2955ac;
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+        }
+    }
+
+    &:hover {
+        color: $blue;
+
+        @include color-scheme(dark) {
+            color: $blue-dark;
+        }
+
+        position: relative;
+
+        &::after {
+            content: '';
+            width: 100%;
+            height: $border-line-active;
+            background-color: #29557c;
             position: absolute;
             bottom: -2px;
             left: 0;
@@ -74,19 +98,20 @@ $blue-dark: #A9B5ac;
 
     border-radius: 8px;
     padding: 32px 32px 10px 32px;
-
     /* links */
     &__pills {
         width: fit-content;
-        border-bottom: 2px solid rgba($color: $text, $alpha: 0.2);
+        border-bottom: $border-line-inactive solid rgba($color: $text, $alpha: 0.2);
+
         @include color-scheme(dark) {
-            border-bottom: 2px solid rgba($color: $text-dark, $alpha: 0.2);
+            border-bottom: $border-line-inactive solid rgba($color: $text-dark, $alpha: 0.2);
         }
     }
 
     &__panels {
         padding: 20px 0;
         color: $text;
+
         @include color-scheme(dark) {
             color: $text-dark;
         }
@@ -106,4 +131,8 @@ $blue-dark: #A9B5ac;
             }
         }
     }
+}
+
+:root {
+    color-scheme: light dark;
 }

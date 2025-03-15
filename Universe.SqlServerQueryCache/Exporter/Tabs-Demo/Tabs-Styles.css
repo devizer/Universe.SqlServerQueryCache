@@ -42,8 +42,26 @@
 .TabLink.active::after {
   content: "";
   width: 100%;
-  height: 2px;
+  height: 4px;
   background-color: #2955ac;
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+}
+.TabLink:hover {
+  color: #2955ac;
+  position: relative;
+}
+@media (prefers-color-scheme: dark) {
+  .TabLink:hover {
+    color: #A9B5ac;
+  }
+}
+.TabLink:hover::after {
+  content: "";
+  width: 100%;
+  height: 4px;
+  background-color: #29557c;
   position: absolute;
   bottom: -2px;
   left: 0;
@@ -90,4 +108,8 @@
   .tabs__panels > div.active {
     flex-direction: column;
   }
+}
+
+:root {
+  color-scheme: light dark;
 }
