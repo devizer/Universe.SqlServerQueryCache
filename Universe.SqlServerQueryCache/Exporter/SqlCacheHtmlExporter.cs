@@ -74,10 +74,13 @@ public class SqlCacheHtmlExporter
 </div>";
 
             htmlTables.AppendLine(htmlForSortedProperty);
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+            if (ReportBuilderConfiguration.NeedGarbageCollection)
+            {
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
         }
 
         var css = ExporterResources.StyleCSS
