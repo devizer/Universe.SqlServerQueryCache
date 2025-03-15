@@ -68,7 +68,7 @@ $border-line-active: 4px;
         }
     }
 
-    &:hover {
+    &:hover:not(.active) {
         color: $blue;
 
         @include color-scheme(dark) {
@@ -81,7 +81,12 @@ $border-line-active: 4px;
             content: '';
             width: 100%;
             height: $border-line-active;
-            background-color: #29557c;
+            background-color: rgba($color: $text, $alpha: 1.0);
+
+            @include color-scheme(dark) {
+                background-color: rgba($color: $text-dark, $alpha: 1.0);
+            }
+
             position: absolute;
             bottom: -2px;
             left: 0;

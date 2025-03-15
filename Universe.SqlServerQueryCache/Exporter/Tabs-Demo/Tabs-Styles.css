@@ -48,23 +48,28 @@
   bottom: -2px;
   left: 0;
 }
-.TabLink:hover {
+.TabLink:hover:not(.active) {
   color: #2955ac;
   position: relative;
 }
 @media (prefers-color-scheme: dark) {
-  .TabLink:hover {
+  .TabLink:hover:not(.active) {
     color: #A9B5ac;
   }
 }
-.TabLink:hover::after {
+.TabLink:hover:not(.active)::after {
   content: "";
   width: 100%;
   height: 4px;
-  background-color: #29557c;
+  background-color: #101927;
   position: absolute;
   bottom: -2px;
   left: 0;
+}
+@media (prefers-color-scheme: dark) {
+  .TabLink:hover:not(.active)::after {
+    background-color: #a58787;
+  }
 }
 
 .tabs {
