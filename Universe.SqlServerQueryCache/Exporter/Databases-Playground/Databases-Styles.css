@@ -1,9 +1,20 @@
+.DbListContainer {
+    flex-direction: column;
+    width: 540px;
+    padding: 0px 20px;
+}
+
+.DbListItem {
+    display: flex;
+    flex-wrap: nowrap;
+}
 
 .DbListColumn {
-  border-top: solid 1px grey;
-  display222: flex;
-  margin: 1px 0;
-  padding: 3px 6px;
+    border-top: solid 1px grey;
+    border-top-color: light-dark(#DDD,#333);
+    display222: flex;
+    margin: 1px 0;
+    padding: 3px 6px;
 }
 .DbListColumnCheckbox {
   _width: 150px;
@@ -17,10 +28,6 @@
 .DbListColumnTitle {
   flex-grow: 1;
   __flex-shrink: 0;  
-}
-.DbListItem {
-  display: flex;
-  flex-wrap: nowrap;
 }
 .DbListItem:first-child .DbListColumn {
   border-top: none !important;

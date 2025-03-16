@@ -292,6 +292,7 @@ public class SqlCacheHtmlExporter
     private string ExportDatabasesTab()
     {
         StringBuilder ret = new StringBuilder();
+        ret.AppendLine("<div class='DbListContainer'>");
         foreach (var databaseTabRow in DatabaseTabRows)
         {
             ret.AppendLine($@"
@@ -305,6 +306,8 @@ public class SqlCacheHtmlExporter
 </div>
 ");
         }
+
+        ret.AppendLine("</div>");
 
         return ret.ToString();
     }
