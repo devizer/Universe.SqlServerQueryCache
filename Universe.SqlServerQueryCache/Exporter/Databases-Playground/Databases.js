@@ -104,10 +104,10 @@ function adjustModalTabHeight() {
         if (heightSummary >= visibleHeightThreshold) globalHeightSummary = heightSummary;
         if (heightDatabases >= visibleHeightThreshold) globalHeightDatabases = heightDatabases;
 
+        console.log("Height Summary=[" + globalHeightSummary + "], Height Databases=[" + globalHeightDatabases + "]");
+
         if (globalHeightSummary) tabDatabases.style.minHeight = globalHeightSummary + "px";
         if (globalHeightDatabases) tabSummary.style.minHeight = globalHeightDatabases + "px";
 
-        console.log("Height Summary=[" + globalHeightSummary + "], Height Databases=[" + globalHeightDatabases + "]");
-        if (hs > 100) tabDatabases.style.minHeight = hs + "px";
     }
 }
