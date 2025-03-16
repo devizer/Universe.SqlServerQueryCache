@@ -145,15 +145,26 @@ public class SqlCacheHtmlExporter
 
     private void BuildDatabaseTabRows()
     {
-        this.DatabaseTabRows = Rows
-            .ToLookup(x => new { dbId = x.DatabaseId, dbName = x.DatabaseName })
-            .Select(x => new { x.Key.dbId, x.Key.dbName, isSystem = SqlDatabaseInfo.IsSystemDatabase(x.Key.dbName), queriesCount = x.Count() })
-            .Where(x => !string.IsNullOrEmpty(x.dbName))
-            .Distinct()
-            .OrderBy(x => !x.isSystem)
-            .ThenBy(x => x.dbName)
-            .Select(x => new DatabaseTabRow() { DatabaseId = x.dbId, DatabaseName = x.dbName, IsSystem = x.isSystem, QueriesCount = x.queriesCount })
-            .ToList();
+        DatabaseTabRow anyDbRow = new DatabaseTabRow()
+        {
+            DatabaseId = 0,
+            DatabaseName = "All the Databases",
+            IsSystem = false,
+            QueriesCount = Rows.Count()
+        };
+
+        var actualDbList = Rows
+                .ToLookup(x => new { dbId = x.DatabaseId, dbName = x.DatabaseName })
+                .Select(x => new { x.Key.dbId, x.Key.dbName, isSystem = SqlDatabaseInfo.IsSystemDatabase(x.Key.dbName), queriesCount = x.Count() })
+                .Where(x => !string.IsNullOrEmpty(x.dbName))
+                .Distinct()
+                .OrderBy(x => !x.isSystem)
+                .ThenBy(x => x.dbName)
+                .Select(x => new DatabaseTabRow() { DatabaseId = x.dbId, DatabaseName = x.dbName, IsSystem = x.isSystem, QueriesCount = x.queriesCount })
+            ;
+
+        var dbRows = new[] { anyDbRow }.Concat(actualDbList).ToList();
+        DatabaseTabRows = dbRows;
     }
 
     public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
@@ -167,7 +178,8 @@ public class SqlCacheHtmlExporter
         htmlTable.AppendLine("  <tr>");
         foreach (var header in headers)
         {
-            htmlTable.AppendLine($"    <th colspan='{header.Columns.Count}' class='TableHeaderGroupCell'>{header.Caption}</th>");
+            bool isFirst = header == headers.FirstOrDefault();
+            htmlTable.AppendLine($"    <th colspan='{header.Columns.Count}' class='TableHeaderGroupCell {(isFirst ? "MetricsSummaryHeaderCell" : "")}'>{header.Caption}</th>");
         }
         htmlTable.AppendLine("  </tr>");
 
@@ -300,14 +312,7 @@ public class SqlCacheHtmlExporter
         StringBuilder ret = new StringBuilder();
         ret.AppendLine("<div id='DbListContainer'>");
 
-        DatabaseTabRow anyDbRow = new DatabaseTabRow()
-        {
-            DatabaseId = 0,
-            DatabaseName = "All the Databases",
-            IsSystem = false,
-            QueriesCount = Rows.Count()
-        };
-        var dbRows = new[] { anyDbRow }.Concat(DatabaseTabRows).ToList();
+        var dbRows = DatabaseTabRows;
         foreach (var databaseTabRow in dbRows)
         {
             ret.AppendLine($@"
@@ -316,7 +321,7 @@ public class SqlCacheHtmlExporter
     <input type='radio' data-for-db-id='{databaseTabRow.DatabaseId}' class='InputChooseDb'/>
   </div>
    <div class='DbListColumn DbListColumnTitle'>
-    {HtmlExtensions.EncodeHtml(databaseTabRow.DatabaseName)}, ({databaseTabRow.QueriesCount}&nbsp;{(databaseTabRow.QueriesCount > 1 ? "queries" : "query")})
+    {HtmlExtensions.EncodeHtml(databaseTabRow.DatabaseName)} ({databaseTabRow.QueriesCount}&nbsp;{(databaseTabRow.QueriesCount > 1 ? "queries" : "query")})
   </div>
 </div>
 ");
