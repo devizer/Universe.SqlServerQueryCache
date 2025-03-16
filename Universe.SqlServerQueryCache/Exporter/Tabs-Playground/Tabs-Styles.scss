@@ -11,8 +11,8 @@ $text: #484b6a;
 $text-dark: #DFDFDD;
 $white: #fafafa;
 $white-dark: #0C1011;
-$blue: #2955ac;
-$blue-dark: #A9B5ac;
+$blue: #26A0DA;
+$blue-dark: #99C8FF;
 
 $border-line-inactive: 2px;
 $border-line-active: 4px;
@@ -125,12 +125,16 @@ $border-line-active: 4px;
         > div {
             width: 100%;
             display: none;
-            //   display: flex;
+            /*
+            display: flex;
+            visibility: hidden;
+            */
             gap: 20px;
         }
 
         > div.active {
             display: flex;
+            /* visibility: visible; */
 
             @media only screen and (max-width: 978px) {
                 flex-direction: column;

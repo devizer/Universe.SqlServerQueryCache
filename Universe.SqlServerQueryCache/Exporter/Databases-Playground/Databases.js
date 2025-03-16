@@ -82,21 +82,32 @@ window.addEventListener('load',
 
 
 // On load height is not defined because display: none
+
+globalHeightSummary = 0;
+globalHeightDatabases = 0;
+
+// 1st Invocation: by handleFloatInfoClick()
+// 2nd Invocation: Tab button click (twice)
 function adjustModalTabHeight() {
+    // return; // because visibility hidden, not display non
     var tabDatabases = document.querySelector('#DbListContainer');
     var tabSummary = document.querySelector('#SummaryModalContent');
 
-    console.log("Type of tabDatabases is [" + (typeof tabDatabases) + "]");
-    console.log("Type of tabSummary is [" + (typeof tabSummary) + "]");
+    console.log("Type of tabDatabases is [" + (typeof tabDatabases) + "], Type of tabSummary is [" + (typeof tabSummary) + "]");
 
     if (tabDatabases && tabSummary) {
         // console.log("tabSummary", tabSummary);
         // console.log("tabDatabases", tabDatabases);
-        var heightSummary = tabSummary.getBoundingClientRect().height;
-        var heightDatabases = tabDatabases.getBoundingClientRect().height;
+        var heightSummary = Math.floor(tabSummary.getBoundingClientRect().height);
+        var heightDatabases = Math.floor(tabDatabases.getBoundingClientRect().height);
+        var visibleHeightThreshold = 10;
+        if (heightSummary >= visibleHeightThreshold) globalHeightSummary = heightSummary;
+        if (heightDatabases >= visibleHeightThreshold) globalHeightDatabases = heightDatabases;
 
-        console.log("Height Databases=[" + heightDatabases + "], Height Summary=[" + heightSummary + "]");
-        var hs = Math.floor(heightSummary);
+        if (globalHeightSummary) tabDatabases.style.minHeight = globalHeightSummary + "px";
+        if (globalHeightDatabases) tabSummary.style.minHeight = globalHeightDatabases + "px";
+
+        console.log("Height Summary=[" + globalHeightSummary + "], Height Databases=[" + globalHeightDatabases + "]");
         if (hs > 100) tabDatabases.style.minHeight = hs + "px";
     }
 }

@@ -18,6 +18,8 @@
                         content.classList.remove('active');
                     }
                 });
+                adjustModalTabHeight();
+                setTimeout(() => adjustModalTabHeight());
             });
         });
     }

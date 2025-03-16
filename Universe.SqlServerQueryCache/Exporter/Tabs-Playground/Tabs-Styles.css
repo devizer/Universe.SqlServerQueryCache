@@ -31,12 +31,12 @@
   }
 }
 .TabLink.active {
-  color: #2955ac;
+  color: #26A0DA;
   position: relative;
 }
 @media (prefers-color-scheme: dark) {
   .TabLink.active {
-    color: #A9B5ac;
+    color: #99C8FF;
   }
 }
 .TabLink.active::after {
@@ -49,12 +49,12 @@
   left: 0;
 }
 .TabLink:hover:not(.active) {
-  color: #2955ac;
+  color: #26A0DA;
   position: relative;
 }
 @media (prefers-color-scheme: dark) {
   .TabLink:hover:not(.active) {
-    color: #A9B5ac;
+    color: #99C8FF;
   }
 }
 .TabLink:hover:not(.active)::after {
@@ -105,10 +105,15 @@
 .tabs__panels > div {
   width: 100%;
   display: none;
+  /*
+  display: flex;
+  visibility: hidden;
+  */
   gap: 20px;
 }
 .tabs__panels > div.active {
   display: flex;
+  /* visibility: visible; */
 }
 @media only screen and (max-width: 978px) {
   .tabs__panels > div.active {
