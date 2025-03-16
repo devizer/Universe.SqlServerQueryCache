@@ -4,7 +4,7 @@ function handleFloatInfoClick() {
     // alert(quote1);
     openModal('modal-summary-root');
     // TODO: ADJUST HEIGHT
-    adjustModalTabHeight();
+    setTimeout(() => adjustModalTabHeight(), 1);
 }
 
 

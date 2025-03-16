@@ -193,9 +193,11 @@ public class SqlCacheHtmlExporter
             // Metrics Row
             var hasDatabase = row.DatabaseId != null && !string.IsNullOrEmpty(row.DatabaseName);
             var trClass = hasDatabase ? $"DB-Id-{row.DatabaseId}" : null;
-            var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : null;
+            // var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : null;
+            // data-db-id required for javascript show/hide db
+            var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : " data-db-id='-1'";
             // TODO: Choose either DB-Id-? class or data-db-id attribute
-            htmlTable.AppendLine($"  <tr class='MetricsRow {trClass}'{trDataDbId}>");
+            htmlTable.AppendLine($"  <tr class='MetricsRow {trClass} hidden'{trDataDbId}>");
             foreach (ColumnDefinition column in columnDefinitions)
             {
                 var value = column.PropertyAccessor(row);
@@ -268,7 +270,7 @@ public class SqlCacheHtmlExporter
         return $@"
     <div id='modal-summary-root' class='Modal-Summary'>
          <div class='Modal-Summary-body Capped'>
-             <center>SQL Server Summary<br/>v{mediumVersion}{customHeadersHtml}<br/><br/></center>
+             <center>SQL Server Summary<br/>v{mediumVersion}{customHeadersHtml}<br/></center>
 
 <div class='tabs'>
   <div class='tabs__pills'>

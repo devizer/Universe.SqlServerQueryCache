@@ -75,7 +75,7 @@
 .tabs {
   background-color: #fafafa;
   border-radius: 8px;
-  padding: 0;
+  padding: 10px 0 0 0;
   /* links */
 }
 @media (prefers-color-scheme: dark) {
