@@ -118,12 +118,14 @@ public class SqlCacheHtmlExporter
                   + Environment.NewLine + ExporterResources.FloatButtonCss
                   + Environment.NewLine + ExporterResources.FlexedListCss
                   + Environment.NewLine + ExporterResources.ModalSummaryCss
-                  + Environment.NewLine + ExporterResources.DownloadIconCss;
+                  + Environment.NewLine + ExporterResources.DownloadIconCss
+                  + Environment.NewLine + ExporterResources.TabsStylesCss
+            ;
 
-        var htmlSummary = ExportModalSummaryAsHtml();
+        var htmlSummary = ExportModalAsHtml();
 
         var finalHtml = htmlSummary + Environment.NewLine + htmlTables;
-        var finalJs = ExporterResources.MainJS + Environment.NewLine + ExporterResources.ModalSummaryJS;
+        var finalJs = ExporterResources.MainJS + Environment.NewLine + ExporterResources.ModalSummaryJS + Environment.NewLine + ExporterResources.TabsSummaryJs;
 
         var ret = ExporterResources.HtmlTemplate
             .Replace("{{ Body }}", finalHtml)
@@ -134,7 +136,7 @@ public class SqlCacheHtmlExporter
         return ret;
     }
 
-    string ExportModalSummaryAsHtml()
+    string ExportModalAsHtml()
     {
         var con = DbProvider.CreateConnection();
         con.ConnectionString = ConnectionString;
@@ -157,12 +159,30 @@ public class SqlCacheHtmlExporter
         // Done: Custom Header
 
         return $@"
-    <div id=""modal-summary-root"" class=""Modal-Summary"">
-         <div class=""Modal-Summary-body Capped"">
+    <div id='modal-summary-root' class='Modal-Summary'>
+         <div class='Modal-Summary-body Capped'>
              <center>SQL Server Summary<br/>v{mediumVersion}{customHeadersHtml}<br/><br/></center>
-{ExportSummaryAsHtml()}
-        </div>
-     </div>
+
+<div class='tabs'>
+  <div class='tabs__pills'>
+    <button class='TabLink active' data-id='SummaryModalContent'>Summary</button>
+    <button class='TabLink' data-id='DatabasesModalContent'>Filter DB</button>
+  </div>
+
+  <div class='tabs__panels'>
+    <!-- Content panels for each tab -->
+    <!-- Summer tab -->
+    <div id='SummaryModalContent' class='active'>
+        {ExportSummaryAsHtml()}
+    </div>
+    <div id='DatabasesModalContent'>
+        THE DATABASES PLACEHOLDER
+    </div>
+  </div>
+</div>
+
+        </div> <!-- Modal -->
+     </div> <!-- Modal -->
 ";
     }
     

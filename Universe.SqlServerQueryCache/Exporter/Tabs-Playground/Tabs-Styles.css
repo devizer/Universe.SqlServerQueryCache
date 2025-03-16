@@ -11,7 +11,7 @@
 
 .TabLink {
   cursor: pointer;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   padding: 10px;
   background: transparent;
@@ -22,7 +22,7 @@
 }
 @media (prefers-color-scheme: dark) {
   .TabLink {
-    color: #a58787;
+    color: #DFDFDD;
   }
 }
 @media only screen and (max-width: 576px) {
@@ -68,28 +68,29 @@
 }
 @media (prefers-color-scheme: dark) {
   .TabLink:hover:not(.active)::after {
-    background-color: #a58787;
+    background-color: #dfdfdd;
   }
 }
 
 .tabs {
   background-color: #f7f7f7;
   border-radius: 8px;
-  padding: 32px 32px 10px 32px;
+  padding: 0;
   /* links */
 }
 @media (prefers-color-scheme: dark) {
   .tabs {
-    background-color: #272727;
+    background-color: #0C1011;
   }
 }
 .tabs__pills {
   width: fit-content;
   border-bottom: 2px solid rgba(16, 25, 39, 0.2);
+  margin: 0 auto;
 }
 @media (prefers-color-scheme: dark) {
   .tabs__pills {
-    border-bottom: 2px solid rgba(165, 135, 135, 0.2);
+    border-bottom: 2px solid rgba(223, 223, 221, 0.2);
   }
 }
 .tabs__panels {
@@ -98,7 +99,7 @@
 }
 @media (prefers-color-scheme: dark) {
   .tabs__panels {
-    color: #a58787;
+    color: #DFDFDD;
   }
 }
 .tabs__panels > div {

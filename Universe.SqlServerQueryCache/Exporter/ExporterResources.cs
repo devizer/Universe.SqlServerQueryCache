@@ -21,6 +21,9 @@ namespace Universe.SqlServerQueryCache.Exporter
         public static string ModalSummaryJS => ReadResource("Modal-Summary.js");
         public static string DownloadIconCss => ReadResource("Download-Icon.css");
 
+        public static string TabsStylesCss => ReadResource("Tabs_Playground.Tabs-Styles.css");
+        public static string TabsSummaryJs => ReadResource("Tabs_Playground.Tabs-Summary.js");
+
 
 
 

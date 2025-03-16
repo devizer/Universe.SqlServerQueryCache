@@ -8,9 +8,9 @@
 
 // COLORS
 $text: #101927;
-$text-dark: #a58787;
+$text-dark: #DFDFDD;
 $white: #f7f7f7;
-$white-dark: #272727;
+$white-dark: #0C1011;
 $blue: #2955ac;
 $blue-dark: #A9B5ac;
 
@@ -30,7 +30,7 @@ $border-line-active: 4px;
 
 .TabLink {
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 600;
     padding: 10px;
     background: transparent;
@@ -102,11 +102,12 @@ $border-line-active: 4px;
     }
 
     border-radius: 8px;
-    padding: 32px 32px 10px 32px;
+    padding: 0;
     /* links */
     &__pills {
         width: fit-content;
         border-bottom: $border-line-inactive solid rgba($color: $text, $alpha: 0.2);
+        margin: 0 auto;
 
         @include color-scheme(dark) {
             border-bottom: $border-line-inactive solid rgba($color: $text-dark, $alpha: 0.2);

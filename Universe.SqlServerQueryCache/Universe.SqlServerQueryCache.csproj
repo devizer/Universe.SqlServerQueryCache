@@ -21,6 +21,8 @@
     <None Remove="Exporter\Modal-Summary.js" />
     <None Remove="Exporter\SqlSyntaxHighlighter.css" />
     <None Remove="Exporter\Style.css" />
+    <None Remove="Exporter\Tabs-Playground\Tabs-Styles.css" />
+    <None Remove="Exporter\Tabs-Playground\Tabs-Summary.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +35,8 @@
     <EmbeddedResource Include="Exporter\Modal-Summary.js" />
     <EmbeddedResource Include="Exporter\SqlSyntaxHighlighter.css" />
     <EmbeddedResource Include="Exporter\Style.css" />
+    <EmbeddedResource Include="Exporter\Tabs-Playground\Tabs-Styles.css" />
+    <EmbeddedResource Include="Exporter\Tabs-Playground\Tabs-Summary.js" />
   </ItemGroup>
 
   <ItemGroup>

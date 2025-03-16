@@ -6,5 +6,9 @@
   {
     "outputFile": "Exporter/Tabs-Demo/Tabs-Styles.css",
     "inputFile": "Exporter/Tabs-Demo/Tabs-Styles.scss"
+  },
+  {
+    "outputFile": "Exporter/Tabs-Playground/Tabs-Styles.css",
+    "inputFile": "Exporter/Tabs-Playground/Tabs-Styles.scss"
   }
 ]
