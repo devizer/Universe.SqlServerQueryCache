@@ -299,7 +299,16 @@ public class SqlCacheHtmlExporter
     {
         StringBuilder ret = new StringBuilder();
         ret.AppendLine("<div id='DbListContainer'>");
-        foreach (var databaseTabRow in DatabaseTabRows)
+
+        DatabaseTabRow anyDbRow = new DatabaseTabRow()
+        {
+            DatabaseId = 0,
+            DatabaseName = "All the Databases",
+            IsSystem = false,
+            QueriesCount = Rows.Count()
+        };
+        var dbRows = new[] { anyDbRow }.Concat(DatabaseTabRows).ToList();
+        foreach (var databaseTabRow in dbRows)
         {
             ret.AppendLine($@"
 <div class='DbListItem'>
@@ -307,7 +316,7 @@ public class SqlCacheHtmlExporter
     <input type='radio' data-for-db-id='{databaseTabRow.DatabaseId}' class='InputChooseDb'/>
   </div>
    <div class='DbListColumn DbListColumnTitle'>
-    {HtmlExtensions.EncodeHtml(databaseTabRow.DatabaseName)}, ({databaseTabRow.QueriesCount}&nbsp;queries)
+    {HtmlExtensions.EncodeHtml(databaseTabRow.DatabaseName)}, ({databaseTabRow.QueriesCount}&nbsp;{(databaseTabRow.QueriesCount > 1 ? "queries" : "query")})
   </div>
 </div>
 ");
