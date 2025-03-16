@@ -21,6 +21,7 @@ public class SqlCacheHtmlExporter
     public readonly string ConnectionString;
 
     public IEnumerable<QueryCacheRow> Rows { get; protected set; } // Available after Export
+    public List<SqlResultSetColumn> ColumnsSchema { get; protected set; }
     public List<SummaryRow> Summary { get; protected set; } // Available after Export
     public List<DatabaseTabRow> DatabaseTabRows { get; protected set; } // Available after Export
     private JsStringConstants Strings = new JsStringConstants();
@@ -55,7 +56,9 @@ public class SqlCacheHtmlExporter
 
     public string Export()
     {
-        Rows = QueryCacheReader.Read(DbProvider, ConnectionString).ToList();
+        QueryCacheReader reader = new QueryCacheReader(DbProvider, ConnectionString);
+        Rows = reader.Read().ToList();
+        ColumnsSchema = reader.ColumnsSchema;
         _tableTopHeaders = AllSortingDefinitions.GetHeaders().ToArray();
         _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
 
@@ -313,12 +316,13 @@ public class SqlCacheHtmlExporter
         ret.AppendLine("<div id='DbListContainer'>");
 
         var dbRows = DatabaseTabRows;
+        var idSelectedDb = 0;
         foreach (var databaseTabRow in dbRows)
         {
             ret.AppendLine($@"
 <div class='DbListItem'>
   <div class='DbListColumn DbListColumnCheckbox'>
-    <input type='radio' data-for-db-id='{databaseTabRow.DatabaseId}' class='InputChooseDb'/>
+    <input type='radio' data-for-db-id='{databaseTabRow.DatabaseId}' class='InputChooseDb' {(databaseTabRow.DatabaseId == idSelectedDb ? "checked" : "")}/>
   </div>
    <div class='DbListColumn DbListColumnTitle'>
     {HtmlExtensions.EncodeHtml(databaseTabRow.DatabaseName)} ({databaseTabRow.QueriesCount}&nbsp;{(databaseTabRow.QueriesCount > 1 ? "queries" : "query")})

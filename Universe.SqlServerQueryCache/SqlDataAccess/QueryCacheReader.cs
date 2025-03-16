@@ -6,10 +6,25 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess;
 
 public class QueryCacheReader
 {
-    public static IEnumerable<QueryCacheRow> Read(DbProviderFactory dbProvider, string connectionString)
+    public readonly DbProviderFactory DbProvider;
+    public readonly string ConnectionString;
+
+    public List<QueryCacheRow> Rows { get; protected set; }
+    public List<SqlResultSetColumn> ColumnsSchema { get; protected set; }
+
+    public QueryCacheReader(DbProviderFactory dbProvider, string connectionString)
     {
-        var con = dbProvider.CreateConnection();
-        con.ConnectionString = connectionString;
+        DbProvider = dbProvider;
+        ConnectionString = connectionString;
+    }
+
+    public IEnumerable<QueryCacheRow> Read()
+    {
+        SqlResultSetSchemaReader schemaReader = new SqlResultSetSchemaReader(DbProvider, ConnectionString);
+        ColumnsSchema = schemaReader.GetSchema("Select * From sys.dm_exec_query_stats");
+
+        var con = DbProvider.CreateConnection();
+        con.ConnectionString = ConnectionString;
         var jit1 = con.Query<int>("Select 1 as Jit", null).ToList();
         var jit2 = new QueryCacheRow().AvgElapsedTime;
         var now = DateTime.Now;
@@ -18,7 +33,7 @@ public class QueryCacheReader
             row.Lifetime = now - row.CreationTime;
 
         // Populate ObjectName and ObjectType
-        SqlQueryObjectsReader objectMetaInfoReader = new SqlQueryObjectsReader(dbProvider, connectionString);
+        SqlQueryObjectsReader objectMetaInfoReader = new SqlQueryObjectsReader(DbProvider, ConnectionString);
         var dbIdList = ret.Select(x => x.DatabaseId).Distinct();
         var objectList = objectMetaInfoReader.Read(dbIdList);
         var objectsLookup = objectList.ToSpecializedLookup();

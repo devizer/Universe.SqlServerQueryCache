@@ -45,12 +45,15 @@ public class TestQuery
         SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
         b.Encrypt = false;
         var cs = b.ConnectionString;
-        var rows = QueryCacheReader.Read(SqlClientFactory.Instance, cs);
-        rows = rows.OrderByDescending(r => r.ExecutionCount).ToArray();
+        QueryCacheReader reader = new QueryCacheReader(SqlClientFactory.Instance, cs);
+        var rows = reader.Read().ToList();
+        var columnsSchema = reader.ColumnsSchema;
+        rows = rows.OrderByDescending(r => r.ExecutionCount).ToList();
         Console.WriteLine($"{rows.Count()} QUERIES ON SERVER [{server}]");
         Console.WriteLine(rows.ToJsonString());
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".Rows.json");
-        File.WriteAllText(dumpFile, rows.ToJsonString());
+        var json = new { ColumnsSchema = columnsSchema, Rows = rows };
+        File.WriteAllText(dumpFile, json.ToJsonString());
     }
 
     [Test]
@@ -58,7 +61,6 @@ public class TestQuery
     public void D_Produce_Html_Report(SqlServerRef server)
     {
         var cs = SqlServerReferenceExtensions.GetConnectionString(server);
-        var rows = QueryCacheReader.Read(SqlClientFactory.Instance, cs);
         var mediumVersion = SqlServerReferenceExtensions.GetMediumVersion(cs);
         SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, cs);
         var singleFileHtml = e.Export();
@@ -66,10 +68,9 @@ public class TestQuery
         Console.WriteLine($"Store HTML Report to {dumpFile}");
         File.WriteAllText(dumpFile, singleFileHtml);
 
-        var jsonExport = new { Summary = e.Summary, Queries = e.Rows };
+        var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
         var jsonFileName = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".json");
         File.WriteAllText(jsonFileName, jsonExport.ToJsonString(false, JsonNaming.PascalCase));
-
 
 
         var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
