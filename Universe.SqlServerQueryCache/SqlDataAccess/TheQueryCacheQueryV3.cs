@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Universe.SqlServerQueryCache.SqlDataAccess
 {
+    // TODO: V4 - columns depends on Columns Schema
     public static class TheQueryCacheQueryV3
     {
         public const string SqlServerQueryCache = @"SELECT -- Query Cache Report https://github.com/devizer/Universe.SqlServerQueryCache
