@@ -134,7 +134,7 @@ internal class MainProgram
 
                     CreateDirectoryForFile(realOutputFile);
                     File.WriteAllText(realOutputFile + ".txt", summaryReport);
-                    var jsonExport = new { Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
+                    var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
                     File.WriteAllText(realOutputFile + ".json", jsonExport.ToJsonString(false, JsonNaming.PascalCase));
 
                     File.WriteAllText(realOutputFile + ".html", singleFileHtml);
