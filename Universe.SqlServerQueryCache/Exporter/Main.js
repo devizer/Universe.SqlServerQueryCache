@@ -1,8 +1,12 @@
 ﻿quote1 = 'I love deadlines. I like the whooshing sound they make as they fly by.';
+
 function handleFloatInfoClick() {
     // alert(quote1);
     openModal('modal-summary-root');
+    // TODO: ADJUST HEIGHT
+    adjustModalTabHeight();
 }
+
 
 document.addEventListener('DOMContentLoaded', function (e) {
     console.log("Document is Ready");

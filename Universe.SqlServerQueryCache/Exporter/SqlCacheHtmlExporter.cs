@@ -128,7 +128,11 @@ public class SqlCacheHtmlExporter
         var htmlSummary = ExportModalAsHtml();
 
         var finalHtml = htmlSummary + Environment.NewLine + htmlTables;
-        var finalJs = ExporterResources.MainJS + Environment.NewLine + ExporterResources.ModalSummaryJS + Environment.NewLine + ExporterResources.TabsSummaryJs;
+        var finalJs = ExporterResources.MainJS
+                      + Environment.NewLine + ExporterResources.ModalSummaryJS
+                      + Environment.NewLine + ExporterResources.TabsSummaryJs
+                      + Environment.NewLine + ExporterResources.DatabasesJs
+            ;
 
         var ret = ExporterResources.HtmlTemplate
             .Replace("{{ Body }}", finalHtml)
@@ -292,7 +296,7 @@ public class SqlCacheHtmlExporter
     private string ExportDatabasesTab()
     {
         StringBuilder ret = new StringBuilder();
-        ret.AppendLine("<div class='DbListContainer'>");
+        ret.AppendLine("<div id='DbListContainer'>");
         foreach (var databaseTabRow in DatabaseTabRows)
         {
             ret.AppendLine($@"
