@@ -37,7 +37,7 @@ public class ElapsedFormatter
         {
             // return elapsed.ToString("d'.'hh':'mm':'ss'.'f");
             // return daysTotalInt.ToString("0") + "d " + (hoursTotalInt % 24).ToString("00") + ":" + new DateTime(0).Add(elapsed).ToString("mm':'ss'.'f");
-            return daysTotalInt.ToString("0") + "d&nbsp;" + $"<span class='Hours'>{hoursTotalInt % 24:00}:</span>" + new DateTime(0).Add(elapsed).ToString("mm':'ss'.'f");
+            return "<span class='Hours'>" + daysTotalInt.ToString("0") + "d&nbsp;" + $"{hoursTotalInt % 24:00}:</span>" + new DateTime(0).Add(elapsed).ToString("mm':'ss'.'f");
         }
     }
 
