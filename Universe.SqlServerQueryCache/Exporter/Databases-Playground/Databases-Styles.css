@@ -26,7 +26,9 @@
   border-top: none !important;
 }
 
-
+/*
+    Below is a copy from the Styles.css
+*/
 :root {
     color-scheme: light dark;
     --dark-back: #0C1011;

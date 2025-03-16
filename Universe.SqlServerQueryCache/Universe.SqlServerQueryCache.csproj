@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Exporter\Databases-Playground\Databases-Styles.css" />
     <None Remove="Exporter\Download-Icon.css" />
     <None Remove="Exporter\Flexed-List.css" />
     <None Remove="Exporter\Float-Button.css" />
@@ -26,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Exporter\Databases-Playground\Databases-Styles.css" />
     <EmbeddedResource Include="Exporter\Download-Icon.css" />
     <EmbeddedResource Include="Exporter\Flexed-List.css" />
     <EmbeddedResource Include="Exporter\Float-Button.css" />

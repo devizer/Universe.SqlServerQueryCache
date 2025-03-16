@@ -22,6 +22,7 @@ public class SqlCacheHtmlExporter
 
     public IEnumerable<QueryCacheRow> Rows { get; protected set; } // Available after Export
     public List<SummaryRow> Summary { get; protected set; } // Available after Export
+    public List<DatabaseTabRow> DatabaseTabRows { get; protected set; } // Available after Export
     private JsStringConstants Strings = new JsStringConstants();
 
     private IEnumerable<TableHeaderDefinition> _tableTopHeaders;
@@ -44,11 +45,20 @@ public class SqlCacheHtmlExporter
         ConnectionString = connectionString;
     }
 
+    public class DatabaseTabRow
+    {
+        public int DatabaseId { get; set; }
+        public string DatabaseName { get; set; }
+        public bool IsSystem { get; set; }
+        public int QueriesCount { get; set; }
+    }
+
     public string Export()
     {
         Rows = QueryCacheReader.Read(DbProvider, ConnectionString).ToList();
         _tableTopHeaders = AllSortingDefinitions.GetHeaders().ToArray();
         _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
+
 
         var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
@@ -56,16 +66,8 @@ public class SqlCacheHtmlExporter
         // SCRIPT: Selected Sort Column
         htmlTables.AppendLine($"selectedSortProperty = '{selectedSortProperty}';theFile={{}};");
         // SCRIPT: Databases Id and Names
-        var dbIdNameList = Rows
-            .ToLookup(x => new { dbId = x.DatabaseId, dbName = x.DatabaseName })
-            .Select(x => new {x.Key.dbId, x.Key.dbName, isSystem = SqlDatabaseInfo.IsSystemDatabase(x.Key.dbName), queriesCount = x.Count() })
-            .Where(x => !string.IsNullOrEmpty(x.dbName))
-            .Distinct()
-            .OrderBy(x => !x.isSystem)
-            .ThenBy(x => x.dbName)
-            .ToList();
-
-        htmlTables.AppendLine($"dbList={dbIdNameList.ToJsonString()};");
+        BuildDatabaseTabRows();
+        htmlTables.AppendLine($"dbList={DatabaseTabRows.ToJsonString()};");
         // SCRIPT: Query Plan (optional) for each Query
         foreach (var queryCacheRow in Rows)
         {
@@ -120,6 +122,7 @@ public class SqlCacheHtmlExporter
                   + Environment.NewLine + ExporterResources.ModalSummaryCss
                   + Environment.NewLine + ExporterResources.DownloadIconCss
                   + Environment.NewLine + ExporterResources.TabsStylesCss
+                  + Environment.NewLine + ExporterResources.DatabasesStylesCss
             ;
 
         var htmlSummary = ExportModalAsHtml();
@@ -135,6 +138,106 @@ public class SqlCacheHtmlExporter
         CollectGarbage();
         return ret;
     }
+
+    private void BuildDatabaseTabRows()
+    {
+        this.DatabaseTabRows = Rows
+            .ToLookup(x => new { dbId = x.DatabaseId, dbName = x.DatabaseName })
+            .Select(x => new { x.Key.dbId, x.Key.dbName, isSystem = SqlDatabaseInfo.IsSystemDatabase(x.Key.dbName), queriesCount = x.Count() })
+            .Where(x => !string.IsNullOrEmpty(x.dbName))
+            .Distinct()
+            .OrderBy(x => !x.isSystem)
+            .ThenBy(x => x.dbName)
+            .Select(x => new DatabaseTabRow() { DatabaseId = x.dbId, DatabaseName = x.dbName, IsSystem = x.isSystem, QueriesCount = x.queriesCount })
+            .ToList();
+    }
+
+    public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
+    {
+        var headers = _tableTopHeaders.ToArray();
+        var sortedRows = sortByColumn.SortAction(Rows).ToArray();
+        StringBuilder htmlTable = new StringBuilder();
+        htmlTable.AppendLine("  <table class='Metrics'><thead>");
+
+        // Table Header: 1st Row (metrics categories)
+        htmlTable.AppendLine("  <tr>");
+        foreach (var header in headers)
+        {
+            htmlTable.AppendLine($"    <th colspan='{header.Columns.Count}' class='TableHeaderGroupCell'>{header.Caption}</th>");
+        }
+        htmlTable.AppendLine("  </tr>");
+
+        // Table Header: 2nd row (concrete metrics)
+        htmlTable.AppendLine("  <tr>");
+        var columnDefinitions = headers.SelectMany(h => h.Columns).ToArray();
+        foreach (var column in columnDefinitions)
+        {
+            bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
+            const string arrows = " ⇓ ⇩ ↓ ↡";
+            // var attrs = "";
+            // var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
+            // if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
+            // var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
+            htmlTable.AppendLine($"    <th class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button>{column.TheCaption}</button></th>");
+        }
+        htmlTable.AppendLine("  </tr>");
+        htmlTable.AppendLine("  </thead>");
+
+        htmlTable.AppendLine("  <tbody>");
+        foreach (QueryCacheRow row in sortedRows)
+        {
+            // Metrics Row
+            var hasDatabase = row.DatabaseId != null && !string.IsNullOrEmpty(row.DatabaseName);
+            var trClass = hasDatabase ? $"DB-Id-{row.DatabaseId}" : null;
+            var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : null;
+            // TODO: Choose either DB-Id-? class or data-db-id attribute
+            htmlTable.AppendLine($"  <tr class='MetricsRow {trClass}'{trDataDbId}>");
+            foreach (ColumnDefinition column in columnDefinitions)
+            {
+                var value = column.PropertyAccessor(row);
+                var valueString = GetValueAsHtml(value, row, column);
+                htmlTable.AppendLine($"\t\t<td>{valueString}</td>");
+            }
+            htmlTable.AppendLine("\t</tr>");
+            htmlTable.AppendLine($"\t<tr class='SqlRow  {trClass}'{trDataDbId}>");
+
+            // BUILD META LINE as SQL: Database, ObjectType and ObjectName
+            StringBuilder sqlMeta = new StringBuilder(); // Use [DB-Stress]; -- For SQL STORED PROCEDURE [Stress By Select]
+            if (!string.IsNullOrEmpty(row.DatabaseName)) sqlMeta.Append($"Use [{row.DatabaseName}];");
+            var objectType = row.ObjectType?.Replace("_", " ");
+            if (objectType != null) objectType = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(objectType);
+            string htmlObjectSchemaName = string.IsNullOrEmpty(row.ObjectSchemaName) ? "" : $"[{row.ObjectSchemaName}].";
+            if (!string.IsNullOrEmpty(row.ObjectName)) sqlMeta.Append(sqlMeta.Length == 0 ? "" : " ").Append($"-- For {objectType} {htmlObjectSchemaName}[{row.ObjectName}]".Replace("  [", " ["));
+            // Done: sqlMeta
+
+            var rowSqlStatement = sqlMeta.Length == 0 ? row.SqlStatement : $"{sqlMeta}{Environment.NewLine}{row.SqlStatement}";
+            var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(rowSqlStatement, SqlSyntaxColors.DarkTheme);
+            var htmlSqlPlanButton = "";
+            if (!string.IsNullOrEmpty(row.QueryPlan))
+            {
+                var keyQueryPlan = Strings.GetKey(row.QueryPlan);
+                var jsDownloadPlan = $"dynamicDownloading(theFile['{keyQueryPlan}'], 'text/xml', 'SQL Execution Plan {keyQueryPlan}.sqlplan');";
+                var htmlDownloadIcon = "⇓";
+                htmlDownloadIcon = $"<img style='width: 20px; height: 20px' src='{DownloadIconSrcEmbedded}' />";
+                htmlDownloadIcon = $"<div class='Icon'><img style='width: 16px; height: 16px' src='{DownloadIconSrcEmbedded}' /></div>";
+                htmlDownloadIcon = "&nbsp;";
+                htmlDownloadIcon = "<div class='SvgIcon' />";
+                htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"{jsDownloadPlan}; return false;\">{htmlDownloadIcon}</div>";
+            }
+
+            // Query Plan Cell (2 columns)
+            htmlTable.AppendLine($"\t\t<td colspan='2' class='SqlPadding'>{htmlSqlPlanButton}</td>");
+
+            // T-SQL Cell (rest of columns)
+            htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length - 2}'><pre>{tsqlHtmlString}</pre></td>");
+            htmlTable.AppendLine("\t</tr>");
+        }
+        htmlTable.AppendLine("  </tbody>");
+
+        htmlTable.AppendLine("  </table>");
+        return htmlTable.ToString();
+    }
+
 
     string ExportModalAsHtml()
     {
@@ -176,7 +279,7 @@ public class SqlCacheHtmlExporter
         {ExportSummaryAsHtml()}
     </div>
     <div id='DatabasesModalContent'>
-        THE DATABASES PLACEHOLDER
+        {ExportDatabasesTab()}
     </div>
   </div>
 </div>
@@ -185,7 +288,27 @@ public class SqlCacheHtmlExporter
      </div> <!-- Modal -->
 ";
     }
-    
+
+    private string ExportDatabasesTab()
+    {
+        StringBuilder ret = new StringBuilder();
+        foreach (var databaseTabRow in DatabaseTabRows)
+        {
+            ret.AppendLine($@"
+<div class='DbListItem'>
+  <div class='DbListColumn DbListColumnCheckbox'>
+    <input type='radio' data-for-db-id='{databaseTabRow.DatabaseId}' class='InputChooseDb'/>
+  </div>
+   <div class='DbListColumn DbListColumnTitle'>
+    {HtmlExtensions.EncodeHtml(databaseTabRow.DatabaseName)}, ({databaseTabRow.QueriesCount}&nbsp;queries)
+  </div>
+</div>
+");
+        }
+
+        return ret.ToString();
+    }
+
     private string ExportSummaryAsHtml()
     {
         SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows.ToList());
@@ -209,91 +332,6 @@ public class SqlCacheHtmlExporter
     }
 
 
-    public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
-    {
-        var headers = _tableTopHeaders.ToArray();
-        var sortedRows = sortByColumn.SortAction(Rows).ToArray();
-        StringBuilder htmlTable = new StringBuilder();
-        htmlTable.AppendLine("  <table class='Metrics'><thead>");
-        
-        // Table Header: 1st Row (metrics categories)
-        htmlTable.AppendLine("  <tr>");
-        foreach (var header in headers)
-        {
-            htmlTable.AppendLine($"    <th colspan='{header.Columns.Count}' class='TableHeaderGroupCell'>{header.Caption}</th>");
-        }
-        htmlTable.AppendLine("  </tr>");
-        
-        // Table Header: 2nd row (concrete metrics)
-        htmlTable.AppendLine("  <tr>");
-        var columnDefinitions = headers.SelectMany(h => h.Columns).ToArray();
-        foreach (var column in columnDefinitions)
-        {
-            bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
-            const string arrows = " ⇓ ⇩ ↓ ↡";
-            // var attrs = "";
-            // var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
-            // if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
-            // var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
-            htmlTable.AppendLine($"    <th class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button>{column.TheCaption}</button></th>");
-        }
-        htmlTable.AppendLine("  </tr>");
-        htmlTable.AppendLine("  </thead>");
-
-        htmlTable.AppendLine("  <tbody>");
-        foreach (QueryCacheRow row in sortedRows)
-        {
-            // Metrics Row
-            var hasDatabase = row.DatabaseId != null && !string.IsNullOrEmpty(row.DatabaseName);
-            var trClass = hasDatabase ? $"DB-Id-{row.DatabaseId}" : null;
-            var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : null;
-            // TODO: Choose either DB-Id-? class or data-db-id attribute
-            htmlTable.AppendLine($"  <tr class='MetricsRow {trClass}'{trDataDbId}>");
-            foreach (ColumnDefinition column in columnDefinitions)
-            {
-                var value = column.PropertyAccessor(row);
-                var valueString = GetValueAsHtml(value, row, column);
-                htmlTable.AppendLine($"\t\t<td>{valueString}</td>");
-            }
-            htmlTable.AppendLine("\t</tr>");
-            htmlTable.AppendLine($"\t<tr class='SqlRow  {trClass}'{trDataDbId}>");
-            
-            // BUILD META LINE as SQL: Database, ObjectType and ObjectName
-            StringBuilder sqlMeta = new StringBuilder(); // Use [DB-Stress]; -- For SQL STORED PROCEDURE [Stress By Select]
-            if (!string.IsNullOrEmpty(row.DatabaseName)) sqlMeta.Append($"Use [{row.DatabaseName}];");
-            var objectType = row.ObjectType?.Replace("_", " ");
-            if (objectType != null) objectType = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(objectType);
-            string htmlObjectSchemaName = string.IsNullOrEmpty(row.ObjectSchemaName) ? "" : $"[{row.ObjectSchemaName}].";
-            if (!string.IsNullOrEmpty(row.ObjectName)) sqlMeta.Append(sqlMeta.Length == 0 ? "": " ").Append($"-- For {objectType} {htmlObjectSchemaName}[{row.ObjectName}]".Replace("  [", " ["));
-            // Done: sqlMeta
-            
-            var rowSqlStatement = sqlMeta.Length == 0 ? row.SqlStatement : $"{sqlMeta}{Environment.NewLine}{row.SqlStatement}";
-            var tsqlHtmlString = TSqlToVanillaHtmlConverter.ConvertTSqlToHtml(rowSqlStatement, SqlSyntaxColors.DarkTheme);
-            var htmlSqlPlanButton = "";
-            if (!string.IsNullOrEmpty(row.QueryPlan))
-            {
-                var keyQueryPlan = Strings.GetKey(row.QueryPlan);
-                var jsDownloadPlan = $"dynamicDownloading(theFile['{keyQueryPlan}'], 'text/xml', 'SQL Execution Plan {keyQueryPlan}.sqlplan');";
-                var htmlDownloadIcon = "⇓";
-                htmlDownloadIcon = $"<img style='width: 20px; height: 20px' src='{DownloadIconSrcEmbedded}' />";
-                htmlDownloadIcon = $"<div class='Icon'><img style='width: 16px; height: 16px' src='{DownloadIconSrcEmbedded}' /></div>";
-                htmlDownloadIcon = "&nbsp;";
-                htmlDownloadIcon = "<div class='SvgIcon' />";
-                htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"{jsDownloadPlan}; return false;\">{htmlDownloadIcon}</div>";
-            }
-
-            // Query Plan Cell (2 columns)
-            htmlTable.AppendLine($"\t\t<td colspan='2' class='SqlPadding'>{htmlSqlPlanButton}</td>");
-            
-            // T-SQL Cell (rest of columns)
-            htmlTable.AppendLine($"\t\t<td colspan='{columnDefinitions.Length - 2}'><pre>{tsqlHtmlString}</pre></td>");
-            htmlTable.AppendLine("\t</tr>");
-        }
-        htmlTable.AppendLine("  </tbody>");
-
-        htmlTable.AppendLine("  </table>");
-        return htmlTable.ToString();
-    }
 
     private static string GetValueAsHtml(object value, QueryCacheRow row, ColumnDefinition column)
     {

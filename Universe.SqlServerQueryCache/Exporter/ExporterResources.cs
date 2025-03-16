@@ -23,6 +23,7 @@ namespace Universe.SqlServerQueryCache.Exporter
 
         public static string TabsStylesCss => ReadResource("Tabs_Playground.Tabs-Styles.css");
         public static string TabsSummaryJs => ReadResource("Tabs_Playground.Tabs-Summary.js");
+        public static string DatabasesStylesCss => ReadResource("Databases_Playground.Databases-Styles.css");
 
 
 

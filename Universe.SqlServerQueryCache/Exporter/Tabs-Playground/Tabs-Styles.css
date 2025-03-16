@@ -17,7 +17,7 @@
   background: transparent;
   outline: transparent;
   border: transparent;
-  color: #101927;
+  color: #484b6a;
   transition: 300ms all ease-in-out;
 }
 @media (prefers-color-scheme: dark) {
@@ -61,7 +61,7 @@
   content: "";
   width: 100%;
   height: 4px;
-  background-color: #101927;
+  background-color: #484b6a;
   position: absolute;
   bottom: -2px;
   left: 0;
@@ -73,7 +73,7 @@
 }
 
 .tabs {
-  background-color: #f7f7f7;
+  background-color: #fafafa;
   border-radius: 8px;
   padding: 0;
   /* links */
@@ -85,7 +85,7 @@
 }
 .tabs__pills {
   width: fit-content;
-  border-bottom: 2px solid rgba(16, 25, 39, 0.2);
+  border-bottom: 2px solid rgba(72, 75, 106, 0.2);
   margin: 0 auto;
 }
 @media (prefers-color-scheme: dark) {
@@ -95,7 +95,7 @@
 }
 .tabs__panels {
   padding: 20px 0;
-  color: #101927;
+  color: #484b6a;
 }
 @media (prefers-color-scheme: dark) {
   .tabs__panels {
