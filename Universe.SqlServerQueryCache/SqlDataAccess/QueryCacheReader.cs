@@ -29,7 +29,9 @@ public class QueryCacheReader
         // var jit1 = con.Query<int>("Select 1 as Jit", null).ToList();
         // var jit2 = new QueryCacheRow().AvgElapsedTime;
         var now = DateTime.Now;
-        var ret = con.Query<QueryCacheRow>(TheQueryCacheQueryV3.SqlServerQueryCache, null).ToList();
+        var sqlServerQueryCache = TheQueryCacheQueryV3.SqlServerQueryCache;
+        sqlServerQueryCache = new TheQueryCacheQueryV4(ColumnsSchema).GetSqlQuery();
+        var ret = con.Query<QueryCacheRow>(sqlServerQueryCache, null).ToList();
         foreach (var row in ret)
             row.Lifetime = now - row.CreationTime;
 
