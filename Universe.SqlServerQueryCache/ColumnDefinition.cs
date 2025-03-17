@@ -27,7 +27,7 @@ public class TableHeaderDefinition
         Columns.Add(column);
         return this;
     }
-    public TableHeaderDefinition SetVisibilility(bool isVisible)
+    public TableHeaderDefinition SetVisibility(bool isVisible)
     {
         Visible = isVisible;
         return this;
@@ -93,6 +93,7 @@ public class AllSortingDefinitions
             .AddColumn(CreateSortableColumn("Lifetime", r => r.Lifetime));
 
         yield return new TableHeaderDefinition("Duration")
+            .SetVisibility(false)
             .AddColumn(CreateSortableColumn("Total", r => r.TotalElapsedTime))
             .AddColumn(CreateSortableColumn("Avg", r => r.AvgElapsedTime))
             // .AddColumn(CreateSortableColumn("Last", r => r.LastElapsedTime))
@@ -130,7 +131,7 @@ public class AllSortingDefinitions
         if (ColumnsSchema.HasRows)
         {
             yield return new TableHeaderDefinition("Rows")
-                .SetVisibilility(true)
+                .SetVisibility(true)
                 .AddColumn(CreateSortableColumn("Total", r => r.TotalRows))
                 .AddColumn(CreateSortableColumn("Avg", r => r.AvgRows))
                 // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
@@ -140,8 +141,8 @@ public class AllSortingDefinitions
 
         if (ColumnsSchema.HasGrantKb)
         {
-            yield return new TableHeaderDefinition("Memory, Kb")
-                .SetVisibilility(false)
+            yield return new TableHeaderDefinition("Memory Grant, Kb")
+                .SetVisibility(false)
                 .AddColumn(CreateSortableColumn("Total", r => r.TotalGrantKb))
                 .AddColumn(CreateSortableColumn("Avg", r => r.AvgGrantKb))
                 // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
@@ -151,8 +152,8 @@ public class AllSortingDefinitions
 
         if (ColumnsSchema.HasGrantKb)
         {
-            yield return new TableHeaderDefinition("Memory Used")
-                .SetVisibilility(false)
+            yield return new TableHeaderDefinition("Memory Used, Kb")
+                .SetVisibility(true)
                 .AddColumn(CreateSortableColumn("Total", r => r.TotalUsedGrantKb))
                 .AddColumn(CreateSortableColumn("Avg", r => r.AvgUsedGrantKb))
                 // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
@@ -163,7 +164,7 @@ public class AllSortingDefinitions
         if (ColumnsSchema.HasNumPhysicalReads)
         {
             yield return new TableHeaderDefinition("Physical Reads v2")
-                .SetVisibilility(false)
+                .SetVisibility(false)
                 .AddColumn(CreateSortableColumn("Total", r => r.TotalNumPhysicalReads))
                 .AddColumn(CreateSortableColumn("Avg", r => r.AvgNumPhysicalReads))
                 // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))

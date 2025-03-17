@@ -18,13 +18,26 @@ window.addEventListener('load',
 
                         var isChecked = input.checked;
 
-                        var cells = document.querySelectorAll('*[data-columns-header-id="' + columnsHeaderId + '"]');
-                        console.log("Cells count is " + cells.length + " for Columns Header [" + columnsHeaderId + "] visible=" + isChecked);
-                        var act = isChecked
-                            ? cell => cell.classList.remove("Hidden")
-                            : cell => cell.classList.add("Hidden");
+                        var totalCheckedCount = 0;
+                        dbInputs.forEach(x => totalCheckedCount += x.checked ? 1 : 0);
+                        if (totalCheckedCount > 0 || isChecked) {
+                            // at least one column header is checked
+                            var cells = document.querySelectorAll('*[data-columns-header-id="' + columnsHeaderId + '"]');
+                            console.log("Cells count is " + cells.length + " for Columns Header [" + columnsHeaderId + "] visible=" + isChecked);
+                            var act = isChecked
+                                ? cell => cell.classList.remove("Hidden")
+                                : cell => cell.classList.add("Hidden");
 
-                        cells.forEach(cell => act(cell));
+                            cells.forEach(cell => act(cell));
+                        }
+                        else {
+                            // cancel un-check
+                            input.checked = true;
+                        }
+
+
+
+
                     });
             });
 

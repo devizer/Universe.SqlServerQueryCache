@@ -183,7 +183,9 @@ public class SqlCacheHtmlExporter
         foreach (var header in headers)
         {
             bool isFirst = header == headers.FirstOrDefault();
-            htmlTable.AppendLine($"    <th data-columns-header-id='{header.Caption}' colspan='{header.Columns.Count}' class='TableHeaderGroupCell {(isFirst ? "MetricsSummaryHeaderCell" : "")}'>{header.Caption}</th>");
+            var class1 = (isFirst ? "MetricsSummaryHeaderCell" : "");
+            var class2 = header.Visible ? "" : "Hidden";
+            htmlTable.AppendLine($"    <th data-columns-header-id='{header.Caption}' colspan='{header.Columns.Count}' class='TableHeaderGroupCell {class1} {class2}'>{header.Caption}</th>");
         }
         htmlTable.AppendLine("  </tr>");
 
@@ -195,11 +197,13 @@ public class SqlCacheHtmlExporter
         {
             bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
             const string arrows = " ⇓ ⇩ ↓ ↡";
-            // var attrs = "";
-            // var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
-            // if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
-            // var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
-            htmlTable.AppendLine($"    <th data-columns-header-id='{header.Caption}' class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button>{column.TheCaption}</button></th>");
+                // var attrs = "";
+                // var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
+                // if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
+                // var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
+                var class1 = (isThisSorting ? "Selected" : "");
+                var class2 = header.Visible ? "" : "Hidden";
+                htmlTable.AppendLine($"    <th data-columns-header-id='{header.Caption}' class='TableHeaderCell {class1} {class2}' data-sorting='{column.GetHtmlId()}'><button>{column.TheCaption}</button></th>");
         }
         htmlTable.AppendLine("  </tr>");
         htmlTable.AppendLine("  </thead>");
@@ -220,7 +224,8 @@ public class SqlCacheHtmlExporter
             {
                 var value = column.PropertyAccessor(row);
                 var valueString = GetValueAsHtml(value, row, column);
-                htmlTable.AppendLine($"\t\t<td data-columns-header-id='{header.Caption}'>{valueString}</td>");
+                var class2 = header.Visible ? "" : " class='Hidden'";
+                htmlTable.AppendLine($"\t\t<td data-columns-header-id='{header.Caption}'{class2}>{valueString}</td>");
             }
             htmlTable.AppendLine("\t</tr>");
             htmlTable.AppendLine($"\t<tr class='SqlRow  {trClass}'{trDataDbId}>");
