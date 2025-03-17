@@ -10,7 +10,7 @@ public class QueryCacheReader
     public readonly string ConnectionString;
 
     public List<QueryCacheRow> Rows { get; protected set; }
-    public List<SqlResultSetColumn> ColumnsSchema { get; protected set; }
+    public SqlQueryStatsSchema ColumnsSchema { get; protected set; }
 
     public QueryCacheReader(DbProviderFactory dbProvider, string connectionString)
     {
@@ -21,12 +21,13 @@ public class QueryCacheReader
     public IEnumerable<QueryCacheRow> Read()
     {
         SqlResultSetSchemaReader schemaReader = new SqlResultSetSchemaReader(DbProvider, ConnectionString);
-        ColumnsSchema = schemaReader.GetSchema("Select * From sys.dm_exec_query_stats");
+        var statsColumns = schemaReader.GetSchema("Select * From sys.dm_exec_query_stats");
+        ColumnsSchema = new SqlQueryStatsSchema(statsColumns);
 
         var con = DbProvider.CreateConnection();
         con.ConnectionString = ConnectionString;
-        var jit1 = con.Query<int>("Select 1 as Jit", null).ToList();
-        var jit2 = new QueryCacheRow().AvgElapsedTime;
+        // var jit1 = con.Query<int>("Select 1 as Jit", null).ToList();
+        // var jit2 = new QueryCacheRow().AvgElapsedTime;
         var now = DateTime.Now;
         var ret = con.Query<QueryCacheRow>(TheQueryCacheQueryV3.SqlServerQueryCache, null).ToList();
         foreach (var row in ret)

@@ -40,7 +40,24 @@ public class TestQuery
 
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
-    public void C_QueryQueryCache(SqlServerRef server)
+    public void C_ShowQueryStatsSchema(SqlServerRef server)
+    {
+        SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
+        b.Encrypt = false;
+        var cs = b.ConnectionString;
+        SqlResultSetSchemaReader schemaReader = new SqlResultSetSchemaReader(SqlClientFactory.Instance, cs);
+        var columns = schemaReader.GetSchema("Select * From sys.dm_exec_query_stats");
+        SqlQueryStatsSchema schema = new SqlQueryStatsSchema(columns);
+        Console.WriteLine(schema);
+
+        var dumpFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".QueryStatsSchema.txt");
+        File.WriteAllText(dumpFile, schema.ToString());
+
+    }
+
+    [Test]
+    [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    public void D_QueryQueryCache(SqlServerRef server)
     {
         SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(server.ConnectionString);
         b.Encrypt = false;
@@ -58,7 +75,7 @@ public class TestQuery
 
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
-    public void D_Produce_Html_Report(SqlServerRef server)
+    public void E_Produce_Html_Report(SqlServerRef server)
     {
         var cs = SqlServerReferenceExtensions.GetConnectionString(server);
         var mediumVersion = SqlServerReferenceExtensions.GetMediumVersion(cs);
@@ -71,7 +88,6 @@ public class TestQuery
         var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
         var jsonFileName = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".json");
         File.WriteAllText(jsonFileName, jsonExport.ToJsonString(false, JsonNaming.PascalCase));
-
 
         var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
         string summaryReport = SqlSummaryTextExporter.ExportAsText(e.Summary, $"SQL Server {mediumVersion} on {hostPlatform}");
@@ -98,7 +114,7 @@ public class TestQuery
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
     // TODO: Remove, because it was used for debugging only
-    public void E_Get_SQL_OS_Sys_Info(SqlServerRef server)
+    public void F_Get_SQL_OS_Sys_Info(SqlServerRef server)
     {
         var cs = SqlServerReferenceExtensions.GetConnectionString(server);
         var sysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);

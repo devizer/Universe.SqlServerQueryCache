@@ -1,0 +1,77 @@
+ #0 [sql_handle] «varbinary» is System.Byte[], System.Data.SqlTypes.SqlBinary
+ #1 [statement_start_offset] «int» is System.Int32, System.Data.SqlTypes.SqlInt32
+ #2 [statement_end_offset] «int» is System.Int32, System.Data.SqlTypes.SqlInt32
+ #3 [plan_generation_num] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+ #4 [plan_handle] «varbinary» is System.Byte[], System.Data.SqlTypes.SqlBinary
+ #5 [creation_time] «datetime» is System.DateTime, System.Data.SqlTypes.SqlDateTime
+ #6 [last_execution_time] «datetime» is System.DateTime, System.Data.SqlTypes.SqlDateTime
+ #7 [execution_count] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+ #8 [total_worker_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+ #9 [last_worker_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#10 [min_worker_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#11 [max_worker_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#12 [total_physical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#13 [last_physical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#14 [min_physical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#15 [max_physical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#16 [total_logical_writes] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#17 [last_logical_writes] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#18 [min_logical_writes] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#19 [max_logical_writes] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#20 [total_logical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#21 [last_logical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#22 [min_logical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#23 [max_logical_reads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#24 [total_clr_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#25 [last_clr_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#26 [min_clr_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#27 [max_clr_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#28 [total_elapsed_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#29 [last_elapsed_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#30 [min_elapsed_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#31 [max_elapsed_time] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#32 [query_hash] «binary» is System.Byte[], System.Data.SqlTypes.SqlBinary
+#33 [query_plan_hash] «binary» is System.Byte[], System.Data.SqlTypes.SqlBinary
+
+#34 [total_rows] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#35 [last_rows] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#36 [min_rows] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#37 [max_rows] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#38 [total_dop] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#39 [last_dop] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#40 [min_dop] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#41 [max_dop] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#42 [total_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#43 [last_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#44 [min_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#45 [max_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#46 [total_used_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#47 [last_used_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#48 [min_used_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#49 [max_used_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#50 [total_ideal_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#51 [last_ideal_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#52 [min_ideal_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#53 [max_ideal_grant_kb] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#54 [total_reserved_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#55 [last_reserved_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#56 [min_reserved_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#57 [max_reserved_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+
+#58 [total_used_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#59 [last_used_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#60 [min_used_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+#61 [max_used_threads] «bigint» is System.Int64, System.Data.SqlTypes.SqlInt64
+

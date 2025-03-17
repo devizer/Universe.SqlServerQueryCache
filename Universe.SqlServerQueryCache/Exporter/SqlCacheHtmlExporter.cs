@@ -21,7 +21,7 @@ public class SqlCacheHtmlExporter
     public readonly string ConnectionString;
 
     public IEnumerable<QueryCacheRow> Rows { get; protected set; } // Available after Export
-    public List<SqlResultSetColumn> ColumnsSchema { get; protected set; }
+    public SqlQueryStatsSchema ColumnsSchema { get; protected set; }
     public List<SummaryRow> Summary { get; protected set; } // Available after Export
     public List<DatabaseTabRow> DatabaseTabRows { get; protected set; } // Available after Export
     private JsStringConstants Strings = new JsStringConstants();

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Universe.SqlServerQueryCache.SqlDataAccess
+namespace Universe.SqlServerQueryCache.SqlDataAccess;
+
+// TODO: V4 - columns depends on Columns Schema
+public static class TheQueryCacheQueryV3
 {
-    // TODO: V4 - columns depends on Columns Schema
-    public static class TheQueryCacheQueryV3
-    {
-        public const string SqlServerQueryCache = @"SELECT -- Query Cache Report https://github.com/devizer/Universe.SqlServerQueryCache
+    public const string SqlServerQueryCache = @"SELECT -- Query Cache Report https://github.com/devizer/Universe.SqlServerQueryCache
     p.dbid DatabaseId,
     d.name DatabaseName,
     p.objectid ObjectId, /* stored proc, function, or trigger */
@@ -47,6 +46,7 @@ namespace Universe.SqlServerQueryCache.SqlDataAccess
     qs.last_logical_writes [LastLogicalWrites],
     qs.min_logical_writes [MinLogicalWrites],
     qs.max_logical_writes [MaxLogicalWrites]
+    /* Optional Columns */
 FROM sys.dm_exec_query_stats AS qs
 CROSS APPLY sys.dm_exec_sql_text(sql_handle) AS t      -- join sql text
 OUTER APPLY sys.dm_exec_query_plan(qs.plan_handle) p   -- join database id and query plan
@@ -54,5 +54,4 @@ LEFT JOIN sys.databases d ON p.dbid = d.database_id    -- join database name
 -- Order By p.objectid Desc, qs.total_elapsed_time Desc;
 /* If creation_time changed then add else replace */
 ";
-    }
 }
