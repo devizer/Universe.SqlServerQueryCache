@@ -129,6 +129,22 @@ public class TestQuery
         var letsDebug = sqlSysInfo.ToString();
     }
 
+    [Test]
+    [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    // TODO: Remove, because it was used for debugging only
+    public void G_TryQueryStatsV4(SqlServerRef server)
+    {
+        var cs = SqlServerReferenceExtensions.GetConnectionString(server);
+        var sysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, cs);
+
+        SqlResultSetSchemaReader schemaReader = new SqlResultSetSchemaReader(SqlClientFactory.Instance, cs);
+        var columns = schemaReader.GetSchema("Select * From sys.dm_exec_query_stats");
+        SqlQueryStatsSchema schema = new SqlQueryStatsSchema(columns);
+        TheQueryCacheQueryV4 queryCacheQueryV4 = new TheQueryCacheQueryV4(schema);
+        Console.WriteLine(queryCacheQueryV4);
+    }
+
+
     [TearDown]
     public void TestTearDown()
     {
