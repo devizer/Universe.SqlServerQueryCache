@@ -14,6 +14,7 @@ public class TableHeaderDefinition
 {
     public string Caption { get; set; }
     public bool Visible { get; set; } = true;
+    public bool AllowHide { get; set; } = true;
     public List<ColumnDefinition> Columns { get; set; } = new List<ColumnDefinition>();
 
     public TableHeaderDefinition(string caption)
@@ -31,6 +32,13 @@ public class TableHeaderDefinition
         Visible = isVisible;
         return this;
     }
+
+    public TableHeaderDefinition SetAllowHide(bool allowHide)
+    {
+        AllowHide = allowHide;
+        return this;
+    }
+
 
 }
 public class ColumnDefinition
@@ -78,6 +86,7 @@ public class AllSortingDefinitions
     public IEnumerable<TableHeaderDefinition> GetHeaders()
     {
         yield return new TableHeaderDefinition("Summary")
+            .SetAllowHide(false)
             .AddColumn(CreateSortableColumn("Count", r => r.ExecutionCount))
             // Created At is the same as Lifetime
             // .AddColumn(CreateSortableColumn("Created At", r => r.CreationTime))
@@ -128,6 +137,40 @@ public class AllSortingDefinitions
                 .AddColumn(CreateSortableColumn("Min", r => r.MinRows))
                 .AddColumn(CreateSortableColumn("Max", r => r.MaxRows));
         }
+
+        if (ColumnsSchema.HasGrantKb)
+        {
+            yield return new TableHeaderDefinition("Memory, Kb")
+                .SetVisibilility(false)
+                .AddColumn(CreateSortableColumn("Total", r => r.TotalGrantKb))
+                .AddColumn(CreateSortableColumn("Avg", r => r.AvgGrantKb))
+                // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
+                .AddColumn(CreateSortableColumn("Min", r => r.MinGrantKb))
+                .AddColumn(CreateSortableColumn("Max", r => r.MaxGrantKb));
+        }
+
+        if (ColumnsSchema.HasGrantKb)
+        {
+            yield return new TableHeaderDefinition("Memory Used")
+                .SetVisibilility(false)
+                .AddColumn(CreateSortableColumn("Total", r => r.TotalUsedGrantKb))
+                .AddColumn(CreateSortableColumn("Avg", r => r.AvgUsedGrantKb))
+                // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
+                .AddColumn(CreateSortableColumn("Min", r => r.MinUsedGrantKb))
+                .AddColumn(CreateSortableColumn("Max", r => r.MaxUsedGrantKb));
+        }
+
+        if (ColumnsSchema.HasNumPhysicalReads)
+        {
+            yield return new TableHeaderDefinition("Physical Reads v2")
+                .SetVisibilility(false)
+                .AddColumn(CreateSortableColumn("Total", r => r.TotalNumPhysicalReads))
+                .AddColumn(CreateSortableColumn("Avg", r => r.AvgNumPhysicalReads))
+                // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
+                .AddColumn(CreateSortableColumn("Min", r => r.MinNumPhysicalReads))
+                .AddColumn(CreateSortableColumn("Max", r => r.MaxNumPhysicalReads));
+        }
+
     }
 
     public IEnumerable<ColumnDefinition> Get()

@@ -4,7 +4,9 @@ prevCheckedDbId = 0;
 window.addEventListener('load',
     function() {
 
-        var dbInputs = document.querySelectorAll('.InputChooseDb');
+        // var dbInputs = document.querySelectorAll('.InputChooseDb');
+        var dbInputs = document.querySelectorAll('.InputChooseDb[data-for-db-id]');
+
         if (dbInputs) {
             dbInputs.forEach((input) => {
                 input.addEventListener('click',
@@ -83,8 +85,10 @@ window.addEventListener('load',
 
 // On load height is not defined because display: none
 
+// Height for the Tabs
 globalHeightSummary = 0;
 globalHeightDatabases = 0;
+globalHeightColumns = 0;
 
 // 1st Invocation: by handleFloatInfoClick()
 // 2nd Invocation: Tab button click (twice)
@@ -92,24 +96,33 @@ function adjustModalTabHeight() {
     // return; // because visibility hidden, not display non
     var tabDatabases = document.querySelector('#DbListContainer');
     var tabSummary = document.querySelector('#SummaryModalContent');
+    var tabColumns = document.querySelector('#ColumnsChooserModalContent');
 
     console.log("Type of tabDatabases is [" + (typeof tabDatabases) + "], Type of tabSummary is [" + (typeof tabSummary) + "]");
 
-    if (tabDatabases && tabSummary) {
+    if (tabDatabases && tabSummary && tabColumns) {
         // console.log("tabSummary", tabSummary);
         // console.log("tabDatabases", tabDatabases);
         var heightSummary = Math.floor(tabSummary.getBoundingClientRect().height);
         var heightDatabases = Math.floor(tabDatabases.getBoundingClientRect().height);
+        var heightColumnsChooser = Math.floor(tabColumns.getBoundingClientRect().height);
         var visibleHeightThreshold = 10;
         if (heightSummary >= visibleHeightThreshold) globalHeightSummary = heightSummary;
         if (heightDatabases >= visibleHeightThreshold) globalHeightDatabases = heightDatabases;
+        if (heightColumnsChooser >= visibleHeightThreshold) globalHeightColumns = heightColumnsChooser;
+
 
         console.log("Height Summary=[" + globalHeightSummary + "], Height Databases=[" + globalHeightDatabases + "]");
 
-        if (globalHeightSummary) tabDatabases.style.minHeight = globalHeightSummary + "px";
+        if (globalHeightSummary) {
+            tabDatabases.style.minHeight = globalHeightSummary + "px";
+            tabColumns.style.minHeight = globalHeightSummary + "px";
+        }
 
         // TODO: Align Top First
         if (globalHeightDatabases) tabSummary.style.minHeight = globalHeightDatabases + "px";
+
+
 
     }
 }

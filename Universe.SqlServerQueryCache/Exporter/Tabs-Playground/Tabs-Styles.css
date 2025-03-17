@@ -13,7 +13,7 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  padding: 10px 10px;
+  padding: 16px 24px 10px 24px;
   background: transparent;
   outline: transparent;
   border: transparent;
@@ -94,7 +94,7 @@
   }
 }
 .tabs__panels {
-  padding: 20px 0;
+  padding: 28px 0 16px 0;
   color: #484b6a;
 }
 @media (prefers-color-scheme: dark) {

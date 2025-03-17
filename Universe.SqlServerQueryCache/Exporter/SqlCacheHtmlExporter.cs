@@ -290,17 +290,20 @@ public class SqlCacheHtmlExporter
 <div class='tabs'>
   <div class='tabs__pills'>
     <button class='TabLink active' data-id='SummaryModalContent'>Summary</button>
-    <button class='TabLink' data-id='DatabasesModalContent'>Filter DB</button>
+    <button class='TabLink' data-id='DatabasesModalContent'>Databases</button>
+    <button class='TabLink' data-id='ColumnsChooserModalContent'>Columns</button>
   </div>
 
   <div class='tabs__panels'>
     <!-- Content panels for each tab -->
-    <!-- Summer tab -->
     <div id='SummaryModalContent' class='active'>
         {ExportSummaryAsHtml()}
     </div>
     <div id='DatabasesModalContent'>
         {ExportDatabasesTab()}
+    </div>
+    <div id='ColumnsChooserModalContent'>
+        {ExportColumnsChooserTab()}
     </div>
   </div>
 </div>
@@ -310,6 +313,32 @@ public class SqlCacheHtmlExporter
 ";
     }
 
+    private string ExportColumnsChooserTab()
+    {
+        StringBuilder ret = new StringBuilder();
+        ret.AppendLine("<div id='DbListContainer'>");
+        // data-for-columns-header-id - checkboxes
+        // data-columns-header-id - cells
+
+        var headers = new AllSortingDefinitions(ColumnsSchema).GetHeaders();
+        foreach (var header in headers.Where(x => x.AllowHide))
+        {
+            ret.AppendLine($@"
+<div class='DbListItem'>
+  <div class='DbListColumn DbListColumnCheckbox'>
+    <input type='checkbox' data-for-columns-header-id='{header.Caption}' class='InputChooseDb' {(header.Visible ? "checked" : "")}/>
+  </div>
+   <div class='DbListColumn DbListColumnTitle'>
+    {HtmlExtensions.EncodeHtml(header.Caption)}
+  </div>
+</div>
+");
+        }
+
+        ret.AppendLine("</div>");
+
+        return ret.ToString();
+    }
     private string ExportDatabasesTab()
     {
         StringBuilder ret = new StringBuilder();
