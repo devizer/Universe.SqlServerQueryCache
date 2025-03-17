@@ -33,25 +33,24 @@ public class TheQueryCacheQueryV4
         StringBuilder optionalColumns = new StringBuilder();
         string[] sqlPrefixes = new[] { "total", "last", "min", "max" };
         string[] netPrefixes = new[] { "Total", "Last", "Min", "Max" };
-        bool isFirst = true;
-        foreach(var part in parts)
+        var hasFourColumns = (string sqlSuffix) => sqlPrefixes.All(x => this.ColumnsSchema.GetColumn($"{x}_{sqlSuffix}") != null);
+        int totalIndex = 0;
+        int totalCount = 4 * parts.Count(x => hasFourColumns(x.SqlSuffix));
+        if (totalCount > 0) optionalColumns.AppendLine().AppendLine("    /* Optional Columns */, ");
+
+        foreach (var part in parts)
         {
-            var hasFourColumns = sqlPrefixes.All(x => this.ColumnsSchema.GetColumn($"{x}_{part.SqlSuffix}") != null);
-            if (hasFourColumns)
+            if (hasFourColumns(part.SqlSuffix))
             {
                 optionalColumns.AppendLine();
                 for (int partIndex = 0; partIndex < sqlPrefixes.Length; partIndex++)
                 {
-                    if (isFirst)
-                    {
-                        isFirst = false;
-                    }
-                    else
-                    {
-                        optionalColumns.Append(",").AppendLine();
-                    }
-                    
-                    optionalColumns.Append($"qs.{sqlPrefixes[partIndex]}_{part.SqlSuffix} [{netPrefixes[partIndex]}{part.NetSuffix}]");
+                    optionalColumns
+                        .Append($"    qs.{sqlPrefixes[partIndex]}_{part.SqlSuffix} [{netPrefixes[partIndex]}{part.NetSuffix}]")
+                        .Append(totalIndex + 1 < totalCount ? "," : "")
+                        .AppendLine();
+
+                    totalIndex++;
                 }
             }
         }

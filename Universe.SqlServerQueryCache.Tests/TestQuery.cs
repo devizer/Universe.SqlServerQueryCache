@@ -141,7 +141,7 @@ public class TestQuery
         var columns = schemaReader.GetSchema("Select * From sys.dm_exec_query_stats");
         SqlQueryStatsSchema schema = new SqlQueryStatsSchema(columns);
         TheQueryCacheQueryV4 queryCacheQueryV4 = new TheQueryCacheQueryV4(schema);
-        Console.WriteLine(queryCacheQueryV4);
+        Console.WriteLine(queryCacheQueryV4.GetSqlQuery());
     }
 
 
