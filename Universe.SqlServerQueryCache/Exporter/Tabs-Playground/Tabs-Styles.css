@@ -13,12 +13,12 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  padding: 10px;
+  padding: 10px 10px;
   background: transparent;
   outline: transparent;
   border: transparent;
   color: #484b6a;
-  transition: 300ms all ease-in-out;
+  transition: 100ms all ease-in-out;
 }
 @media (prefers-color-scheme: dark) {
   .TabLink {
@@ -112,7 +112,7 @@
   gap: 20px;
 }
 .tabs__panels > div.active {
-  display: flex;
+  display: block;
   /* visibility: visible; */
 }
 @media only screen and (max-width: 978px) {

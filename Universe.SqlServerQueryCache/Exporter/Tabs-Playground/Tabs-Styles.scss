@@ -32,7 +32,7 @@ $border-line-active: 4px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    padding: 10px;
+    padding: 10px 10px;
     background: transparent;
     outline: transparent;
     border: transparent;
@@ -42,7 +42,7 @@ $border-line-active: 4px;
         color: $text-dark;
     }
 
-    transition: 300ms all ease-in-out;
+    transition: 100ms all ease-in-out;
 
     @media only screen and (max-width: 576px) {
         padding: 10px 8px;
@@ -133,7 +133,7 @@ $border-line-active: 4px;
         }
 
         > div.active {
-            display: flex;
+            display: block;
             /* visibility: visible; */
 
             @media only screen and (max-width: 978px) {
