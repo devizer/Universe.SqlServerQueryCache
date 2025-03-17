@@ -20,7 +20,10 @@ public class SqlSummaryTextExporter
         }
 
         Add("Queries", FormatKind.Natural, rows.Count());
-            
+
+        var queryPlanCount = rows.Count(x => !string.IsNullOrEmpty(x.QueryPlan));
+        Add("Query Plans", FormatKind.Natural, queryPlanCount);
+
         var executionCount = rows.Sum(x => x.ExecutionCount);
         Add($"Execution Count", FormatKind.Natural, executionCount);
 

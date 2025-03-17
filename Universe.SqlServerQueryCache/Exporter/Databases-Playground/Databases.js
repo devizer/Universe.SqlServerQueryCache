@@ -107,7 +107,9 @@ function adjustModalTabHeight() {
         console.log("Height Summary=[" + globalHeightSummary + "], Height Databases=[" + globalHeightDatabases + "]");
 
         if (globalHeightSummary) tabDatabases.style.minHeight = globalHeightSummary + "px";
-        if (globalHeightDatabases) tabSummary.style.minHeight = globalHeightDatabases + "px";
+
+        // TODO: Align Top First
+        // if (globalHeightDatabases) tabSummary.style.minHeight = globalHeightDatabases + "px";
 
     }
 }
