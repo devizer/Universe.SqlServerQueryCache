@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.Reflection;
+using System.Text;
 using Dapper;
 using Universe.SqlServerJam;
 using Universe.SqlServerQueryCache.Exporter;
@@ -108,8 +110,42 @@ public class TestQuery
             indexPlan++;
             File.WriteAllText(Path.Combine(dumpXmlFolder, $"{indexPlan}.sqlplan"), queryCacheRow.QueryPlan);
         }
-
     }
+
+    [Test]
+    [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]
+    public void E2_ShowMetricsRange(SqlServerRef server)
+    {
+        var cs = SqlServerReferenceExtensions.GetConnectionString(server);
+        var mediumVersion = SqlServerReferenceExtensions.GetMediumVersion(cs);
+        SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, cs);
+        var singleFileHtml = e.Export();
+        IEnumerable<QueryCacheRow> rows = e.Rows;
+        var properties = typeof(QueryCacheRow)
+            .GetProperties()
+            .Where(x => x.PropertyType == typeof(long))
+            .ToList();
+
+        StringBuilder report = new StringBuilder();
+        report.AppendLine(mediumVersion);
+        report.AppendLine($"Queries: {e.Rows.Count()}");
+        var column1Length = properties.Select(x => x.Name.Length).Max();
+        Func<long, string> longToString = l => l == 0 ? "-" : l.ToString("n0");
+        foreach (var pi in properties)
+        {
+            var longs = rows.Select(x => (long)pi.GetValue(x)).ToArray();
+            if (longs.Length > 0)
+            {
+                var nonZeroValueCount = longs.Where(x => x != 0).Distinct().Count();
+                var nonZeroRowsCount = longs.Count(x => x != 0);
+                report.AppendLine($"{pi.Name.PadRight(column1Length)} | {longToString(longs.Min())} ... {longToString(longs.Max())}, ({longToString(nonZeroValueCount)} values on {longToString(nonZeroRowsCount)} queries)");
+            }
+        }
+        Console.WriteLine(report);
+        var rangesFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".Ranges.txt");
+        File.WriteAllText(rangesFile, report.ToString());
+    }
+
 
     [Test]
     [TestCaseSource(typeof(SqlServersTestCaseSource), nameof(SqlServersTestCaseSource.SqlServers))]

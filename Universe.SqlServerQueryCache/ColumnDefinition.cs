@@ -13,6 +13,7 @@ namespace Universe.SqlServerQueryCache;
 public class TableHeaderDefinition
 {
     public string Caption { get; set; }
+    public bool Visible { get; set; } = true;
     public List<ColumnDefinition> Columns { get; set; } = new List<ColumnDefinition>();
 
     public TableHeaderDefinition(string caption)
@@ -25,7 +26,11 @@ public class TableHeaderDefinition
         Columns.Add(column);
         return this;
     }
-
+    public TableHeaderDefinition SetVisibilility(bool isVisible)
+    {
+        Visible = isVisible;
+        return this;
+    }
 
 }
 public class ColumnDefinition
@@ -116,6 +121,7 @@ public class AllSortingDefinitions
         if (ColumnsSchema.HasRows)
         {
             yield return new TableHeaderDefinition("Rows")
+                .SetVisibilility(true)
                 .AddColumn(CreateSortableColumn("Total", r => r.TotalRows))
                 .AddColumn(CreateSortableColumn("Avg", r => r.AvgRows))
                 // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
