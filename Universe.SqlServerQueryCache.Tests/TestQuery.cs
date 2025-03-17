@@ -136,9 +136,12 @@ public class TestQuery
             var longs = rows.Select(x => (long)pi.GetValue(x)).ToArray();
             if (longs.Length > 0)
             {
-                var nonZeroValueCount = longs.Where(x => x != 0).Distinct().Count();
+                var nonZeroValues = longs.Where(x => x != 0).Distinct().OrderBy(x => x).ToArray();
+                var nonZeroValuesString = string.Join(",", nonZeroValues.Select(x => x.ToString()).ToArray());
+                var nonZeroValueCount = nonZeroValues.Count();
                 var nonZeroRowsCount = longs.Count(x => x != 0);
-                report.AppendLine($"{pi.Name.PadRight(column1Length)} | {longToString(longs.Min())} ... {longToString(longs.Max())}, ({longToString(nonZeroValueCount)} values on {longToString(nonZeroRowsCount)} queries)");
+                string vals = longs.Max() != 0 || longs.Min() != 0 ? $", ({longToString(nonZeroValueCount)} values on {longToString(nonZeroRowsCount)} queries: {nonZeroValuesString})" : "";
+                report.AppendLine($"{pi.Name.PadRight(column1Length)} | {longToString(longs.Min())} ... {longToString(longs.Max())}{vals}");
             }
         }
         Console.WriteLine(report);
