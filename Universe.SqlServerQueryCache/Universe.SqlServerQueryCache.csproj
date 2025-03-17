@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Exporter\Columns-Chooser.js" />
     <None Remove="Exporter\Databases-Playground\Databases-Styles.css" />
     <None Remove="Exporter\Databases-Playground\Databases.js" />
     <None Remove="Exporter\Download-Icon.css" />
@@ -28,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Exporter\Columns-Chooser.js" />
     <EmbeddedResource Include="Exporter\Databases-Playground\Databases-Styles.css" />
     <EmbeddedResource Include="Exporter\Databases-Playground\Databases.js" />
     <EmbeddedResource Include="Exporter\Download-Icon.css" />

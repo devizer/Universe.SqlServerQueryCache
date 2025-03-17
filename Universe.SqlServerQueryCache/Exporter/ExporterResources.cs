@@ -26,8 +26,8 @@ namespace Universe.SqlServerQueryCache.Exporter
         public static string DatabasesStylesCss => ReadResource("Databases_Playground.Databases-Styles.css");
         public static string DatabasesJs => ReadResource("Databases_Playground.Databases.js");
 
-
-
+        // Columns-Chooser.js
+        public static string ColumnsChooserJs => ReadResource("Columns-Chooser.js");
 
 
         static string ReadResource(string name)

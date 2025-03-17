@@ -135,6 +135,7 @@ public class SqlCacheHtmlExporter
                       + Environment.NewLine + ExporterResources.ModalSummaryJS
                       + Environment.NewLine + ExporterResources.TabsSummaryJs
                       + Environment.NewLine + ExporterResources.DatabasesJs
+                      + Environment.NewLine + ExporterResources.ColumnsChooserJs
             ;
 
         var ret = ExporterResources.HtmlTemplate
@@ -182,14 +183,15 @@ public class SqlCacheHtmlExporter
         foreach (var header in headers)
         {
             bool isFirst = header == headers.FirstOrDefault();
-            htmlTable.AppendLine($"    <th colspan='{header.Columns.Count}' class='TableHeaderGroupCell {(isFirst ? "MetricsSummaryHeaderCell" : "")}'>{header.Caption}</th>");
+            htmlTable.AppendLine($"    <th data-columns-header-id='{header.Caption}' colspan='{header.Columns.Count}' class='TableHeaderGroupCell {(isFirst ? "MetricsSummaryHeaderCell" : "")}'>{header.Caption}</th>");
         }
         htmlTable.AppendLine("  </tr>");
 
         // Table Header: 2nd row (concrete metrics)
         htmlTable.AppendLine("  <tr>");
         var columnDefinitions = headers.SelectMany(h => h.Columns).ToArray();
-        foreach (var column in columnDefinitions)
+        foreach (var header in headers)
+            foreach (var column in header.Columns)
         {
             bool isThisSorting = column.PropertyName == sortByColumn.PropertyName;
             const string arrows = " ⇓ ⇩ ↓ ↡";
@@ -197,7 +199,7 @@ public class SqlCacheHtmlExporter
             // var onClick = $"onclick='SelectContent(\"{column.GetHtmlId()}\"); alert('HAHA'); return false;'";
             // if (!isFieldSelected && column.AllowSort) attrs = $"style=\"cursor: pointer; display: inline-block;\" class='SortButton' data-sorting='{column.GetHtmlId()}'";
             // var spanSortingParameter = $"<span id='SortingParameter' class='Hidden'>{column.GetHtmlId()}</span>";
-            htmlTable.AppendLine($"    <th class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button>{column.TheCaption}</button></th>");
+            htmlTable.AppendLine($"    <th data-columns-header-id='{header.Caption}' class='TableHeaderCell {(isThisSorting ? "Selected" : "")}' data-sorting='{column.GetHtmlId()}'><button>{column.TheCaption}</button></th>");
         }
         htmlTable.AppendLine("  </tr>");
         htmlTable.AppendLine("  </thead>");
@@ -213,11 +215,12 @@ public class SqlCacheHtmlExporter
             var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : " data-db-id='-1'";
             // TODO: Choose either DB-Id-? class or data-db-id attribute
             htmlTable.AppendLine($"  <tr class='MetricsRow {trClass} hidden'{trDataDbId}>");
-            foreach (ColumnDefinition column in columnDefinitions)
+            foreach (var header in headers)
+                foreach (ColumnDefinition column in header.Columns)
             {
                 var value = column.PropertyAccessor(row);
                 var valueString = GetValueAsHtml(value, row, column);
-                htmlTable.AppendLine($"\t\t<td>{valueString}</td>");
+                htmlTable.AppendLine($"\t\t<td data-columns-header-id='{header.Caption}'>{valueString}</td>");
             }
             htmlTable.AppendLine("\t</tr>");
             htmlTable.AppendLine($"\t<tr class='SqlRow  {trClass}'{trDataDbId}>");
