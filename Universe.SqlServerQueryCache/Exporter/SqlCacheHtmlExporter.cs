@@ -250,7 +250,7 @@ public class SqlCacheHtmlExporter
                 htmlDownloadIcon = $"<img style='width: 20px; height: 20px' src='{DownloadIconSrcEmbedded}' />";
                 htmlDownloadIcon = $"<div class='Icon'><img style='width: 16px; height: 16px' src='{DownloadIconSrcEmbedded}' /></div>";
                 htmlDownloadIcon = "&nbsp;";
-                htmlDownloadIcon = "<div class='SvgIcon' />";
+                htmlDownloadIcon = "<div class='SvgIconDownload' />";
                 htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"{jsDownloadPlan}; return false;\">{htmlDownloadIcon}</div>";
             }
 

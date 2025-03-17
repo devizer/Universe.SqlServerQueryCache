@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 
   <Import Project="..\Shared.props" />
@@ -12,6 +12,12 @@
 	  <Nullable>disable</Nullable>
 	  <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Query Cache Reports\**" />
+    <EmbeddedResource Remove="Query Cache Reports\**" />
+    <None Remove="Query Cache Reports\**" />
+  </ItemGroup>
 
 	<ItemGroup>
     <ProjectReference Include="..\Universe.SqlServerQueryCache\Universe.SqlServerQueryCache.csproj" />
