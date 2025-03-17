@@ -93,7 +93,7 @@ public class AllSortingDefinitions
             .AddColumn(CreateSortableColumn("Lifetime", r => r.Lifetime));
 
         yield return new TableHeaderDefinition("Duration")
-            .SetVisibility(false)
+            .SetVisibility(true)
             .AddColumn(CreateSortableColumn("Total", r => r.TotalElapsedTime))
             .AddColumn(CreateSortableColumn("Avg", r => r.AvgElapsedTime))
             // .AddColumn(CreateSortableColumn("Last", r => r.LastElapsedTime))
@@ -101,6 +101,7 @@ public class AllSortingDefinitions
             .AddColumn(CreateSortableColumn("Max", r => r.MaxElapsedTime));
 
         yield return new TableHeaderDefinition("CPU Time")
+            .SetVisibility(false)
             .AddColumn(CreateSortableColumn("Total", r => r.TotalWorkerTime))
             .AddColumn(CreateSortableColumn("Avg", r => r.AvgWorkerTime))
             // .AddColumn(CreateSortableColumn("Last", r => r.LastWorkerTime))
@@ -108,6 +109,7 @@ public class AllSortingDefinitions
             .AddColumn(CreateSortableColumn("Max", r => r.MaxWorkerTime));
 
         yield return new TableHeaderDefinition("Logical Reads")
+            .SetVisibility(true)
             .AddColumn(CreateSortableColumn("Total", r => r.TotalLogicalReads))
             .AddColumn(CreateSortableColumn("Avg", r => r.AvgLogicalReads))
             // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalReads))
@@ -115,6 +117,7 @@ public class AllSortingDefinitions
             .AddColumn(CreateSortableColumn("Max", r => r.MaxLogicalReads));
 
         yield return new TableHeaderDefinition("Physical Reads")
+            .SetVisibility(!ColumnsSchema.HasRows || !ColumnsSchema.HasUsedGrantKb)
             .AddColumn(CreateSortableColumn("Total", r => r.TotalPhysicalReads))
             .AddColumn(CreateSortableColumn("Avg", r => r.AvgPhysicalReads))
             // .AddColumn(CreateSortableColumn("Last", r => r.LastPhysicalReads))
@@ -150,7 +153,7 @@ public class AllSortingDefinitions
                 .AddColumn(CreateSortableColumn("Max", r => r.MaxGrantKb));
         }
 
-        if (ColumnsSchema.HasGrantKb)
+        if (ColumnsSchema.HasUsedGrantKb)
         {
             yield return new TableHeaderDefinition("Memory Used, Kb")
                 .SetVisibility(true)
