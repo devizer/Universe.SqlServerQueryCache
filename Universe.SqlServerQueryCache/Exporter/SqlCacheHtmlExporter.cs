@@ -59,7 +59,7 @@ public class SqlCacheHtmlExporter
         QueryCacheReader reader = new QueryCacheReader(DbProvider, ConnectionString);
         Rows = reader.Read().ToList();
         ColumnsSchema = reader.ColumnsSchema;
-        _tableTopHeaders = AllSortingDefinitions.GetHeaders().ToArray();
+        _tableTopHeaders = new AllSortingDefinitions(ColumnsSchema).GetHeaders().ToArray();
         _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
 
 
@@ -113,7 +113,7 @@ public class SqlCacheHtmlExporter
             CollectGarbage();
         }
 
-        foreach (ColumnDefinition sortingDefinition in AllSortingDefinitions.Get())
+        foreach (ColumnDefinition sortingDefinition in new AllSortingDefinitions(ColumnsSchema).Get())
         {
             IterateSortingColumn(sortingDefinition);
         }

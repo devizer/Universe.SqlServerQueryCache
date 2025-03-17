@@ -40,6 +40,13 @@ public class ColumnDefinition
 
 public class AllSortingDefinitions
 {
+    public readonly SqlQueryStatsSchema ColumnsSchema;
+
+    public AllSortingDefinitions(SqlQueryStatsSchema columnsSchema)
+    {
+        ColumnsSchema = columnsSchema;
+    }
+
     static ColumnDefinition CreateSortableColumn<TProperty>(string caption, Expression<Func<QueryCacheRow, TProperty>> sort)
     {
         var compiled = sort.Compile();
@@ -63,7 +70,7 @@ public class AllSortingDefinitions
         };
     }
 
-    public static IEnumerable<TableHeaderDefinition> GetHeaders()
+    public IEnumerable<TableHeaderDefinition> GetHeaders()
     {
         yield return new TableHeaderDefinition("Summary")
             .AddColumn(CreateSortableColumn("Count", r => r.ExecutionCount))
@@ -105,9 +112,19 @@ public class AllSortingDefinitions
             // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
             .AddColumn(CreateSortableColumn("Min", r => r.MinLogicalWrites))
             .AddColumn(CreateSortableColumn("Max", r => r.MaxLogicalWrites));
+
+        if (ColumnsSchema.HasRows)
+        {
+            yield return new TableHeaderDefinition("Rows")
+                .AddColumn(CreateSortableColumn("Total", r => r.TotalRows))
+                .AddColumn(CreateSortableColumn("Avg", r => r.AvgRows))
+                // .AddColumn(CreateSortableColumn("Last", r => r.LastLogicalWrites))
+                .AddColumn(CreateSortableColumn("Min", r => r.MinRows))
+                .AddColumn(CreateSortableColumn("Max", r => r.MaxRows));
+        }
     }
 
-    public static IEnumerable<ColumnDefinition> Get()
+    public IEnumerable<ColumnDefinition> Get()
     {
         return GetHeaders().SelectMany(x => x.Columns).Where(x => x.AllowSort);
     }
