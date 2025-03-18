@@ -95,6 +95,7 @@ namespace Universe.SqlServerQueryCache.External
             MaxDepth = 32,
             MissingMemberHandling = MissingMemberHandling.Ignore,
             NullValueHandling = NullValueHandling.Ignore,
+            // Ignore does not work properly 
             DefaultValueHandling = DefaultValueHandling.Include,
         };
 

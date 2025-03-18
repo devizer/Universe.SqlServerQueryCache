@@ -133,7 +133,9 @@ public class TestQuery
         Func<long, string> longToString = l => l == 0 ? "-" : l.ToString("n0");
         foreach (var pi in properties)
         {
-            var longs = rows.Select(x => (long)pi.GetValue(x)).ToArray();
+            var getProperty = PropertyAccessor.CreatePropertyGetter<QueryCacheRow, long>(pi);
+            // var longs = rows.Select(x => (long)pi.GetValue(x)).ToArray();
+            var longs = rows.Select(x => getProperty(x)).ToArray();
             if (longs.Length > 0)
             {
                 var nonZeroValues = longs.Where(x => x != 0).Distinct().OrderBy(x => x).ToArray();
