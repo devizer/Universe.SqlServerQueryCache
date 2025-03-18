@@ -1,0 +1,1 @@
+pwsh EmbedSvgIcons.ps1  -Folder "."
