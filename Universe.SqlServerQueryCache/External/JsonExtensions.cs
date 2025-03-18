@@ -95,7 +95,7 @@ namespace Universe.SqlServerQueryCache.External
             MaxDepth = 32,
             MissingMemberHandling = MissingMemberHandling.Ignore,
             NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            DefaultValueHandling = DefaultValueHandling.Include,
         };
 
         public static IContractResolver GetContractResolver(JsonNaming jsonNamingStrategy)
