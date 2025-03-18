@@ -36,7 +36,7 @@ public class TheQueryCacheQueryV4
         var hasFourColumns = (string sqlSuffix) => sqlPrefixes.All(x => this.ColumnsSchema.GetColumn($"{x}_{sqlSuffix}") != null);
         int totalIndex = 0;
         int totalCount = 4 * parts.Count(x => hasFourColumns(x.SqlSuffix));
-        if (totalCount > 0) optionalColumns.AppendLine().AppendLine("    /* Optional Columns */, ");
+        if (totalCount > 0) optionalColumns.AppendLine().AppendLine("    /* Columns below depends on SQL Server version */, ");
 
         foreach (var part in parts)
         {

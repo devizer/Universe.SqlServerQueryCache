@@ -62,6 +62,8 @@ public class SqlCacheHtmlExporter
         _tableTopHeaders = new AllSortingDefinitions(ColumnsSchema).GetHeaders().ToArray();
         _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
 
+        SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows.ToList());
+        Summary = summaryBuilder.BuildTotalWholeSummary();
 
         var selectedSortProperty = "Content_AvgElapsedTime";
         StringBuilder htmlTables = new StringBuilder();
@@ -139,9 +141,11 @@ public class SqlCacheHtmlExporter
             ;
 
         var ret = ExporterResources.HtmlTemplate
-            .Replace("{{ Body }}", finalHtml)
-            .Replace("{{ MainJS }}", finalJs)
-            .Replace("{{ StylesCSS }}", css);
+                .Replace("{{ ReportSubTitleHtml }}", ExportReportSubTitleAsHtml())
+                .Replace("{{ MainJS }}", finalJs)
+                .Replace("{{ StylesCSS }}", css)
+                .Replace("{{ Body }}", finalHtml)
+            ;
 
         CollectGarbage();
         return ret;
@@ -270,24 +274,13 @@ public class SqlCacheHtmlExporter
 
     string ExportModalAsHtml()
     {
-        var con = DbProvider.CreateConnection();
-        con.ConnectionString = ConnectionString;
-        var man = con.Manage();
-        var hostPlatform = man.HostPlatform;
-        var mediumVersion = man.MediumServerVersion;
-        if (man.ShortServerVersion.Major >= 14) mediumVersion += $" on {hostPlatform}";
+        var mediumVersion = GetMediumVersionAndPlatform();
 
         // Custom Headers
         var customSummaryRows = CustomSummaryRowReader.GetCustomSummary();
         var customHeaders = customSummaryRows.Where(x => x.IsHeader);
         var sep = Environment.NewLine + "\t\t\t\t\t";
-        string GetSummaryHeaderRowHtml(CustomSummaryRowReader.CustomSummaryRow customSummaryRow)
-        {
-            return
-                ((string.IsNullOrEmpty(customSummaryRow.Title) ? "" : $"{customSummaryRow.Title} ")
-                + customSummaryRow.DescriptionAsHtml).Trim();
-        }
-        var customHeadersHtml = string.Join(sep, customHeaders.Select(x => $"<br/>{GetSummaryHeaderRowHtml(x)}").ToArray());
+        var customHeadersHtml = string.Join(sep, customHeaders.Select(x => $"<br/>{x.GetSummaryHeaderRowHtml()}").ToArray());
         // Done: Custom Header
 
         return $@"
@@ -373,10 +366,35 @@ public class SqlCacheHtmlExporter
         return ret.ToString();
     }
 
+    string ExportReportSubTitleAsHtml()
+    {
+        var mediumVersion = GetMediumVersionAndPlatform();
+
+        List<string> pieces = new List<string>();
+        pieces.Add($"v{mediumVersion}");
+        pieces.AddRange(Summary.Where(x => x.IsHeader).Select(x => x.GetSummaryHeaderRowHtml()));
+
+        StringBuilder ret = new StringBuilder();
+        foreach (var piece in pieces)
+        {
+            ret.AppendLine($"\t\t\t\t<div class='ReportSubTitle'>{piece}</div>");
+        }
+        return ret.ToString();
+    }
+
+    private string GetMediumVersionAndPlatform()
+    {
+        var con = DbProvider.CreateConnection();
+        con.ConnectionString = ConnectionString;
+        var man = con.Manage();
+        var hostPlatform = man.HostPlatform;
+        var mediumVersion = man.MediumServerVersion;
+        if (man.ShortServerVersion.Major >= 14) mediumVersion += $" on {hostPlatform}";
+        return mediumVersion;
+    }
+
     private string ExportSummaryAsHtml()
     {
-        SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows.ToList());
-        Summary = summaryBuilder.BuildTotalWholeSummary();
         List<SummaryRow> summaryRows = Summary;
 
         StringBuilder ret = new StringBuilder();

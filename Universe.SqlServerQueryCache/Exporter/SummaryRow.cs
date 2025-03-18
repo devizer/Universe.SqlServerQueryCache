@@ -71,4 +71,12 @@ public class SummaryRow
 
     }
 
+    public string GetSummaryHeaderRowHtml()
+    {
+        return
+            ((string.IsNullOrEmpty(this.Title) ? "" : $"{this.Title} ")
+             + this.DescriptionAsHtml).Trim();
+    }
+
+
 }

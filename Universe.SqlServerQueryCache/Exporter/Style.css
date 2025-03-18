@@ -29,6 +29,23 @@ body, table.Metrics thead th, table.Metrics thead th button {
     box-sizing: border-box;
 }
 
+.ReportTitle {
+    font-size: 25px;
+    margin: 24px auto 4px auto;
+    text-align: center;
+}
+.ReportSubTitle {
+    font-size: 14px;
+    margin: 4px auto 4px auto;
+    text-align: center;
+}
+.ReportSubTitle:last-child {
+    margin-bottom: 28px;
+}
+.ReportSubTitle:nth-child(2) {
+    margin-bottom: 20px;
+}
+
 table.Metrics thead {
     position: sticky;
     top: 0;
