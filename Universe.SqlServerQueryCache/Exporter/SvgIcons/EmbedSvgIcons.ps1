@@ -10,14 +10,15 @@ foreach($svgFile in $svgFiles) {
   Write-Host "$($svgFile) :--> $cssFile"
   $svgSource = [System.IO.File]::ReadAllText("$svgFile")
   $svgSourceUrlEncoded = [System.Web.HttpUtility]::UrlEncode($svgSource, (new-object System.Text.ASCIIEncoding))
+  $svgSourceUrlEncoded = "data:image/svg+xml,$svgSourceUrlEncoded"
+  $bytes = (new-object System.Text.Utf8Encoding($false)).GetBytes($svgSource)
+  $svgSourceBase64 = [System.Convert]::ToBase64String($bytes)
+  $svgSourceBase64 = "data:image/svg+xml;base64,$svgSourceBase64"
+
+
   $nl=[Environment]::NewLine
   $cssSource = ".$($svgKey) {$($nl)" `
-    + "  background-image: url(`"data:image/svg+xml;$svgSourceUrlEncoded`");$($nl)" `
-    + "  background-repeat: no-repeat;$($nl)" `
-    + "  background-size: 24px 24px;$($nl)" `
-    + "  width: 24px;$($nl)" `
-    + "  height: 24px;$($nl)" `
-    + "  margin: auto auto;$($nl)" `
+    + "  background-image: url(`"$svgSourceBase64`");$($nl)" `
     + "}$($nl)"
 
   [System.IO.File]::WriteAllText("$cssFile", $cssSource)
