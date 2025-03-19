@@ -65,15 +65,18 @@ public class SqlCacheHtmlExporter
         SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows.ToList());
         Summary = summaryBuilder.BuildTotalWholeSummary();
 
-        var selectedSortProperty = "Content_AvgElapsedTime";
+        BuildDatabaseTabRows();
+
+        // Start: ExportAllHtmlTables()
         StringBuilder htmlTables = new StringBuilder();
+        var selectedSortProperty = "Content_AvgElapsedTime";
         htmlTables.AppendLine($"<script>");
         // SCRIPT: Selected Sort Column
-        htmlTables.AppendLine($"selectedSortProperty = '{selectedSortProperty}';theFile={{}};");
-        // SCRIPT: Databases Id and Names
-        BuildDatabaseTabRows();
+        htmlTables.AppendLine($"selectedSortProperty = '{selectedSortProperty}';");
+        // SCRIPT: Databases Id and Names, including 0 (all the databases)
         htmlTables.AppendLine($"dbList={DatabaseTabRows.ToJsonString()};");
         // SCRIPT: Query Plan (optional) for each Query
+        htmlTables.AppendLine($"theFile={{}};");
         foreach (var queryCacheRow in Rows)
         {
             // Download SQL STATEMENT IS NOT IMPLEMENTED
@@ -87,27 +90,9 @@ public class SqlCacheHtmlExporter
         }
         htmlTables.AppendLine($"</script>");
 
-        void CollectGarbage()
-        {
-            if (ReportBuilderConfiguration.NeedGarbageCollection)
-            {
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-            }
-        }
-
         void IterateSortingColumn(ColumnDefinition columnDefinition)
         {
             bool isSelected = selectedSortProperty == columnDefinition.GetHtmlId();
-            /*
-            string htmlForSortedProperty = @$"<div id='{columnDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>
-{Export(columnDefinition, isSelected)}
-</div>";
-
-            htmlTables.AppendLine(htmlForSortedProperty);
-            */
             htmlTables.AppendLine($"<div id='{columnDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>");
             htmlTables.AppendLine(Export(columnDefinition, isSelected));
             htmlTables.AppendLine($"</div>");
@@ -119,6 +104,8 @@ public class SqlCacheHtmlExporter
         {
             IterateSortingColumn(sortingDefinition);
         }
+        // Finish: ExportAllHtmlTables()
+
 
         var css = ExporterResources.StyleCSS
                   + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss
@@ -130,9 +117,7 @@ public class SqlCacheHtmlExporter
                   + Environment.NewLine + ExporterResources.DatabasesStylesCss
             ;
 
-        var htmlSummary = ExportModalAsHtml();
-
-        var finalHtml = htmlSummary + Environment.NewLine + htmlTables;
+        var finalHtml = ExportModalAsHtml() + Environment.NewLine + htmlTables;
         var finalJs = ExporterResources.MainJS
                       + Environment.NewLine + ExporterResources.ModalSummaryJS
                       + Environment.NewLine + ExporterResources.TabsSummaryJs
@@ -179,6 +164,7 @@ public class SqlCacheHtmlExporter
     {
         var headers = _tableTopHeaders.ToArray();
         var sortedRows = sortByColumn.SortAction(Rows).ToArray();
+        // TODO: Replace StringBuilder by TextWriter
         StringBuilder htmlTable = new StringBuilder();
         htmlTable.AppendLine("  <table class='Metrics'><thead>");
 
@@ -431,6 +417,19 @@ public class SqlCacheHtmlExporter
 
         return valueString;
     }
+
+    void CollectGarbage()
+    {
+        if (ReportBuilderConfiguration.NeedGarbageCollection)
+        {
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+    }
+
+
 }
 
 public static class SortingDefinitionExtensions
