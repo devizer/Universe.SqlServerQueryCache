@@ -12,9 +12,10 @@ public class OrderedPipelineConfiguration
         PipelineLog.LogTrace($"[{typeof(OrderedPipelineConfiguration)}]::Configure()");
 
         var reportConfiguration = NUnitPipelineConfiguration.GetService<NUnitReportConfiguration>();
-        reportConfiguration.InternalReportFile = Path.Combine("TestsOutput", $"SQL Server Administrative Views {GetCurrentNetVersion()}");
-
-        
+        var reportFile = Path.Combine("TestsOutput", $"SQL Server Administrative Views {GetCurrentNetVersion()}");
+        string artifactsFolder = Environment.GetEnvironmentVariable("SYSTEM_ARTIFACTSDIRECTORY");
+        if (!string.IsNullOrEmpty(artifactsFolder)) reportFile = Path.Combine(artifactsFolder, reportFile);
+        reportConfiguration.InternalReportFile = reportFile;
 
         var chain = NUnitPipelineConfiguration.GetService<NUnitPipelineChain>();
 
