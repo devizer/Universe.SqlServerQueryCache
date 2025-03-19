@@ -68,8 +68,8 @@ public class TestQuery
         var rows = reader.Read().ToList();
         var columnsSchema = reader.ColumnsSchema;
         rows = rows.OrderByDescending(r => r.ExecutionCount).ToList();
-        Console.WriteLine($"{rows.Count()} QUERIES ON SERVER [{server}]");
-        Console.WriteLine(rows.ToJsonString());
+        Console.WriteLine($"{rows.Count()} QUERIES ON SERVER [{server}]. Below is up to 2 first queries");
+        Console.WriteLine(rows.Take(2).ToJsonString());
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".Rows.json");
         var json = new { ColumnsSchema = columnsSchema, Rows = rows };
         File.WriteAllText(dumpFile, json.ToJsonString());
