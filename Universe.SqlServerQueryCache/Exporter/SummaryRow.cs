@@ -47,7 +47,7 @@ public class SummaryRow
             TimeSpan? ts = null;
             if (Value is TimeSpan t1) ts = t1;
             else if (Value is TimeSpan?) ts = (TimeSpan?) Value;
-            var formatted = ts == null ? "" : needHtml ? ElapsedFormatter.FormatElapsedAsHtml(ts.Value) : ts.Value.ToString();
+            var formatted = ts == null ? "" : ElapsedFormatter.FormatElapsed(ts.Value, needHtml);
             return formatted;
         }
         else if (Kind == FormatKind.Pages || Kind == FormatKind.PagesPerSecond)
@@ -95,9 +95,9 @@ public class SummaryRowCounterValueWithDuration
     {
         var counterString = !needHtml ? $"{Counter:n0}" : HtmlNumberFormatter.Format(Counter, 0);
         TimeSpan ts = TimeSpan.FromMilliseconds(Milliseconds);
-        var durationString = Milliseconds == 0 ? "" : needHtml ? ElapsedFormatter.FormatElapsedAsHtml(ts) : ts.ToString();
+        var durationString = Milliseconds == 0 ? "" : ElapsedFormatter.FormatElapsed(ts, needHtml);
         var space = needHtml ? "&nbsp; " : "  ";
         return counterString
-               + (string.IsNullOrEmpty(durationString) ? "" : $"{space}({durationString})");
+               + (string.IsNullOrEmpty(durationString) ? "" : $"{space}(took {durationString})");
     }
 }
