@@ -119,7 +119,7 @@ internal class MainProgram
                     "Process_Kernel_Time_Ms",
                     "Process_User_Time_Ms",
                 };
-                summaryReport += Environment.NewLine + sqlSysInfo.Format("   ");
+                var summaryReportFull = summaryReport + Environment.NewLine + sqlSysInfo.Format("   ");
 
                 Console.WriteLine(summaryReport);
                 if (!string.IsNullOrEmpty(outputFile))
@@ -133,7 +133,7 @@ internal class MainProgram
                     if (appendSqlServerVersion) realOutputFile += $" {mediumVersion} on {hostPlatform}";
 
                     CreateDirectoryForFile(realOutputFile);
-                    File.WriteAllText(realOutputFile + ".txt", summaryReport);
+                    File.WriteAllText(realOutputFile + ".txt", summaryReportFull);
                     var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
                     File.WriteAllText(realOutputFile + ".json", jsonExport.ToJsonString(false, JsonNaming.PascalCase));
 
