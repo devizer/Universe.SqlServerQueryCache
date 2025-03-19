@@ -47,6 +47,11 @@ public class SqlServerSummaryBuilder
         var summarySysInfo = BuildSysInfoSummary().ToArray();
         summaryRows.AddRange(summarySysInfo);
 
+        // Wait Stats
+        SqlOsWaitStatsReader waitStatsReader = new SqlOsWaitStatsReader(DbProvider, ConnectionString);
+        var waitStatsSummary = waitStatsReader.Read().ToReportSummaryRows();
+        summaryRows.AddRange(waitStatsSummary);
+
         // version
         var versionRow = new SummaryRow("Version", FormatKind.Unknown, $"{mediumVersion} on {hostPlatform}");
         // summaryRows.Add(versionRow); // Already on the HTML header

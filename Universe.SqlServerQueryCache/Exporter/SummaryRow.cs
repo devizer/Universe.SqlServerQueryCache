@@ -96,8 +96,8 @@ public class SummaryRowCounterValueWithDuration
         var counterString = !needHtml ? $"{Counter:n0}" : HtmlNumberFormatter.Format(Counter, 0);
         TimeSpan ts = TimeSpan.FromMilliseconds(Milliseconds);
         var durationString = Milliseconds == 0 ? "" : needHtml ? ElapsedFormatter.FormatElapsedAsHtml(ts) : ts.ToString();
-        var space = needHtml ? "&nbsp;" : "";
+        var space = needHtml ? "&nbsp; " : "  ";
         return counterString
-               + (string.IsNullOrEmpty(durationString) ? "" : $"{space}{durationString}");
+               + (string.IsNullOrEmpty(durationString) ? "" : $"{space}({durationString})");
     }
 }
