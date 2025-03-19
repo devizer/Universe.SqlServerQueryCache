@@ -10,7 +10,7 @@
 
         
         <!-- Needs by NUnitTestsBase.cs -->
-        <PackageReference Include="Universe.CpuUsage" Version="2.2.497.598" />
+        <PackageReference Include="Universe.CpuUsage" Version="2.2.778.893" />
     </ItemGroup>
 
     <ItemGroup>
