@@ -16,7 +16,7 @@ public static class TheQueryCacheQueryV3
     t.objectid objectid2,
     qs.sql_handle,
     qs.creation_time [CreationTime],
-    (SELECT TOP 1 SUBSTRING(t.text,(qs.statement_start_offset/2) + 1, ( (CASE WHEN qs.statement_end_offset = -1 THEN (LEN(CONVERT(nvarchar(max),t.text)) * 2) ELSE qs.statement_end_offset END) - qs.statement_start_offset)/2 + 1)) AS [SqlStatement],
+    (SELECT TOP 1 SUBSTRING(t.[text],(qs.statement_start_offset/2) + 1, ( (CASE WHEN qs.statement_end_offset = -1 THEN (LEN(CONVERT(nvarchar(max),t.[text])) * 2) ELSE qs.statement_end_offset END) - qs.statement_start_offset)/2 + 1)) AS [SqlStatement],
     p.query_plan [QueryPlan],
     qs.execution_count [ExecutionCount],
     qs.plan_generation_num [PlanGenerationNum],

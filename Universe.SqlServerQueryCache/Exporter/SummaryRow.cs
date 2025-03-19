@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Universe.SqlServerQueryCache.External;
+using Newtonsoft.Json.Linq;
 
 namespace Universe.SqlServerQueryCache.Exporter;
 
@@ -64,6 +65,10 @@ public class SummaryRow
             else if (pages > 0) ret += toNotImportant($"  (is {kb:n0}{kbFormatted})");
             return ret;
         }
+        else if (Kind == FormatKind.CounterWithDuration)
+        {
+            return Value == null ? "" : ((SummaryRowCounterValueWithDuration)Value).GetFormatted(needHtml);
+        }
         else
         {
             return Convert.ToString(Value);
@@ -79,4 +84,20 @@ public class SummaryRow
     }
 
 
+}
+
+public class SummaryRowCounterValueWithDuration
+{
+    public long Counter { get; set; }
+    public long Milliseconds { get; set; }
+
+    public string GetFormatted(bool needHtml)
+    {
+        var counterString = !needHtml ? $"{Counter:n0}" : HtmlNumberFormatter.Format(Counter, 0);
+        TimeSpan ts = TimeSpan.FromMilliseconds(Milliseconds);
+        var durationString = Milliseconds == 0 ? "" : needHtml ? ElapsedFormatter.FormatElapsedAsHtml(ts) : ts.ToString();
+        var space = needHtml ? "&nbsp;" : "";
+        return counterString
+               + (string.IsNullOrEmpty(durationString) ? "" : $"{space}{durationString}");
+    }
 }

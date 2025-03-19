@@ -69,4 +69,5 @@ public enum FormatKind
     Pages,
     PagesPerSecond,
     Timespan,
+    CounterWithDuration,
 }
