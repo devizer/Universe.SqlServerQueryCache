@@ -58,7 +58,7 @@ From
         return ret;
     }
 
-    // null databaseIdList means all the databases
+    // NULL or EMPTY databaseIdList means all the databases
     public List<DB> GetDatabases(IEnumerable<int> databaseIdList)
     {
         var idListCopy = databaseIdList.ToList();

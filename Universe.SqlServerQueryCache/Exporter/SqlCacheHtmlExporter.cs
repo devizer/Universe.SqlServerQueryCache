@@ -20,7 +20,7 @@ public class SqlCacheHtmlExporter
     public readonly DbProviderFactory DbProvider;
     public readonly string ConnectionString;
 
-    public IEnumerable<QueryCacheRow> Rows { get; protected set; } // Available after Export
+    public List<QueryCacheRow> Rows { get; protected set; } // Available after Export
     public SqlQueryStatsSchema ColumnsSchema { get; protected set; }
     public List<SummaryRow> Summary { get; protected set; } // Available after Export
     public List<DatabaseTabRow> DatabaseTabRows { get; protected set; } // Available after Export
@@ -60,9 +60,9 @@ public class SqlCacheHtmlExporter
         Rows = reader.Read().ToList();
         ColumnsSchema = reader.ColumnsSchema;
         _tableTopHeaders = new AllSortingDefinitions(ColumnsSchema).GetHeaders().ToArray();
-        _tableTopHeaders.First().Caption = Rows.Count() == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
+        _tableTopHeaders.First().Caption = Rows.Count == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
 
-        SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows.ToList());
+        SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows);
         Summary = summaryBuilder.BuildTotalWholeSummary();
 
         BuildDatabaseTabRows();
@@ -143,7 +143,7 @@ public class SqlCacheHtmlExporter
             DatabaseId = 0,
             DatabaseName = "All the Databases",
             IsSystem = false,
-            QueriesCount = Rows.Count()
+            QueriesCount = Rows.Count
         };
 
         var actualDbList = Rows

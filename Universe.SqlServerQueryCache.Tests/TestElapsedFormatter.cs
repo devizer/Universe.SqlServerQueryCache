@@ -21,11 +21,14 @@ public class TestElapsedFormatter
             24*3600,
             24*3600+0.1,
         };
+
         foreach (object sec in testCases)
         {
             decimal seconds = Convert.ToDecimal(sec);
             string columnArgument = $"{seconds} Seconds:";
-            Console.WriteLine($"{columnArgument,-17} {ElapsedFormatter.FormatElapsedAsHtml(TimeSpan.FromSeconds((double)seconds))}");
+            var formattedHtml = ElapsedFormatter.FormatElapsedAsHtml(TimeSpan.FromSeconds((double)seconds));
+            var formattedText = ElapsedFormatter.FormatElapsedAsText(TimeSpan.FromSeconds((double)seconds));
+            Console.WriteLine($"{columnArgument,-17} {formattedText,-16} {formattedHtml}");
         }
     }
 }
