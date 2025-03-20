@@ -116,6 +116,12 @@ public partial class SqlCacheHtmlExporter
             CollectGarbage();
         }
 
+        using (LogStep("Render 'Modal Dialog' as html"))
+        {
+            var modalAsHtml = ExportModalAsHtml();
+            htmlTables.AppendLine(modalAsHtml);
+        }
+
         foreach (ColumnDefinition sortingDefinition in new AllSortingDefinitions(ColumnsSchema).Get())
         {
             IterateSortingColumn(sortingDefinition);
@@ -134,11 +140,6 @@ public partial class SqlCacheHtmlExporter
                   + Environment.NewLine + ExporterResources.DatabasesStylesCss
             ;
 
-        logStep.Restart("Export Modal Dialog as html");
-        var modalAsHtml = ExportModalAsHtml();
-
-        logStep.Restart($"Concat 'Modal Dialog' {modalAsHtml.Length / 1024:n0}Kb and 'Queries Table' {htmlTables.Length / 1024:n0}Kb html");
-        var finalHtml = modalAsHtml + Environment.NewLine + htmlTables;
         
         logStep.Restart("Build JS");
         var finalJs = ExporterResources.MainJS
@@ -153,7 +154,7 @@ public partial class SqlCacheHtmlExporter
                 .Replace("{{ ReportSubTitleHtml }}", ExportReportSubTitleAsHtml())
                 .Replace("{{ MainJS }}", finalJs)
                 .Replace("{{ StylesCSS }}", css)
-                .Replace("{{ Body }}", finalHtml)
+                .Replace("{{ Body }}", htmlTables.ToString())
             ;
 
         logStep.Dispose();
