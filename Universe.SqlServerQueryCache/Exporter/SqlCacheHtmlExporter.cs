@@ -26,19 +26,9 @@ public partial class SqlCacheHtmlExporter
     public List<DatabaseTabRow> DatabaseTabRows { get; protected set; } // Available after Export
     private JsStringConstants Strings = new JsStringConstants();
 
-    private IEnumerable<TableHeaderDefinition> _tableTopHeaders;
+    private TableHeaderDefinition[] _tableTopHeaders;
 
 
-    private const string DownloadIconSvg =
-        @"<svg id='svgDownloadIcon' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='400' height='400' viewBox='0, 0, 400,400'>
-<style id='style42'>
-  .dark-light { fill: #111 }
-  @media (prefers-color-scheme: dark) { .dark-light { fill: #DDD } }
-</style>
-<g id='svgIconGraphics'><path id='path0' d='M187.880 19.069 C 178.822 22.159,172.261 29.430,169.994 38.889 C 169.345 41.594,169.175 56.705,169.158 113.243 L 169.136 184.202 142.130 157.306 C 116.453 131.734,114.896 130.302,110.494 128.218 C 87.625 117.390,64.023 140.817,74.433 164.009 C 76.535 168.691,179.142 271.666,183.951 273.919 C 192.444 277.897,200.149 277.897,208.642 273.919 C 213.280 271.746,315.893 168.761,318.115 164.049 C 328.874 141.230,304.865 117.333,282.099 128.200 C 277.711 130.295,276.059 131.814,250.463 157.306 L 223.457 184.202 223.435 113.243 C 223.411 36.793,223.495 38.864,220.153 32.276 C 214.366 20.867,199.929 14.959,187.880 19.069 M82.099 321.552 C 55.748 326.818,54.577 366.187,80.547 373.736 C 85.540 375.188,307.052 375.188,312.046 373.736 C 335.627 366.881,337.975 334.615,315.706 323.446 L 311.420 321.296 197.840 321.208 C 135.370 321.160,83.287 321.314,82.099 321.552 ' stroke='none' class='SvgIcon dark-light' fill-rule='evenodd'></path></g>
-</svg>";
-
-    static readonly string DownloadIconSrcEmbedded = $"data:image/svg+xml;base64,{Convert.ToBase64String(new ASCIIEncoding().GetBytes(DownloadIconSvg))}";
 
     public SqlCacheHtmlExporter(DbProviderFactory dbProvider, string connectionString)
     {
@@ -66,13 +56,14 @@ public partial class SqlCacheHtmlExporter
         _tableTopHeaders = new AllSortingDefinitions(ColumnsSchema).GetHeaders().ToArray();
         _tableTopHeaders.First().Caption = Rows.Count == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
 
-        using (this.LogStep("Build Summary"))
+        using (this.LogStep("Build Summary Row List"))
         {
             SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows);
             Summary = summaryBuilder.BuildTotalWholeSummary();
         }
 
-        BuildDatabaseTabRows();
+        using (this.LogStep("Build Databases Row List")) 
+            BuildDatabaseTabRows();
 
         // Start: ExportAllHtmlTables()
         StringBuilder htmlTables = new StringBuilder();
@@ -81,7 +72,7 @@ public partial class SqlCacheHtmlExporter
         // SCRIPT: Selected Sort Column
         htmlTables.AppendLine($"selectedSortProperty = '{selectedSortProperty}';");
         // SCRIPT: Databases Id and Names, including 0 (all the databases)
-        using (this.LogStep("Render 'Databases' Tab"))
+        using (this.LogStep("Render 'Databases' json"))
             htmlTables.AppendLine($"dbList={DatabaseTabRows.ToJsonString()};");
 
         // SCRIPT: Query Plan (optional) for each Query
@@ -188,7 +179,7 @@ public partial class SqlCacheHtmlExporter
 
     public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
     {
-        var headers = _tableTopHeaders.ToArray();
+        var headers = _tableTopHeaders;
         var sortedRows = sortByColumn.SortAction(Rows).ToArray();
         // TODO: Replace StringBuilder by TextWriter
         StringBuilder htmlTable = new StringBuilder();
@@ -262,11 +253,7 @@ public partial class SqlCacheHtmlExporter
             {
                 var keyQueryPlan = Strings.GetKey(row.QueryPlan);
                 var jsDownloadPlan = $"dynamicDownloading(theFile['{keyQueryPlan}'], 'text/xml', 'SQL Execution Plan {keyQueryPlan}.sqlplan');";
-                var htmlDownloadIcon = "⇓";
-                htmlDownloadIcon = $"<img style='width: 20px; height: 20px' src='{DownloadIconSrcEmbedded}' />";
-                htmlDownloadIcon = $"<div class='Icon'><img style='width: 16px; height: 16px' src='{DownloadIconSrcEmbedded}' /></div>";
-                htmlDownloadIcon = "&nbsp;";
-                htmlDownloadIcon = "<div class='SvgIconDownload' />";
+                var htmlDownloadIcon = "<div class='SvgIconDownload' />";
                 htmlSqlPlanButton = $"<div class='SqlPlanDownload' Title='Open Execution Plan' onclick=\"{jsDownloadPlan}; return false;\">{htmlDownloadIcon}</div>";
             }
 
