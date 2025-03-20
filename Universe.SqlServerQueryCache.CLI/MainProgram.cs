@@ -153,6 +153,8 @@ internal class MainProgram
                     // tree (shrunk)
                     var reportTreeContent = reportShrunk.TreeTable + Environment.NewLine + Environment.NewLine + reportShrunk.EmptyMetricsFormatted;
                     File.WriteAllText(realOutputFile + ".Indexes-Tree.txt", reportTreeContent);
+
+                    File.WriteAllText(realOutputFile + ".log", e.GetLogsAsString());
                 }
             }
             catch (Exception ex)
