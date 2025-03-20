@@ -11,6 +11,27 @@ namespace Universe.SqlServerQueryCache.CLI;
 
 internal class MainProgram
 {
+    private static string[] MeaningfulSysInfoKeys = new string[]
+    {
+        "Cpu_Count",
+        "bpool_committed", "physical_memory_in_bytes", // up to 2008 r2
+        "physical_memory_kb", // on azure use process_memory_limit_mb column in sys.dm_os_job_object
+        "committed_kb", // 2012+
+        // sqlserver_start_time_ms_ticks - Ms_Ticks - sql server uptime
+        "sqlserver_start_time_ms_ticks", "Ms_Ticks",
+        // Used and Available memory on 2005...2008R2
+        "Bpool_Committed",
+        "Bpool_Commit_Target",
+        "Bpool_Visible",
+        // Used and Available memory on 2012+
+        "Committed_Kb",
+        "Committed_Target_Kb",
+        "Visible_Target_Kb",
+        // Total CPU Usage on 2012+
+        "Process_Kernel_Time_Ms",
+        "Process_User_Time_Ms",
+    };
+
     public static int Run(string[] args)
     {
         List<string> ConnectionStrings = new List<string>();
@@ -88,74 +109,66 @@ internal class MainProgram
             Console.Write($"Analyzing Query Cache for {GetInstanceName(connectionString)}:");
             try
             {
-                SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, connectionString);
-                e.Export(TextWriter.Null);
-                // rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString).ToArray();
-                Console.WriteLine(" OK");
-                // Medium Version already got, so HostPlatform error is not visualized explicitly
+                var instanceName = GetInstanceName(connectionString);
                 var hostPlatform = SqlClientFactory.Instance.CreateConnection(connectionString).Manage().HostPlatform;
-                var summary = e.Summary;
-                string summaryReport = SqlSummaryTextExporter.ExportAsText(summary, $"SQL Server {mediumVersion}");
+                SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, connectionString);
 
-                // Sys Info
-                ICollection<SqlSysInfoReader.Info> sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, connectionString);
-                var sysInfoKeys = new string[]
-                {
-                    "Cpu_Count",
-                    "bpool_committed", "physical_memory_in_bytes", // up to 2008 r2
-                    "physical_memory_kb", // on azure use process_memory_limit_mb column in sys.dm_os_job_object
-                    "committed_kb", // 2012+
-                    // sqlserver_start_time_ms_ticks - Ms_Ticks - sql server uptime
-                    "sqlserver_start_time_ms_ticks", "Ms_Ticks",
-                    // Used and Available memory on 2005...2008R2
-                    "Bpool_Committed",
-                    "Bpool_Commit_Target",
-                    "Bpool_Visible",
-                    // Used and Available memory on 2012+
-                    "Committed_Kb",
-                    "Committed_Target_Kb",
-                    "Visible_Target_Kb",
-                    // Total CPU Usage on 2012+
-                    "Process_Kernel_Time_Ms",
-                    "Process_User_Time_Ms",
-                };
-                var summaryReportFull = summaryReport + Environment.NewLine + sqlSysInfo.Format("   ");
-
-                Console.WriteLine(summaryReport);
                 if (!string.IsNullOrEmpty(outputFile))
                 {
-                    var instanceName = GetInstanceName(connectionString);
-                    // var realFolder = Path.GetFullPath(Path.GetDirectoryName(outputFile));
-                    // var realFile = Path.GetFileName(outputFile);
                     // Does not supported by net framework
                     // var realOutputFile = outputFile.Replace("{InstanceName}", SafeFileName.Get(instanceName), StringComparison.OrdinalIgnoreCase);
                     var realOutputFile = outputFile.ReplaceCore("{InstanceName}", SafeFileName.Get(instanceName), StringComparison.OrdinalIgnoreCase);
                     if (appendSqlServerVersion) realOutputFile += $" {mediumVersion} on {hostPlatform}";
-
                     CreateDirectoryForFile(realOutputFile);
+
+                    e.ExportToFile(realOutputFile + ".html");
+
+                    // rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString).ToArray();
+                    Console.WriteLine(" OK");
+                    // Medium Version already got, so HostPlatform error is not visualized explicitly
+                    var summary = e.Summary;
+                    string summaryReport = SqlSummaryTextExporter.ExportAsText(summary, $"SQL Server {mediumVersion}");
+                    Console.WriteLine(summaryReport);
+
+                    // Sys Info
+                    ICollection<SqlSysInfoReader.Info> sqlSysInfo = SqlSysInfoReader.Query(SqlClientFactory.Instance, connectionString);
+                    var summaryReportFull = summaryReport + Environment.NewLine + sqlSysInfo.Format("   ");
                     File.WriteAllText(realOutputFile + ".txt", summaryReportFull);
+
                     var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
                     File.WriteAllText(realOutputFile + ".json", jsonExport.ToJsonString(false, JsonNaming.PascalCase));
 
-                    e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, connectionString);
-                    e.ExportToFile(realOutputFile + ".html");
 
-                    // Indexes
+                    // Indexes: json
                     SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, connectionString);
                     var structuredIndexStats = reader.ReadStructured();
                     File.WriteAllText(realOutputFile + ".Indexes.json", structuredIndexStats.ToJsonString());
-                    // full plain
+
+                    // Indexes: full plain
                     SqlIndexStatSummaryReport reportFull = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable();
                     File.WriteAllText(realOutputFile + ".Indexes-Full.txt", reportFull.PlainTable.ToString());
                     SqlIndexStatSummaryReport reportShrunk = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable(true);
-                    // shrunk plain
+
+                    // Indexes: plain
                     var reportShrunkContent = reportShrunk.PlainTable + Environment.NewLine + Environment.NewLine + reportShrunk.EmptyMetricsFormatted;
                     File.WriteAllText(realOutputFile + ".Indexes-Plain.txt", reportShrunkContent);
+
                     // tree (shrunk)
                     var reportTreeContent = reportShrunk.TreeTable + Environment.NewLine + Environment.NewLine + reportShrunk.EmptyMetricsFormatted;
                     File.WriteAllText(realOutputFile + ".Indexes-Tree.txt", reportTreeContent);
 
                     File.WriteAllText(realOutputFile + ".log", e.GetLogsAsString());
+                }
+                else
+                {
+                    e.Export(TextWriter.Null);
+
+                    // rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString).ToArray();
+                    Console.WriteLine(" OK");
+                    // Medium Version already got, so HostPlatform error is not visualized explicitly
+                    var summary = e.Summary;
+                    string summaryReport = SqlSummaryTextExporter.ExportAsText(summary, $"SQL Server {mediumVersion}");
+                    Console.WriteLine(summaryReport);
                 }
             }
             catch (Exception ex)

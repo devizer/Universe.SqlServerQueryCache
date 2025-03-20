@@ -13,4 +13,6 @@ dotnet run -c Release -f %NETV% -- -o "Query Cache Reports\LOCAL MS SQL SERVER V
 
 dotnet run -c Release -f %NETV% -- -all -av -o "Query Cache Reports\Discovered {InstanceNaMe}" 
 
+dotnet run -c Release -f %NETV% -- -s "(local)"
+
 
