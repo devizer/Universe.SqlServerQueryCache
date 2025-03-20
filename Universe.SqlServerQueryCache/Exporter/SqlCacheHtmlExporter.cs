@@ -15,7 +15,7 @@ using Universe.SqlServerQueryCache.TSqlSyntax;
 
 namespace Universe.SqlServerQueryCache.Exporter;
 
-public class SqlCacheHtmlExporter
+public partial class SqlCacheHtmlExporter
 {
     public readonly DbProviderFactory DbProvider;
     public readonly string ConnectionString;
@@ -56,14 +56,21 @@ public class SqlCacheHtmlExporter
 
     public string Export()
     {
-        QueryCacheReader reader = new QueryCacheReader(DbProvider, ConnectionString);
-        Rows = reader.Read().ToList();
-        ColumnsSchema = reader.ColumnsSchema;
+        using (this.LogStep("Query Query Stat"))
+        {
+            QueryCacheReader reader = new QueryCacheReader(DbProvider, ConnectionString);
+            Rows = reader.Read().ToList();
+            ColumnsSchema = reader.ColumnsSchema;
+        }
+
         _tableTopHeaders = new AllSortingDefinitions(ColumnsSchema).GetHeaders().ToArray();
         _tableTopHeaders.First().Caption = Rows.Count == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
 
-        SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows);
-        Summary = summaryBuilder.BuildTotalWholeSummary();
+        using (this.LogStep("Build Summary"))
+        {
+            SqlServerSummaryBuilder summaryBuilder = new SqlServerSummaryBuilder(DbProvider, ConnectionString, Rows);
+            Summary = summaryBuilder.BuildTotalWholeSummary();
+        }
 
         BuildDatabaseTabRows();
 
@@ -74,28 +81,37 @@ public class SqlCacheHtmlExporter
         // SCRIPT: Selected Sort Column
         htmlTables.AppendLine($"selectedSortProperty = '{selectedSortProperty}';");
         // SCRIPT: Databases Id and Names, including 0 (all the databases)
-        htmlTables.AppendLine($"dbList={DatabaseTabRows.ToJsonString()};");
-        // SCRIPT: Query Plan (optional) for each Query
-        htmlTables.AppendLine($"theFile={{}};");
-        foreach (var queryCacheRow in Rows)
-        {
-            // Download SQL STATEMENT IS NOT IMPLEMENTED
-            if (false && !string.IsNullOrEmpty(queryCacheRow.SqlStatement))
-                if (Strings.GetOrAddThenReturnKey(queryCacheRow.SqlStatement, out var keySqlStatement))
-                    htmlTables.AppendLine($"\ttheFile[\"{keySqlStatement}\"] = {JsExtensions.EncodeJsString(queryCacheRow.SqlStatement)};");
+        using (this.LogStep("Render 'Databases' Tab"))
+            htmlTables.AppendLine($"dbList={DatabaseTabRows.ToJsonString()};");
 
-            if (!string.IsNullOrEmpty(queryCacheRow.QueryPlan))
-                if (Strings.GetOrAddThenReturnKey(queryCacheRow.QueryPlan, out var keyQueryPlan))
-                    htmlTables.AppendLine($"\ttheFile[\"{keyQueryPlan}\"] = {JsExtensions.EncodeJsString(queryCacheRow.QueryPlan)};");
+        // SCRIPT: Query Plan (optional) for each Query
+        using (this.LogStep("Render Query Plans"))
+        {
+            htmlTables.AppendLine($"theFile={{}};");
+            foreach (var queryCacheRow in Rows)
+            {
+                // Download SQL STATEMENT IS NOT IMPLEMENTED
+                if (false && !string.IsNullOrEmpty(queryCacheRow.SqlStatement))
+                    if (Strings.GetOrAddThenReturnKey(queryCacheRow.SqlStatement, out var keySqlStatement))
+                        htmlTables.AppendLine($"\ttheFile[\"{keySqlStatement}\"] = {JsExtensions.EncodeJsString(queryCacheRow.SqlStatement)};");
+
+                if (!string.IsNullOrEmpty(queryCacheRow.QueryPlan))
+                    if (Strings.GetOrAddThenReturnKey(queryCacheRow.QueryPlan, out var keyQueryPlan))
+                        htmlTables.AppendLine($"\ttheFile[\"{keyQueryPlan}\"] = {JsExtensions.EncodeJsString(queryCacheRow.QueryPlan)};");
+            }
         }
+
         htmlTables.AppendLine($"</script>");
 
         void IterateSortingColumn(ColumnDefinition columnDefinition)
         {
-            bool isSelected = selectedSortProperty == columnDefinition.GetHtmlId();
-            htmlTables.AppendLine($"<div id='{columnDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>");
-            htmlTables.AppendLine(Export(columnDefinition, isSelected));
-            htmlTables.AppendLine($"</div>");
+            using (this.LogStep($"Render Report Sorted by '{columnDefinition.PropertyName}'"))
+            {
+                bool isSelected = selectedSortProperty == columnDefinition.GetHtmlId();
+                htmlTables.AppendLine($"<div id='{columnDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>");
+                htmlTables.AppendLine(Export(columnDefinition, isSelected));
+                htmlTables.AppendLine($"</div>");
+            }
 
             CollectGarbage();
         }
@@ -107,6 +123,7 @@ public class SqlCacheHtmlExporter
         // Finish: ExportAllHtmlTables()
 
 
+        var logStep = LogStep("Build Css");
         var css = ExporterResources.StyleCSS
                   + Environment.NewLine + ExporterResources.SqlSyntaxHighlighterCss
                   + Environment.NewLine + ExporterResources.FloatButtonCss
@@ -117,7 +134,13 @@ public class SqlCacheHtmlExporter
                   + Environment.NewLine + ExporterResources.DatabasesStylesCss
             ;
 
-        var finalHtml = ExportModalAsHtml() + Environment.NewLine + htmlTables;
+        logStep.Restart("Export Modal Dialog as html");
+        var modalAsHtml = ExportModalAsHtml();
+
+        logStep.Restart($"Concat 'Modal Dialog' {modalAsHtml.Length / 1024:n0}Kb and 'Queries Table' {htmlTables.Length / 1024:n0}Kb html");
+        var finalHtml = modalAsHtml + Environment.NewLine + htmlTables;
+        
+        logStep.Restart("Build JS");
         var finalJs = ExporterResources.MainJS
                       + Environment.NewLine + ExporterResources.ModalSummaryJS
                       + Environment.NewLine + ExporterResources.TabsSummaryJs
@@ -125,6 +148,7 @@ public class SqlCacheHtmlExporter
                       + Environment.NewLine + ExporterResources.ColumnsChooserJs
             ;
 
+        logStep.Restart("Populate Html Template by placeholders (html, css, js)");
         var ret = ExporterResources.HtmlTemplate
                 .Replace("{{ ReportSubTitleHtml }}", ExportReportSubTitleAsHtml())
                 .Replace("{{ MainJS }}", finalJs)
@@ -132,6 +156,7 @@ public class SqlCacheHtmlExporter
                 .Replace("{{ Body }}", finalHtml)
             ;
 
+        logStep.Dispose();
         CollectGarbage();
         return ret;
     }
@@ -302,6 +327,8 @@ public class SqlCacheHtmlExporter
 
     private string ExportColumnsChooserTab()
     {
+        using var _ = LogStep("Export 'Columns' tab as html");
+
         StringBuilder ret = new StringBuilder();
         ret.AppendLine("<div id='DbListContainer'>");
         // data-for-columns-header-id - checkboxes
@@ -328,6 +355,8 @@ public class SqlCacheHtmlExporter
     }
     private string ExportDatabasesTab()
     {
+        using var _ = LogStep("Export 'Databases' tab as html");
+
         StringBuilder ret = new StringBuilder();
         ret.AppendLine("<div id='DbListContainer'>");
 
@@ -370,6 +399,7 @@ public class SqlCacheHtmlExporter
 
     private string GetMediumVersionAndPlatform()
     {
+        using var _ = LogStep("Fetch SQL Server Version and Platform");
         var con = DbProvider.CreateConnection();
         con.ConnectionString = ConnectionString;
         var man = con.Manage();
@@ -381,6 +411,7 @@ public class SqlCacheHtmlExporter
 
     private string ExportSummaryAsHtml()
     {
+        using var _ = LogStep("Export 'Summary' tab as html");
         List<SummaryRow> summaryRows = Summary;
 
         StringBuilder ret = new StringBuilder();
@@ -422,12 +453,14 @@ public class SqlCacheHtmlExporter
     {
         if (ReportBuilderConfiguration.NeedGarbageCollection)
         {
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+            using (this.LogStep("Collect Garbage"))
+            {
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
         }
     }
+
 
 
 }

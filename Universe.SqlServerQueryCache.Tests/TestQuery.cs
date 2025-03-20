@@ -103,6 +103,10 @@ public class TestQuery
         Console.WriteLine(sqlSysInfo.Format("   "));
         File.AppendAllText(dumpSummaryFile, Environment.NewLine + Environment.NewLine + sqlSysInfo.Format("   "));
 
+        var dumpLogFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".Log.log");
+        Console.WriteLine(e.GetLogsAsString());
+        File.WriteAllText(dumpLogFile, e.GetLogsAsString());
+
         var dumpXmlFolder = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".Xml-Plan");
         Directory.CreateDirectory(dumpXmlFolder);
         int indexPlan = 0;
