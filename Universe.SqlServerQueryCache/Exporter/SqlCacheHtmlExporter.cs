@@ -100,7 +100,8 @@ public partial class SqlCacheHtmlExporter
             {
                 bool isSelected = selectedSortProperty == columnDefinition.GetHtmlId();
                 htmlTables.AppendLine($"<div id='{columnDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>");
-                htmlTables.AppendLine(Export(columnDefinition, isSelected));
+                // htmlTables.AppendLine(Export(columnDefinition, isSelected));
+                Export(htmlTables, columnDefinition, isSelected);
                 htmlTables.AppendLine($"</div>");
             }
 
@@ -177,12 +178,11 @@ public partial class SqlCacheHtmlExporter
         DatabaseTabRows = dbRows;
     }
 
-    public string Export(ColumnDefinition sortByColumn, bool isFieldSelected)
+    // TODO: Replace StringBuilder by TextWriter
+    public string Export(StringBuilder htmlTable, ColumnDefinition sortByColumn, bool isFieldSelected)
     {
         var headers = _tableTopHeaders;
         var sortedRows = sortByColumn.SortAction(Rows).ToArray();
-        // TODO: Replace StringBuilder by TextWriter
-        StringBuilder htmlTable = new StringBuilder();
         htmlTable.AppendLine("  <table class='Metrics'><thead>");
 
         // Table Header: 1st Row (metrics categories)
