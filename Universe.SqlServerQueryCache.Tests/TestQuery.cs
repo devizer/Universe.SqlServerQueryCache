@@ -74,7 +74,8 @@ public class TestQuery
         Console.WriteLine(firstForDebug.ToJsonString());
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".Rows.json");
         var json = new { ColumnsSchema = columnsSchema, Rows = rows };
-        File.WriteAllText(dumpFile, json.ToJsonString());
+        // File.WriteAllText(dumpFile, json.ToJsonString());
+        JsonExtensions.ToJsonFile(dumpFile, json);
     }
 
     [Test]
@@ -90,7 +91,8 @@ public class TestQuery
 
         var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
         var jsonFileName = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".json");
-        File.WriteAllText(jsonFileName, jsonExport.ToJsonString(false, JsonNaming.PascalCase));
+        // File.WriteAllText(jsonFileName, jsonExport.ToJsonString(false, JsonNaming.PascalCase));
+        JsonExtensions.ToJsonFile(jsonFileName, jsonExport);
 
         var hostPlatform = SqlClientFactory.Instance.CreateConnection(cs).Manage().HostPlatform;
         string summaryReport = SqlSummaryTextExporter.ExportAsText(e.Summary, $"SQL Server {mediumVersion} on {hostPlatform}");
@@ -113,7 +115,8 @@ public class TestQuery
         {
             if (string.IsNullOrEmpty(queryCacheRow.QueryPlan)) continue;
             indexPlan++;
-            File.WriteAllText(Path.Combine(dumpXmlFolder, $"{indexPlan}.sqlplan"), queryCacheRow.QueryPlan);
+            var indexPlanTitle = string.Format("{0:" + new string('0', e.Rows.Count.ToString("0").Length) + "}", indexPlan);
+            File.WriteAllText(Path.Combine(dumpXmlFolder, $"{indexPlanTitle}.sqlplan"), queryCacheRow.QueryPlan);
         }
     }
 

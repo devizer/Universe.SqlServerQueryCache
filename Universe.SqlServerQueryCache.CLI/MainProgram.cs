@@ -136,13 +136,15 @@ internal class MainProgram
                     File.WriteAllText(realOutputFile + ".txt", summaryReportFull);
 
                     var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
-                    File.WriteAllText(realOutputFile + ".json", jsonExport.ToJsonString(false, JsonNaming.PascalCase));
+                    JsonExtensions.ToJsonFile(realOutputFile + ".json", jsonExport, false, JsonNaming.CamelCase);
 
 
                     // Indexes: json
                     SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, connectionString);
                     var structuredIndexStats = reader.ReadStructured();
-                    File.WriteAllText(realOutputFile + ".Indexes.json", structuredIndexStats.ToJsonString());
+                    // File.WriteAllText(realOutputFile + ".Indexes.json", structuredIndexStats.ToJsonString());
+                    JsonExtensions.ToJsonFile(realOutputFile + ".Indexes.json", structuredIndexStats, false, JsonNaming.CamelCase);
+
 
                     // Indexes: full plain
                     SqlIndexStatSummaryReport reportFull = structuredIndexStats.GetRidOfUnnamedIndexes().GetRidOfMicrosoftShippedObjects().BuildPlainConsoleTable();

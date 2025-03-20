@@ -32,29 +32,18 @@ namespace Universe.SqlServerQueryCache.External
             return json.ToString();
         }
 
-        public static string ToJsonFile(string path, object arg, bool minify = false, JsonNaming namingStrategy = JsonNaming.CamelCase)
+        // prev version for small objects for Desktop Settings
+        public static void ToJsonFile(string path, object arg, bool minify = false, JsonNaming namingStrategy = JsonNaming.CamelCase)
         {
             var ser = CreateJsonSerializer(minify, namingStrategy);
             try
             {
-                var jsonString = arg.ToJsonString(minify, namingStrategy);
+                // var jsonString = arg.ToJsonString(minify, namingStrategy);
                 using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                 using (StreamWriter wr = new StreamWriter(fs, new UTF8Encoding(false)))
                 {
-                    wr.Write(jsonString);
-                    return jsonString;
+                    ser.Serialize(wr, arg);
                 }
-                return jsonString;
-                /*
-                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
-                using (StreamWriter wr = new StreamWriter(fs, new UTF8Encoding(false)))
-                {
-                    var jsonTextWriter = new JsonTextWriter(wr);
-                    ser.Serialize(jsonTextWriter, arg);
-                    jsonTextWriter.Flush();
-                }
-                */
-
             }
             catch (Exception ex)
             {
