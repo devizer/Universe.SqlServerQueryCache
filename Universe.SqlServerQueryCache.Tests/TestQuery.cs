@@ -84,10 +84,9 @@ public class TestQuery
         var cs = SqlServerReferenceExtensions.GetConnectionString(server);
         var mediumVersion = SqlServerReferenceExtensions.GetMediumVersion(cs);
         SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, cs);
-        var singleFileHtml = e.Export();
         var dumpFile = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".html");
         Console.WriteLine($"Store HTML Report to {dumpFile}");
-        File.WriteAllText(dumpFile, singleFileHtml);
+        e.ExportToFile(dumpFile);
 
         var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
         var jsonFileName = Path.Combine(TestEnvironment.DumpFolder, server.GetSafeFileOnlyName() + ".json");
@@ -125,7 +124,7 @@ public class TestQuery
         var cs = SqlServerReferenceExtensions.GetConnectionString(server);
         var mediumVersion = SqlServerReferenceExtensions.GetMediumVersion(cs);
         SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, cs);
-        var singleFileHtml = e.Export();
+        e.Export(TextWriter.Null);
         IEnumerable<QueryCacheRow> rows = e.Rows;
         var properties = typeof(QueryCacheRow)
             .GetProperties()

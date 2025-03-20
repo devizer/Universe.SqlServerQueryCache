@@ -89,7 +89,7 @@ internal class MainProgram
             try
             {
                 SqlCacheHtmlExporter e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, connectionString);
-                var singleFileHtml = e.Export();
+                e.Export(TextWriter.Null);
                 // rows = QueryCacheReader.Read(SqlClientFactory.Instance, connectionString).ToArray();
                 Console.WriteLine(" OK");
                 // Medium Version already got, so HostPlatform error is not visualized explicitly
@@ -137,7 +137,8 @@ internal class MainProgram
                     var jsonExport = new { SqlServerVersion = mediumVersion, Summary = e.Summary, ColumnsSchema = e.ColumnsSchema, Queries = e.Rows };
                     File.WriteAllText(realOutputFile + ".json", jsonExport.ToJsonString(false, JsonNaming.PascalCase));
 
-                    File.WriteAllText(realOutputFile + ".html", singleFileHtml);
+                    e = new SqlCacheHtmlExporter(SqlClientFactory.Instance, connectionString);
+                    e.ExportToFile(realOutputFile + ".html");
 
                     // Indexes
                     SqlIndexStatsReader reader = new SqlIndexStatsReader(SqlClientFactory.Instance, connectionString);
