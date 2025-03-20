@@ -41,8 +41,10 @@ namespace Universe.SqlServerQueryCache.Exporter
                 TryWriteText(nextStart);
                 if (nextStart < 0) return;
 
+                // TODO: Validate '.IndexOf' arguments (if invalid template)
                 int nextEnd = template.IndexOf("}}", nextStart + 2);
 
+                // TODO: Validate '.Substring' arguments (if invalid template)
                 string nextPlaceholder = template.Substring(nextStart + 2, nextEnd - nextStart - 3);
                 pos = nextEnd + 2;
 
