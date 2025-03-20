@@ -19,7 +19,8 @@ partial class SqlCacheHtmlExporter
             var i = $"{++index}:";
             var kb = $"{(step.DeltaMemory / 1024):n0} Kb";
             kb = kb.StartsWith("-") ? kb : "+" + kb;
-            ret.AppendLine($"{i,3} {step.Title.PadRight(col1Width)} {kb,-10} {step.Duration*1000,-10:n3} {step.CpuUsage}");
+            var perCentCpuUsage = step.Duration > 0 ? $"{step.CpuUsage.TotalMicroSeconds / 1000000d / step.Duration * 100:n0}%" : "";
+            ret.AppendLine($"{i,3} {step.Title.PadRight(col1Width)} {kb,-11}  {perCentCpuUsage,5}  {step.Duration*1000,-10:n3} {step.CpuUsage}");
         }
 
         return ret.ToString();
