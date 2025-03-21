@@ -1,10 +1,12 @@
 ﻿using System.Text;
+using Newtonsoft.Json;
 
 namespace Universe.SqlServerQueryCache.SqlDataAccess;
 
 public class SqlQueryStatsSchema
 {
     public readonly List<SqlResultSetColumn> Columns;
+    [JsonIgnore]
     public IDictionary<string, SqlResultSetColumn> ColumnsAsDictionary { get; protected set; }
 
     public SqlQueryStatsSchema(IEnumerable<SqlResultSetColumn> columns)

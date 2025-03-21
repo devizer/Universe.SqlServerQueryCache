@@ -29,8 +29,7 @@ public partial class SqlCacheHtmlExporter
     private TableHeaderDefinition[] _tableTopHeaders;
 
 
-
-    public SqlCacheHtmlExporter(DbProviderFactory dbProvider, string connectionString)
+    public SqlCacheHtmlExporter(DbProviderFactory dbProvider, string connectionString) : this()
     {
         DbProvider = dbProvider;
         ConnectionString = connectionString;
@@ -51,7 +50,7 @@ public partial class SqlCacheHtmlExporter
             .Substitute("MainJS", textWriter => textWriter.WriteLine(ExportMainJs()))
             .Substitute("StylesCSS", textWriter => textWriter.WriteLine(ExplortMainCss()));
 
-        using (this.LogStep("Query Query Stat"))
+        using (this.LogStep("Query Final 'Query Stat'"))
         {
             QueryCacheReader reader = new QueryCacheReader(DbProvider, ConnectionString);
             Rows = reader.Read().ToList();
@@ -128,6 +127,8 @@ public partial class SqlCacheHtmlExporter
             template.Produce(output, ExporterResources.HtmlTemplate);
 
         CollectGarbage();
+        
+        StepsLogger.TakeOwnership();
     }
 
     private static string ExplortMainCss()
