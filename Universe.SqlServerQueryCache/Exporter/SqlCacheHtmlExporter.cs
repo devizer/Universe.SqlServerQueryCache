@@ -57,6 +57,12 @@ public partial class SqlCacheHtmlExporter
             ColumnsSchema = reader.ColumnsSchema;
         }
 
+        CollectGarbage(
+            $"got {Rows.Count} rows," +
+            $" {Rows.Select(x => (x.QueryPlan?.Length).GetValueOrDefault() / 1024L).SmartySum()} Kb plans," +
+            $" {Rows.Select(x => (x.SqlStatement?.Length).GetValueOrDefault() / 1024L).SmartySum()} Kb sql"
+        );
+
         _tableTopHeaders = new AllSortingDefinitions(ColumnsSchema).GetHeaders().ToArray();
         _tableTopHeaders.First().Caption = Rows.Count == 0 ? "No Data" : Rows.Count() == 1 ? "Summary on 1 query" : $"Summary on {Rows.Count()} queries";
 
@@ -442,11 +448,13 @@ public partial class SqlCacheHtmlExporter
         return valueString;
     }
 
-    void CollectGarbage()
+    void CollectGarbage() => CollectGarbage(null);
+    void CollectGarbage(string details)
     {
         if (ReportBuilderConfiguration.NeedGarbageCollection)
         {
-            using (this.LogStep("Collect Garbage"))
+            var title = $"Collect Garbage{(string.IsNullOrEmpty(details) ? "" : $", {details}")}";
+            using (this.LogStep(title))
             {
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
@@ -498,5 +506,12 @@ public static class SortingDefinitionExtensions
     public static string GetHtmlId(this ColumnDefinition arg)
     {
         return $"Content_{arg.PropertyName}";
+    }
+}
+public static class SumExtensions
+{
+    public static long SmartySum(this IEnumerable<long> list)
+    {
+        return list?.Any() == true ? list.Sum() : 0;
     }
 }
