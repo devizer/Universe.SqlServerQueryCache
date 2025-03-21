@@ -102,7 +102,6 @@ public partial class SqlCacheHtmlExporter
                                 .AppendLine(";");
                 }
             }
-            this.CollectGarbage();
 
             htmlTables.AppendLine($"</script>");
 
