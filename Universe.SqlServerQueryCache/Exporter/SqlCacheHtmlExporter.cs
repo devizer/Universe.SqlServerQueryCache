@@ -96,7 +96,10 @@ public partial class SqlCacheHtmlExporter
 
                     if (!string.IsNullOrEmpty(queryCacheRow.QueryPlan))
                         if (Strings.GetOrAddThenReturnKey(queryCacheRow.QueryPlan, out var keyQueryPlan))
-                            htmlTables.AppendLine($"\ttheFile[\"{keyQueryPlan}\"] = {JsExtensions.EncodeJsString(queryCacheRow.QueryPlan)};");
+                            htmlTables
+                                .Append($"\ttheFile[\"{keyQueryPlan}\"] = ")
+                                .WriteEncodedJsString(queryCacheRow.QueryPlan)
+                                .AppendLine(";");
                 }
             }
             this.CollectGarbage();
@@ -478,6 +481,16 @@ public static class TextWriterExtensions
     public static TextWriter AppendLine(this TextWriter output, string line)
     {
         output.WriteLine(line);
+        return output;
+    }
+    public static TextWriter Append(this TextWriter output, string text)
+    {
+        output.Write(text);
+        return output;
+    }
+    public static TextWriter Append(this TextWriter output, char ch)
+    {
+        output.Write(ch);
         return output;
     }
 }
