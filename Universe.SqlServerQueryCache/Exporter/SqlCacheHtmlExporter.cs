@@ -81,7 +81,10 @@ public partial class SqlCacheHtmlExporter
                 htmlTables.AppendLine($"dbList={DatabaseTabRows.ToJsonString()};");
 
             // SCRIPT: Query Plan (optional) for each Query
-            using (this.LogStep("Render Query Plans"))
+            var queryPlans = Rows.Where(x => !string.IsNullOrEmpty(x.QueryPlan));
+            var queryPlansCount = queryPlans.Count();
+            var queryPlansTextSize = queryPlansCount > 0 ? queryPlans.Sum(x => x.QueryPlan.Length) : 0;
+            using (this.LogStep($"Render {queryPlansCount} Query Plans, {queryPlansTextSize / 1024} Kb"))
             {
                 htmlTables.AppendLine($"theFile={{}};");
                 foreach (var queryCacheRow in Rows)
@@ -96,6 +99,7 @@ public partial class SqlCacheHtmlExporter
                             htmlTables.AppendLine($"\ttheFile[\"{keyQueryPlan}\"] = {JsExtensions.EncodeJsString(queryCacheRow.QueryPlan)};");
                 }
             }
+            this.CollectGarbage();
 
             htmlTables.AppendLine($"</script>");
 
