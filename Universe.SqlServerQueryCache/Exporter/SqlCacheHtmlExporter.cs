@@ -111,7 +111,6 @@ public partial class SqlCacheHtmlExporter
                 {
                     bool isSelected = selectedSortProperty == sortingDefinition.GetHtmlId();
                     htmlTables.AppendLine($"<div id='{sortingDefinition.GetHtmlId()}' class='{(isSelected ? "" : "Hidden")}'>");
-                    // htmlTables.AppendLine(Export(columnDefinition, isSelected));
                     Export(output, sortingDefinition, isSelected);
                     htmlTables.AppendLine($"</div>");
                 }
@@ -123,12 +122,11 @@ public partial class SqlCacheHtmlExporter
 
         template.Substitute("Body", WriteHtmlBody);
 
-        using(LogStep("Render HtmlTemplate.html"))
+        using(LogStep("Render Total HtmlTemplate.html"))
             template.Produce(output, ExporterResources.HtmlTemplate);
 
         CollectGarbage();
         
-        StepsLogger.TakeOwnership();
     }
 
     private static string ExplortMainCss()
