@@ -236,7 +236,7 @@ public partial class SqlCacheHtmlExporter
             // data-db-id required for javascript show/hide db
             var trDataDbId = hasDatabase ? $" data-db-id='{row.DatabaseId}'" : " data-db-id='-1'";
             // TODO: Choose either DB-Id-? class or data-db-id attribute
-            htmlTable.AppendLine($"  <tr class='MetricsRow {trClass} hidden'{trDataDbId}>");
+            htmlTable.AppendLine($"  <tr class='MetricsRow {trClass} '{trDataDbId}>");
             foreach (var header in headers)
                 foreach (ColumnDefinition column in header.Columns)
             {
