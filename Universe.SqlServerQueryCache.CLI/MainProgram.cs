@@ -62,18 +62,13 @@ internal class MainProgram
         {
             var servers = SqlDiscovery.GetLocalDbAndServerList();
             var localServers = servers
-                .Where(x => SqlServiceExtentions.IsLocalDbOrLocalServer(x.ConnectionString))
+                .Where(x => x.ServiceStartup != LocalServiceStartup.Disabled)
                 .ToArray();
 
-            bool IsOnline(SqlServerRef server)
-            {
-                return
-                    SqlServiceExtentions.IsLocalDB(server.DataSource)
-                    || SqlServiceExtentions.CheckServiceStatus(server.DataSource)?.State == SqlServiceStatus.ServiceStatus.Running;
-            }
             
             var onlineServers = localServers
-                .Where(x => IsOnline(x))
+                // Service should be running
+                .Where(x => x.Kind == SqlServerDiscoverySource.WellKnown || x.ToSqlServerDataSource().IsLocalDb || x.ToSqlServerDataSource().CheckLocalServiceStatus()?.State == SqlServiceStatus.ServiceState.Running)
                 .ToArray();
 
             foreach (var s in localServers)
@@ -82,7 +77,8 @@ internal class MainProgram
             }
 
             Console.WriteLine($"Found online {onlineServers.Length} local SQL Servers: [{string.Join(", ", onlineServers.Select(x => x.DataSource).ToArray())}]");
-            ConnectionStrings.AddRange(onlineServers.Select(x => string.Format(csFormat, x.DataSource)));
+            // ConnectionStrings.AddRange(onlineServers.Select(x => string.Format(csFormat, x.DataSource)));
+            ConnectionStrings.AddRange(onlineServers.Select(x => x.ConnectionString));
         }
         var argPadding = "    ";
         Console.WriteLine($@"SQL Server Query Cache CLI Arguments:");

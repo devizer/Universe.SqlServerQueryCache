@@ -30,14 +30,20 @@ public class TestQuery
     {
         Console.WriteLine($"SERVER [{server}]");
         Console.WriteLine($"CONNECTION STRING [{server.ConnectionString}]");
-        bool isLocal = CrossInfo.ThePlatform == CrossInfo.Platform.Windows && SqlServiceExtentions.IsLocalDbOrLocalServer(server.ConnectionString);
+        // bool isLocal = CrossInfo.ThePlatform == CrossInfo.Platform.Windows && SqlServiceExtentions.IsLocalDbOrLocalServer(server.ConnectionString);
+        var sqlServerDataSource = server.ToSqlServerDataSource();
+        bool isLocal = CrossInfo.ThePlatform == CrossInfo.Platform.Windows && sqlServerDataSource?.IsLocal == true;
         if (!isLocal)
         {
             Console.WriteLine($"Server {server} is not local. Skipping Start Server");
             return;
         }
-        bool ok = SqlServiceExtentions.StartService(server.DataSource, TimeSpan.FromSeconds(30));
-        Console.WriteLine($"SERVER [{server}] is running=[{ok}]");
+        else
+        {
+            // bool ok = SqlServiceExtentions.StartService(server.DataSource, TimeSpan.FromSeconds(30));
+            bool ok = server.ToSqlServerDataSource().StartServiceOrLocalDb(timeout: 30);
+            Console.WriteLine($"SERVER [{server}] is started=[{ok}]");
+        }
     }
 
     [Test]
