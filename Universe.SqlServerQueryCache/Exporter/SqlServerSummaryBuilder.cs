@@ -68,17 +68,22 @@ public class SqlServerSummaryBuilder
         return summaryRows;
     }
 
+    // Refactor: Use SingleRowResultSet
     public IEnumerable<SummaryRow> BuildSysInfoSummary()
     {
         // Sys Info
         ICollection<SqlSysInfoReader.Info> sqlSysInfoList = SqlSysInfoReader.Query(DbProvider, ConnectionString);
-        var sqlSysInfo = sqlSysInfoList.ToLookup(x => x.Name).Select(x => new { K = x.Key, V = x.FirstOrDefault()?.Value }).ToDictionary(x => x.K, x => x.V, StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, object> sqlSysInfo = sqlSysInfoList
+            .ToLookup(x => x.Name)
+            .Select(x => new { K = x.Key, V = x.FirstOrDefault()?.Value })
+            .ToDictionary(x => x.K, x => x.V, StringComparer.OrdinalIgnoreCase);
+
         Func<string, long?> getLong = name => sqlSysInfo.TryGetValue(name, out var raw) ? Convert.ToInt64(raw) : null;
         var cpuCount = getLong("cpu_count");
         if (cpuCount.HasValue) yield return new SummaryRow("CPU Count", FormatKind.Natural, cpuCount.Value);
         var physical_memory_in_bytes = getLong("physical_memory_in_bytes");
         var physical_memory_kb = getLong("physical_memory_kb");
-        long? memKb = physical_memory_kb ?? physical_memory_in_bytes / 1024;
+        long? memKb = physical_memory_kb ?? (physical_memory_in_bytes / 1024);
         if (memKb.HasValue) yield return new SummaryRow("Physical Memory (MB)", FormatKind.Natural, memKb.Value / 1024);
 
         // 2005...2008R2

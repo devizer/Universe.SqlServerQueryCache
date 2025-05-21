@@ -1,0 +1,1 @@
+dotnet test -c Release -f net6.0 --filter "Name ~ StartSqlServers"
